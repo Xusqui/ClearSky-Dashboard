@@ -1,83 +1,118 @@
-Versión totalmente funcional en https://xusqui.com/weather/
+# Interfaz Web para Estación Meteorológica (con Home Assistant)
+
+**Versión totalmente funcional en:** [**https://xusqui.com/weather/**](https://xusqui.com/weather/)
 
 <img width="1273" height="1264" alt="Captura de pantalla 2025-10-18 a las 9 42 04" src="https://github.com/user-attachments/assets/50994aba-f6c7-4ff5-9baf-ca1f2c293047" />
 
-Este es un software desarrollado a partir de Weather Underground, por lo que su interfaz es similar.
+## Sobre el Proyecto
 
-No tengo mucha idea de programación, por lo que todo el código se ha creado con ChatGPT y Gemini
+Este es un software desarrollado a partir de la interfaz clásica de Weather Underground.
 
-Se asume que se instala en el directorio /weather/
+> [!NOTE]
+> No tengo mucha idea de programación, por lo que todo el código se ha creado con la ayuda de ChatGPT y Gemini.
 
-Tiene dos partes, un archivo insert.php que es utilizado por Home Assistant para escribir los datos que va recibiendo de la estación meteorológica en la base de datos
+### Componentes
 
-La segunda parte es la propia web en sí.
+El proyecto tiene dos partes principales:
 
-Mi configuración, que es la que he probado aquí y ya funcional es la siguiente:
+1.  **`insert.php`**: Un *endpoint* que es utilizado por Home Assistant para escribir los datos que va recibiendo de la estación meteorológica en la base de datos.
+2.  **La Web (index.php)**: La propia página web que lee y muestra los datos de la base de datos.
 
-* Estación Meteorológica Personal: Ambient Weather WS-2090
-* Software de la estación meteorológica: EasyWeatherPro V5.2.2
+Se asume que el software se instala en el directorio `/weather/` de tu servidor web.
 
-El software envía los datos a una instancia funcional de home assistant: 
-* En primer lugar añadir la integración "Ecowitt" a Home Assistant de la manera habitual
-* En la app WSView Pluss entrar en la estación meteorológica dentro de la pestaña "My Devices" y dentro de ésta, en la pestaña "Customized":
-* Customized: Enable
-* Protocol: Ecowitt
-* Server IP / Hostname: IP de home assistant, en mi caso: 192.168.1.100
-* Path: /api/webhook/API_DE_HOME_ASSISTAN
-* Port: Puerto de Home assistant, en mi caso: 8123
-* Upload Interval: 60 seconds
+---
 
-En el archivo configuration.yaml de Home assistant incluir el siguiente rest_command:
+## Mi Configuración (Probada y Funcional)
 
-rest_command:\
-  send_all_meteo_data:\
-    url: "http://192.168.1.100/weather/insert.php"\
-    method: POST\
-    content_type: "application/json"\
-    headers:\
-      Authorization: "Bearer {{ states('input_text.meteo_token_holder') }}"\
-    payload: >\
-      {\
-        "timestamp": "{{ now().isoformat() }}",\
-        "temperatura": "{{ states('sensor.ws2900_v2_02_03_outdoor_temperature') }}",\
-        "sensacion_termica": "{{ states('sensor.ws2900_v2_02_03_feels_like_temperature') }}",\
-        "humedad": "{{ states('sensor.ws2900_v2_02_03_humidity') }}",\
-        "presion_relativa": "{{ states('sensor.ws2900_v2_02_03_relative_pressure') }}",\
-        "presion_absoluta": "{{ states('sensor.ws2900_v2_02_03_absolute_pressure') }}",\
-        "punto_rocio": "{{ states('sensor.ws2900_v2_02_03_dewpoint') }}",\
-        "viento_velocidad": "{{ states('sensor.ws2900_v2_02_03_wind_speed') }}",\
-        "viento_direccion": "{{ states('sensor.ws2900_v2_02_03_wind_direction') }}",\
-        "viento_racha": "{{ states('sensor.ws2900_v2_02_03_wind_gust') }}",\
-        "lluvia_diaria": "{{ states('sensor.ws2900_v2_02_03_daily_rain') }}",\
-        "indice_uv": "{{ states('sensor.ws2900_v2_02_03_uv_index') }}",\
-        "radiacion_solar": "{{ states('sensor.ws2900_v2_02_03_solar_radiation') }}",\
-        "temperatura_interior": "{{ states('sensor.ws2900_v2_02_03_indoor_temperature') }}",\
-        "humedad_interior": "{{ states('sensor.ws2900_v2_02_03_indoor_humidity') }}"\
-      }\
+Esta es la configuración de hardware y software con la que el proyecto ha sido probado:
 
-input_text:\
-  meteo_token_holder:\
-    name: "Portador del Token Meteo"\
-    initial: !secret meteo_api_token\
-    mode: password # Esto lo oculta en la interfaz por seguridad\
+* **Estación Meteorológica Personal**: Ambient Weather WS-2090
+* **Software de la Estación**: EasyWeatherPro V5.2.2
+* **Software de Domótica**: Home Assistant
+* **Integración de Home Assistant**: "Ecowitt"
 
-// Sustituir los sensores por los de tu estación (Los nombres hay que buscarlos dentro de home assistant)
+---
 
-Dentro de Home Assistant ir a Settings / Automations & scenes / Create automation / Create new automation:
-*  When: + Add trigger / Time and location / Time pattern
-*    Trigger ID (Optional): Lo que sea, p ej: Cada 5 minutos
-*    Hours: En blanco
-*    Minutes: /5
-*    Seconds: en blanco
-* Click: + Add Action:
-*   RESTful Command: send_all_meteo_data
-* Click: Save
+## Guía de Configuración
 
-Name: Enviar datos meteorológicos a la base de datos
-Click: Save
+El flujo de datos es: **Estación $\rightarrow$ Home Assistant $\rightarrow$ Esta Web**.
 
-Y listo.
+Sigue estos pasos para replicar la configuración:
 
-De esta manera, home assistant recibe los datos desde la estación meteorológica cada minuto, y escribe el último valor en la base de datos cada 5 minutos.
+### Paso 1: Añadir Integración "Ecowitt" a Home Assistant
 
-Si alguien llegara a probarlo, me gustaría saber si le funciona
+Añade la integración "Ecowitt" a tu instancia de Home Assistant de la manera habitual.
+
+### Paso 2: Configurar la App "WSView Pluss"
+
+En la app móvil (WSView Pluss), entra en tu estación meteorológica (en "My Devices") y ve a la pestaña "Customized":
+
+* **Customized**: Enable
+* **Protocol**: Ecowitt
+* **Server IP / Hostname**: La IP de tu Home Assistant (ej: `192.168.1.100`)
+* **Path**: `/api/webhook/API_DE_HOME_ASSISTAN` (Sustituye por tu API Key/Webhook ID)
+* **Port**: El puerto de Home Assistant (ej: `8123`)
+* **Upload Interval**: 60 seconds
+
+### Paso 3: Añadir `rest_command` a Home Assistant
+
+Añade lo siguiente a tu archivo `configuration.yaml` en Home Assistant:
+
+```yaml
+rest_command:
+  send_all_meteo_data:
+    url: "[http://192.168.1.100/weather/insert.php](http://192.168.1.100/weather/insert.php)" # Sustituye por la IP de tu servidor web
+    method: POST
+    content_type: "application/json"
+    headers:
+      Authorization: "Bearer {{ states('input_text.meteo_token_holder') }}"
+    payload: >
+      {
+        "timestamp": "{{ now().isoformat() }}",
+        "temperatura": "{{ states('sensor.ws2900_v2_02_03_outdoor_temperature') }}",
+        "sensacion_termica": "{{ states('sensor.ws2900_v2_02_03_feels_like_temperature') }}",
+        "humedad": "{{ states('sensor.ws2900_v2_02_03_humidity') }}",
+        "presion_relativa": "{{ states('sensor.ws2900_v2_02_03_relative_pressure') }}",
+        "presion_absoluta": "{{ states('sensor.ws2900_v2_02_03_absolute_pressure') }}",
+        "punto_rocio": "{{ states('sensor.ws2900_v2_02_03_dewpoint') }}",
+        "viento_velocidad": "{{ states('sensor.ws2900_v2_02_03_wind_speed') }}",
+        "viento_direccion": "{{ states('sensor.ws2900_v2_02_03_wind_direction') }}",
+        "viento_racha": "{{ states('sensor.ws2900_v2_02_03_wind_gust') }}",
+        "lluvia_diaria": "{{ states('sensor.ws2900_v2_02_03_daily_rain') }}",
+        "indice_uv": "{{ states('sensor.ws2900_v2_02_03_uv_index') }}",
+        "radiacion_solar": "{{ states('sensor.ws2900_v2_02_03_solar_radiation') }}",
+        "temperatura_interior": "{{ states('sensor.ws2900_v2_02_03_indoor_temperature') }}",
+        "humedad_interior": "{{ states('sensor.ws2900_v2_02_03_indoor_humidity') }}"
+      }
+
+input_text:
+  meteo_token_holder:
+    name: "Portador del Token Meteo"
+    initial: !secret meteo_api_token
+    mode: password # Oculta el token en la interfaz
+```
+> [!IMPORTANT]
+> **¡Sustituye los nombres de los sensores!** Los nombres (`sensor.ws2900_v2_02_03...`) son específicos de mi estación. Debes buscarlos en tu propia instancia de Home Assistant y reemplazarlos en el `payload` anterior.
+
+### Paso 4: Crear Automatización en Home Assistant
+
+Finalmente, crea una automatización para enviar los datos periódicamente.
+
+1.  Ve a **Settings / Automations & scenes / Create automation / Create new automation**.
+2.  **Trigger (Disparador):**
+    * **+ Add trigger** / **Time and location** / **Time pattern**
+    * **Trigger ID (Optional):** `Cada 5 minutos`
+    * **Minutes:** `/5`
+3.  **Actions (Acciones):**
+    * **+ Add Action**
+    * Busca y selecciona **RESTful Command: send_all_meteo_data**
+4.  **Guardar:**
+    * Ponle un nombre (ej: `Enviar datos meteorológicos a la base de datos`) y guarda.
+
+¡Y listo! Home Assistant recibirá los datos de la estación cada minuto y escribirá el último valor en tu base de datos cada 5 minutos.
+
+---
+
+## Feedback
+
+Si alguien llegara a probar esta configuración, ¡me gustaría saber si le funciona!
