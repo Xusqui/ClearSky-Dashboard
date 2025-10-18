@@ -1,8 +1,8 @@
 <?php
 // CONFIGURACIÓN
 // Datos de Conexión a Home Assistant
-$ha_url = ""; // IP de tu Home Assistant i.e: http://127.0.0.1:8123
-$token = ""; // Token de Home Assistant
+$ha_url = "http://192.168.1.100:8123"; // IP de tu Home Assistant
+$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkNWM3ZDJiNzVlNjU0MzA2YTQwNTk1YTgxMWQwOWY5MCIsImlhdCI6MTc1NjY3MDEwMSwiZXhwIjoyMDcyMDMwMTAxfQ.283et8HUBXs0CIzVfUIn7wN_bNMyBxjajOjly42THqc"; // Token de Home Assistant
 
 include __DIR__ . '/config_db.php';
 
