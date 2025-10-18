@@ -1,7 +1,6 @@
 Versión totalmente funcional en https://xusqui.com/weather/
 
-<img width="1273" height="1221" alt="Captura de pantalla 2025-10-12 a las 22 19 13" src="https://github.com/user-attachments/assets/958aa674-d501-4922-8f63-7cd8b440cd5e" />
-
+<img width="1273" height="1264" alt="Captura de pantalla 2025-10-18 a las 9 42 04" src="https://github.com/user-attachments/assets/50994aba-f6c7-4ff5-9baf-ca1f2c293047" />
 
 Este es un software desarrollado a partir de Weather Underground, por lo que su interfaz es similar.
 
