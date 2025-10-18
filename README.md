@@ -94,6 +94,12 @@ input_text:
 > [!IMPORTANT]
 > **¡Sustituye los nombres de los sensores!** Los nombres (`sensor.ws2900_v2_02_03...`) son específicos de mi estación. Debes buscarlos en tu propia instancia de Home Assistant y reemplazarlos en el `payload` anterior.
 
+Tenemos que crear un token para que Home Assistant pueda escribir los datos en la base de datos.
+
+Para ello, abrimos la web por primera vez (http://xxxx.xx/weather/). La primera visita a la web debe detectar que la base de datos no está creada, la creará y ejecutará el script setup.php para crear una contraseña y posteriormente introducir los datos de tu estación meteorológica:
+
+
+
 ### Paso 4: Crear Automatización en Home Assistant
 
 Finalmente, crea una automatización para enviar los datos periódicamente.
