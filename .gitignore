@@ -7,3 +7,6 @@
 ./static/config/config.php
 *.DS_Store
 ./.gitignore
+/static/config/config_db.php
+/static/config/config.php
+/.gitignore
