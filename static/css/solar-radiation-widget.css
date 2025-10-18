@@ -1,0 +1,68 @@
+solar-radiation-widget-view .circle-container {
+    width: 100%;
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    background: var(--widget-empty);
+    border: 1px solid rgba(var(--black-or-white), .1);
+    position: relative;
+    overflow:hidden
+}
+
+solar-radiation-widget-view .inner-circle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 0%;
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    background: var(--wu-yellow);
+    background: linear-gradient(45deg, var(--wu-yellow), var(--wu-orange));
+    box-shadow: 0 0 20px rgba(var(--wu-yellow-raw), .5);
+    transition:all 3s ease
+}
+
+solar-radiation-widget-view .circle-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10%;
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    background: 0 0;
+    border: .5px solid var(--wu-yellow);
+    animation: radiation-pulse 5s linear infinite;
+    animation-delay: 1s;
+    visibility: hidden;
+    transition:all 3s ease
+}
+
+solar-radiation-widget-view .circle-ring.show {
+    visibility:visible
+}
+
+solar-radiation-widget-view .ring-1 {
+    animation-delay:1s
+}
+
+solar-radiation-widget-view .ring-2 {
+    animation-delay:3s
+}
+
+@keyframes radiation-pulse {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity:0
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(2);
+        opacity:.2
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(3);
+        opacity: 0
+    }
+}

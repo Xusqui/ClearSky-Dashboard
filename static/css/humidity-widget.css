@@ -1,0 +1,246 @@
+humidity-widget-view .humidity-gauge-container {
+    width: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content:center
+}
+
+humidity-widget-view .humidity-gauge-bg {
+    width: 100%;
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    background: rgba(var(--black-or-white), .05);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(var(--black-or-white), .1);
+    position: relative;
+    overflow:hidden
+}
+
+humidity-widget-view .humidity-gauge-bg::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 50%;
+    background: var(--humidity-gauge-bg);
+    opacity:.9
+}
+
+humidity-widget-view:not([data-main-value]) .humidity-gauge-bg::before {
+    background:var(--widget-empty)
+}
+
+humidity-widget-view.comfortable .humidity-gauge-inner {
+    box-shadow:inset 0 0 20px rgba(var(--humidity-comfortable-color), .1)
+}
+
+humidity-widget-view.humid .humidity-gauge-inner {
+    box-shadow:inset 0 0 20px rgba(var(--humidity-humid-color), .1)
+}
+
+humidity-widget-view.dry .humidity-gauge-inner {
+    box-shadow:inset 0 0 20px rgba(var(--humidity-dry-color), .1)
+}
+
+humidity-widget-view:not([data-main-value]) .humidity-gauge-inner {
+    box-shadow:none
+}
+
+humidity-widget-view .humidity-gauge-inner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 70%;
+    aspect-ratio: 1/1;
+    background: rgba(255, 255, 255, .1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(var(--black-or-white), .2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content:center
+}
+
+humidity-widget-view:not([data-main-value]) .humidity-gauge-inner {
+    background: var(--widget-empty);
+    border:1px solid var(--widget-empty)
+}
+
+humidity-widget-view .humidity-mist-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 2px solid;
+    border-radius: 50%;
+    animation:mistExpand 6s ease-in-out infinite
+}
+
+humidity-widget-view.comfortable .humidity-mist-ring {
+    border-color:rgba(var(--humidity-comfortable-color), .3)
+}
+
+humidity-widget-view.humid .humidity-mist-ring {
+    border-color:rgba(var(--humidity-humid-color), .3)
+}
+
+humidity-widget-view.dry .humidity-mist-ring {
+    border-color:rgba(var(--humidity-dry-color), .3)
+}
+
+humidity-widget-view:not([data-main-value]) .humidity-mist-ring {
+    border-color: var(--widget-empty);
+    animation:none
+}
+
+humidity-widget-view .mist-ring-1 {
+    width: 50%;
+    aspect-ratio: 1/1;
+    animation-delay:0s
+}
+
+humidity-widget-view .mist-ring-2 {
+    width: 60%;
+    aspect-ratio: 1/1;
+    animation-delay:2s
+}
+
+humidity-widget-view .mist-ring-3 {
+    width: 70%;
+    aspect-ratio: 1/1;
+    animation-delay:4s
+}
+
+humidity-widget-view .humidity-vapor-particles {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    aspect-ratio: 1/1;
+    pointer-events:none
+}
+
+humidity-widget-view .humidity-vapor-particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    animation:vaporFloat 4s ease-in-out infinite
+}
+
+humidity-widget-view:not([data-main-value]) .humidity-vapor-particle {
+    animation:none
+}
+
+humidity-widget-view.comfortable .humidity-vapor-particle {
+    background: rgba(var(--humidity-comfortable-color), .6);
+    box-shadow:0 0 8px rgba(var(--humidity-comfortable-color), .4)
+}
+
+humidity-widget-view.humid .humidity-vapor-particle {
+    background: rgba(var(--humidity-humid-color), .6);
+    box-shadow:0 0 8px rgba(var(--humidity-humid-color), .4)
+}
+
+humidity-widget-view.dry .humidity-vapor-particle {
+    background: rgba(var(--humidity-dry-color), .6);
+    box-shadow:0 0 8px rgba(var(--humidity-dry-color), .4)
+}
+
+humidity-widget-view:not([data-main-value]) .humidity-vapor-particle {
+    background: var(--widget-empty);
+    box-shadow:0 0 8px var(--widget-empty)
+}
+
+humidity-widget-view .humidity-vapor-particle:first-child {
+    top: 25px;
+    left: 70px;
+    animation-delay: 0s;
+    animation-duration:3.5s
+}
+
+humidity-widget-view .humidity-vapor-particle:nth-child(2) {
+    top: 45px;
+    right: 30px;
+    animation-delay: .7s;
+    animation-duration:4s
+}
+
+humidity-widget-view .humidity-vapor-particle:nth-child(3) {
+    bottom: 50px;
+    left: 35px;
+    animation-delay: 1.4s;
+    animation-duration:3.8s
+}
+
+humidity-widget-view .humidity-vapor-particle:nth-child(4) {
+    top: 70px;
+    left: 25px;
+    animation-delay: 2.1s;
+    animation-duration:4.2s
+}
+
+humidity-widget-view .humidity-vapor-particle:nth-child(5) {
+    bottom: 35px;
+    right: 45px;
+    animation-delay: 2.8s;
+    animation-duration:3.6s
+}
+
+humidity-widget-view .humidity-vapor-particle:nth-child(6) {
+    top: 40px;
+    left: 50px;
+    animation-delay: 3.5s;
+    animation-duration:3.9s
+}
+
+@keyframes humidityShimmer {
+    0%, 100% {
+        opacity: .9;
+        transform:rotate(0)
+    }
+
+    50% {
+        opacity: 1;
+        transform:rotate(-2deg)
+    }
+}
+
+@keyframes vaporFloat {
+    0%, 100% {
+        opacity: .4;
+        transform:translateY(0) scale(1)
+    }
+
+    25% {
+        opacity: .8;
+        transform:translateY(-8px) scale(1.2)
+    }
+
+    50% {
+        opacity: .6;
+        transform:translateY(-12px) scale(.9)
+    }
+
+    75% {
+        opacity: .9;
+        transform:translateY(-5px) scale(1.1)
+    }
+}
+
+@keyframes mistExpand {
+    0%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity:.3
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.1);
+        opacity: .6
+    }
+}

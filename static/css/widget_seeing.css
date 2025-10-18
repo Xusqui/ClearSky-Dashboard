@@ -1,0 +1,17 @@
+.svg-container {
+  width: 100%;
+  height: auto;
+  max-height: 600px;
+  /*background-color: black;*/
+  position: relative;
+  overflow: visible;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+.star {
+  animation: twinkle 5s infinite;
+}

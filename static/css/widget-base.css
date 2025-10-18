@@ -1,0 +1,255 @@
+.widget-view {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    container-type: inline-size;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.widget-view.loaded {
+    opacity: 1;
+}
+
+.widget-view .graphic-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.widget-view .value-container {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.widget-view .main-value {
+    font-size: 2.4rem;
+    font-weight: 200;
+    margin: 0;
+    line-height: 1;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    transition: opacity 0.3s ease;
+    opacity: 0;
+}
+
+.widget-view.loaded .main-value {
+    opacity: 1;
+}
+
+.widget-view .main-value:after {
+    font-size: 1.1rem;
+    color: var(--color-secondary-font);
+    vertical-align: super;
+    margin-left: 4px;
+}
+
+.widget-view:not([data-main-value]) .main-value {
+    color: var(--widget-empty);
+    text-shadow: none;
+}
+
+.widget-view .value-unit.percent:after {
+    content: "%";
+}
+
+.widget-view[data-unit="e"] .value-unit.degrees:after {
+    content: "°F";
+}
+
+.widget-view[data-unit="m"] .value-unit.degrees:after {
+    content: "°C";
+}
+
+.widget-view:not([data-unit]) .value-unit.degrees:after {
+    content: "";
+}
+
+.widget-view[data-unit="e"] .value-unit.speed:after {
+    content: "mph";
+}
+
+.widget-view[data-unit="m"] .value-unit.speed:after {
+    content: "kph";
+}
+
+.widget-view:not([data-unit]) .value-unit.speed:after {
+    content: "";
+}
+
+.widget-view[data-unit="e"] .value-unit.precip-rate:after {
+    content: "in/hr";
+}
+
+.widget-view[data-unit="m"] .value-unit.precip-rate:after {
+    content: "mm/hr";
+}
+
+.widget-view:not([data-unit]) .value-unit.precip-rate:after {
+    content: "";
+}
+
+.widget-view[data-unit="e"] .value-unit.precip-total:after {
+    content: "in";
+}
+
+.widget-view[data-unit="m"] .value-unit.precip-total:after {
+    content: "mm";
+}
+
+.widget-view:not([data-unit]) .value-unit.precip-total:after {
+    content: "";
+}
+
+.widget-view[data-unit="e"] .value-unit.pressure:after {
+    content: "in";
+}
+
+.widget-view[data-unit="m"] .value-unit.pressure:after {
+    content: "hPa";
+}
+
+.widget-view:not([data-unit]) .value-unit.pressure:after {
+    content: "";
+}
+
+.widget-view .value-unit.radiation:after {
+    content: "W/m²";
+}
+
+.widget-view:not([data-unit]) .value-unit.radiation:after {
+    content: "";
+}
+
+.widget-view:not([data-main-value]) .main-value:after {
+    content: "" !important;
+}
+
+.widget-view:not([data-secondary-value]) .secondary-value:after {
+    content: "" !important;
+}
+
+.widget-view .secondary-value {
+    font-size: 0.85rem;
+    color: var(--color-secondary-font);
+    margin-top: 8px;
+    font-weight: 500;
+    transition: opacity 0.3s ease;
+    opacity: 0;
+}
+
+.widget-view.loaded .secondary-value {
+    opacity: 1;
+}
+
+.widget-view .secondary-value:after {
+    margin-left: 2px;
+}
+
+.widget-view:not([data-secondary-value]) .secondary-value {
+    display: none;
+}
+
+.widget-view .tertiary-value {
+    font-size: 0.8rem;
+    color: var(--color-secondary-font);
+    margin-top: 4px;
+    transition: opacity 0.3s ease;
+    opacity: 0;
+}
+
+.widget-view.loaded .tertiary-value {
+    opacity: 0.8;
+}
+
+@container (max-width: 140px) {
+    .widget-view .main-value {
+        font-size: 2rem;
+    }
+
+    .widget-view .main-value:after {
+        font-size: 0.91rem;
+    }
+}
+
+/* Sin numeración */
+#pws-info-dialog ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+/* Separador entre líneas (clase spacer) */
+#pws-info-dialog ul li.spacer {
+    margin-bottom: 10px; /* Ajusta el valor según quieras */
+}
+
+/* Negrita para la parte antes de los dos puntos */
+#pws-info-dialog ul li span.label {
+    font-weight: bold;
+    margin-right: 5px; /* espacio opcional entre label y valor */
+}
+
+#seeingModal ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+#seeingModal ul li.spacer {
+    margin-bottom: 10px;
+}
+
+#seeingModal ul li span.label{
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+.modal {
+    display: none; /* Oculto por defecto */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background: rgba(var(--black-or-white), 0.6); /* negro en día, blanco en noche */
+}
+
+.modal-content {
+    background: var(--bg-color); /* fondo adaptado */
+    color: var(--font-color); /* texto adaptado */
+    margin: 5% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 800px;
+    position: relative;
+    box-shadow: 0 4px 12px var(--dashboard-widget-box-shadow-color);
+}
+
+.close {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    line-height: 0; /* elimina espacio extra */
+}
+
+.close svg {
+    stroke: var(--color-secondary-font); /* gris en día, gris claro en noche */
+    transition: stroke 0.2s ease;
+}
+
+.close:hover svg {
+    stroke: var(--wu-red); /* rojo de la paleta al pasar el ratón */
+}
+
+.modal-content h2 {
+    margin-top: 0;
+    color: var(--font-color);
+}

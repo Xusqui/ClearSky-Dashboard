@@ -1,0 +1,390 @@
+dashboard-body-view {
+    display: block;
+}
+
+dashboard-body-view .max-width {
+    margin: 0 auto;
+    padding: 16px;
+}
+
+dashboard-body-view .widgets {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+}
+
+dashboard-body-view .widget {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+    flex: 0 1 120px;
+    max-width: 16%;
+}
+
+dashboard-body-view .widget .title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--color-secondary-font);
+    opacity: 0.7;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+sun-moon-forecast {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    background: var(--sun-moon-forecast-bg-color);
+    backdrop-filter: blur(10px);
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid var(--sun-moon-forecast-border-color);
+    margin-bottom: 16px;
+}
+
+/* --- Indicadores --- */
+sun-moon-forecast .indicator-text {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    text-transform: capitalize;
+}
+
+sun-moon-forecast .indicator {
+    position: relative;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+}
+
+sun-moon-forecast .indicator::before {
+    content: "";
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    border-radius: 50%;
+    opacity: 0.3;
+    animation: pulse 2s infinite;
+}
+
+sun-moon-forecast .indicator.connected {
+    background: linear-gradient(45deg, #10b981, #059669);
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
+}
+
+sun-moon-forecast .indicator.connected::before {
+    background: #10b981;
+}
+
+sun-moon-forecast .indicator.disconnected,
+sun-moon-forecast .indicator.offline {
+    background: linear-gradient(45deg, #ef4444, #dc2626);
+    box-shadow: 0 4px 20px rgba(239, 68, 68, 0.4);
+}
+
+sun-moon-forecast .indicator.disconnected::before,
+sun-moon-forecast .indicator.offline::before {
+    background: #ef4444;
+}
+
+sun-moon-forecast .time-info {
+    font-size: 0.8rem;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+sun-moon-forecast time.short {
+    display: none;
+}
+
+/* --- Contenedor Astro Info --- */
+sun-moon-forecast .astro-info {
+    display: flex;
+    flex-direction: row; /* filas lado a lado */
+    gap: 1rem;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+    flex-wrap: wrap;
+}
+/* Contenedor general de tarjetas */
+sun-moon-forecast .cards-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Dos columnas iguales: Sol y Luna */
+    gap: 1rem;
+    align-items: stretch;
+    width: 100%;
+}
+
+/* --- Tarjetas grandes para Sol y Luna --- */
+sun-moon-forecast .big-card {
+    background: var(--sun-moon-forecast-bg-color);
+    border-radius: 16px;
+    border: 1px solid var(--sun-moon-forecast-border-color);
+    padding: 16px 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: auto; /* se adapta al contenido */
+    min-height: 160px; /* altura mínima equilibrada */
+    box-sizing: border-box;
+}
+
+/* --- Arco solar --- */
+#sun-arc-container {
+    width: 100%;
+    max-width: 200px;
+    height: 80px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#sun-arc-container svg {
+    width: 100%;
+    height: auto;
+    transform: translateY(10px);
+}
+
+#sun-arc {
+    position: relative;
+    top: -20px;
+    left: 14px;
+}
+
+/* Fase Lunar */
+.moon-card {
+    width: 100%; /* ancho de la tarjeta */
+    height: auto; /* altura automática según contenido */
+}
+
+.moon-card .moon-icon {
+    width: 100%;
+    max-width: 200px;
+    height: auto;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Sombra difusa alrededor de la luna */
+.moon-card .moon-icon::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: radial-gradient(rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0) 70%);
+    filter: blur(8px);
+    z-index: 0;
+}
+
+/* --- Previsión meteorológica ocupa todo el ancho --- */
+#forecast.forecast-container {
+    grid-column: 1 / 3; /* Se extiende a través de las dos columnas */
+    display: grid;
+    grid-template-columns: repeat(6, 1fr); /* 6 tarjetas */
+    gap: 8px;
+    width: 100%;
+    margin-top: 1rem;
+}
+
+#forecast.forecast-container .forecast-card {
+    background: var(--sun-moon-forecast-bg-color);
+    border-radius: 16px;
+    border: 1px solid var(--sun-moon-forecast-border-color);
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Historia, Gráficos y resto --- */
+dashboard-body-view .history {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    background: var(--sun-moon-forecast-bg-color);
+    backdrop-filter: blur(10px);
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--sun-moon-forecast-border-color);
+    margin-top: 32px;
+}
+
+dashboard-body-view .history .title {
+    background-image: var(--icon-chart);
+    background-repeat: no-repeat;
+    background-size: 20px 20px;
+    text-indent: 24px;
+}
+
+dashboard-body-view pws-history-dates {
+    display: flex;
+    align-items: center;
+}
+
+dashboard-body-view pws-history-dates input[type="date"] {
+    border: none;
+    background: 0 0;
+    font-family:
+        Roboto,
+        Helvetica Neue,
+        sans-serif;
+    font-size: 0.9em;
+    color: var(--font-color);
+    width: 105px;
+    background-color: var(--bg-color);
+    border: 1px solid var(--wu-lightblue);
+    border-radius: 8px;
+    padding: 8px;
+}
+
+@media (prefers-color-scheme: dark) {
+    dashboard-body-view pws-history-dates input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+    }
+}
+
+dashboard-body-view pws-history-dates .arrow {
+    background-repeat: no-repeat;
+    width: 16px;
+    height: 16px;
+    background-size: contain;
+    background-image: var(--icon-arrow-right-blue);
+    margin: 0 16px;
+}
+
+dashboard-body-view .pws-chart {
+    --charts-aspect-ratio: 2;
+}
+
+@media (min-aspect-ratio: 2/1) {
+    dashboard-body-view .pws-chart {
+        --charts-aspect-ratio: 5;
+    }
+}
+
+@media (min-aspect-ratio: 1/1) and(max-aspect-ratio: 2/1) {
+    dashboard-body-view .pws-chart {
+        --charts-aspect-ratio: 4;
+    }
+}
+
+dashboard-body-view .pws-chart canvas {
+    box-sizing: border-box;
+    width: 100%;
+    margin-top: 16px;
+    border-radius: 24px;
+    aspect-ratio: var(--charts-aspect-ratio) / 1;
+}
+
+dashboard-body-view .pws-chart.loaded canvas {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+dashboard-body-view .pws-chart .no-data {
+    text-align: center;
+    font-size: 1.5em;
+    padding: 1em;
+    opacity: 0.6;
+    display: none;
+}
+
+dashboard-body-view .pws-chart.no-data .no-data {
+    display: block;
+}
+
+dashboard-body-view .pws-chart.hide {
+    display: none;
+}
+
+@keyframes pulse {
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 0.3;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 0.1;
+    }
+}
+
+/* Responsivo */
+
+@media (max-width: 768px) {
+    sun-moon-forecast .cards-grid {
+        grid-template-columns: 1fr;
+    }
+
+    #forecast.forecast-container {
+        grid-column: 1 / 2;
+        grid-template-columns: repeat(3, 1fr); /* 3 columnas en móvil */
+    }
+}
+
+@media (max-width: 470px) {
+    dashboard-body-view .history {
+        justify-content: space-evenly;
+        gap: 0.5rem;
+        padding: 16px;
+    }
+}
+
+@media (max-width: 432px) {
+    dashboard-body-view .widgets {
+        grid-template-columns: repeat(2, minmax(40%, 1fr));
+    }
+
+    sun-moon-forecast {
+        padding: 8px 16px;
+    }
+
+    sun-moon-forecast .indicator {
+        width: 12px;
+        height: 12px;
+    }
+
+    sun-moon-forecast .text {
+        font-size: 0.9rem;
+    }
+
+    sun-moon-forecast time.short {
+        display: block;
+    }
+
+    sun-moon-forecast time.long {
+        display: none;
+    }
+}
+
+@media (max-width: 374px) {
+    dashboard-body-view .widgets {
+        grid-template-columns: repeat(1, minmax(100%, 1fr));
+    }
+}

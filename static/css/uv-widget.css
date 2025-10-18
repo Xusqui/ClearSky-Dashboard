@@ -1,0 +1,14 @@
+uv-widget-view .pyramid-container {
+    width: 100%;
+    aspect-ratio: 1/1;
+    position:relative
+}
+
+uv-widget-view .pyramid-container svg {
+    vertical-align: top;
+    margin:0 auto
+}
+
+uv-widget-view .pyramid-container svg polygon.empty {
+    fill: var(--widget-empty)
+}

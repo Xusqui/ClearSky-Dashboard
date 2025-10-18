@@ -1,0 +1,191 @@
+dashboard-header-view {
+    background-color: var(--page-nav-bg-color);
+    border-top: 1px solid var(--page-nav-border-color);
+    border-bottom: 2px solid var(--page-nav-border-color);
+    display: block;
+}
+
+dashboard-header-view .max-width {
+    margin: 0 auto;
+    padding: 16px 16px 0 16px;
+    box-sizing: border-box;
+}
+
+dashboard-header-view .elevation-coordinates {
+    color: var(--color-secondary-font);
+    font-size: 0.75rem;
+}
+
+dashboard-header-view .name-actions {
+    display: flex;
+    align-items: center;
+    margin: 8px 0 0 0;
+    gap: 8px;
+}
+
+dashboard-header-view h1 {
+    font-size: 1.5rem;
+    font-weight: 400;
+    margin: 0;
+    padding: 0;
+}
+
+dashboard-header-view .location-info {
+    margin: 8px 0 16px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: clamp(0.8rem, 2vw, 1.2rem);
+    color: var(--font-color);
+    justify-content: space-between;
+    flex-wrap: nowrap;
+}
+
+dashboard-header-view .pws-gold-star {
+    background-image: var(--icon-goldstar);
+    background-repeat: no-repeat;
+    background-size: 16px 22px;
+    background-position: center;
+    width: 23px;
+    min-width: 23px;
+    height: 32px;
+}
+
+dashboard-header-view pws-info {
+    display: block;
+    background-image: var(--icon-info);
+    background-repeat: no-repeat;
+    background-size: 22px 22px;
+    background-position: center;
+    width: 22px;
+    min-width: 22px;
+    height: 32px;
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+dashboard-header-view pws-info dialog {
+    background-color: var(--bg-color);
+    color: var(--font-color);
+    border: 1px solid var(--color-box-border);
+    padding: 0;
+    outline: 0;
+    border-radius: 16px;
+    max-width: 100%;
+    width: 320px;
+    margin-top: 70px;
+    margin-left: 350px;
+    cursor: default;
+}
+
+dashboard-header-view pws-info dialog::backdrop {
+    background-color: rgba(34, 31, 31, 0.7);
+}
+
+dashboard-header-view pws-info dialog .top {
+    position: sticky;
+    top: 0;
+    background-color: var(--page-nav-bg-color);
+}
+
+dashboard-header-view pws-info dialog .top .header-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+dashboard-header-view pws-info dialog .top .close {
+    width: 20px;
+    height: 20px;
+    background-image: var(--close-icon);
+    background-repeat: no-repeat;
+    background-size: contain;
+    margin: 16px;
+    cursor: pointer;
+    opacity: 0.6;
+}
+
+dashboard-header-view pws-info dialog .top .close:hover {
+    opacity: 1;
+}
+
+dashboard-header-view pws-info dialog .top .close:active {
+    opacity: 0.5;
+}
+
+dashboard-header-view pws-info dialog .top .title {
+    font-size: 1.1rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    padding: 16px;
+    text-align: center;
+    flex-grow: 1;
+    margin-right: 36px;
+}
+
+dashboard-header-view pws-info dialog ol {
+    list-style: none;
+    margin: 16px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+dashboard-header-view pws-info dialog li {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(50%, 1fr));
+    word-break: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+}
+
+dashboard-header-view pws-info dialog li.spacer {
+    margin-bottom: px;
+}
+
+dashboard-header-view pws-info dialog li span:first-of-type {
+    font-weight: 500;
+}
+
+@media (max-width: 640px) {
+    dashboard-header-view pws-info dialog {
+        border: none;
+        border-radius: 0;
+        width: 100%;
+        min-height: 100dvh;
+        margin: 0;
+    }
+
+    dashboard-header-view h1 {
+        font-size: 1.3rem;
+    }
+}
+
+.setup-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8em;
+    color: var(--nav-menu-font-color);
+    text-decoration: none;
+    margin-left: auto; /* Empuja el link a la derecha */
+}
+
+.setup-link:hover {
+    color: var(--nav-menu-font-color-hover);
+}
+
+.setup-link setup-button {
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    background-image: var(--icon-settings);
+    background-repeat: no-repeat;
+    background-size: 22px 22px;
+    background-position: center;
+    opacity: 0.7;
+    cursor: pointer;
+}
