@@ -1,8 +1,9 @@
 <?php
 // CONFIGURACIÓN
 // Datos de Conexión a Home Assistant
-$ha_url = ""; // IP de tu Home Assistant. I.e: http://127.0.0.1:8123
-$token = ""; // Token de Home Assistant
+// añadido a .gitignore
+$ha_url = "127.0.0.1:8123"; // IP de tu Home Assistant. I.e: http://127.0.0.1:8123
+$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI2YWUyZjVlZWIyNmU0YTBjOGY0OWM5ZDQ2YzI1MDBmMSIsImlhdCI6MTc2MDc4MDkxOSwiZXhwIjoyMDc2MTQwOTE5fQ.6CbOTbcqWPBKIR8cGCdmaQEBo6YwNDsMCs_0Icvk_2k"; // Token de Home Assistant
 
 include __DIR__ . '/config_db.php';
 
@@ -20,7 +21,7 @@ if ($tableExists->num_rows === 0) {
 }
 
 // === COMPROBAR SI EXISTEN LAS COLUMNAS REQUERIDAS ===
-$requiredFields = ['latitud', 'longitud', 'elevacion', 'hardware', 'software', 'observatorio', 'city', 'country', 'tz', 'password'];
+$requiredFields = ['latitud', 'longitud', 'elevacion', 'hardware', 'software', 'observatorio', 'city', 'country', 'tz', 'password', 'ha_token'];
 $result = $conn->query("SHOW COLUMNS FROM config");
 if (!$result) {
     header("Location: /weather/static/config/setup.php");

@@ -31,9 +31,11 @@ En el archivo configuration.yaml de Home assistant incluir el siguiente rest_com
 
 rest_command:\
   send_all_meteo_data:\
-    url: "http://192.168.1.100/weather/insert.php" // Sustituir por la dirección local de esta web\
+    url: "http://192.168.1.100/weather/insert.php"\
     method: POST\
     content_type: "application/json"\
+    headers:\
+      Authorization: "Bearer {{ states('input_text.meteo_token_holder') }}"\
     payload: >\
       {\
         "timestamp": "{{ now().isoformat() }}",\
@@ -52,7 +54,13 @@ rest_command:\
         "temperatura_interior": "{{ states('sensor.ws2900_v2_02_03_indoor_temperature') }}",\
         "humedad_interior": "{{ states('sensor.ws2900_v2_02_03_indoor_humidity') }}"\
       }\
-      
+
+input_text:\
+  meteo_token_holder:\
+    name: "Portador del Token Meteo"\
+    initial: !secret meteo_api_token\
+    mode: password # Esto lo oculta en la interfaz por seguridad\
+
 // Sustituir los sensores por los de tu estación (Los nombres hay que buscarlos dentro de home assistant)
 
 Dentro de Home Assistant ir a Settings / Automations & scenes / Create automation / Create new automation:

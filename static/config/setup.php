@@ -20,7 +20,8 @@ $desired_columns = [
     'city' => 'VARCHAR(255)',
     'country' => 'VARCHAR(255)',
     'tz' => 'VARCHAR(255)',
-    'password' => 'VARCHAR(255)'
+    'password' => 'VARCHAR(255)',
+    'ha_token' => 'VARCHAR(255)'
 ];
 
 $setup_warning = ''; // variable para mostrar tarjeta de aviso
@@ -158,6 +159,7 @@ $software = $config['software'] ?? '';
 $city = $config['city'] ?? '';
 $country = $config['country'] ?? '';
 $tz = $config['tz'] ?? 'UTC';
+$ha_token = $config['ha_token'] ?? '';
 
 // === COMPROBAR SI ALGUNA VARIABLE ESTÁ VACÍA ===
 $vars_to_check = [
@@ -169,8 +171,16 @@ $vars_to_check = [
     'software'     => $software,
     'city'         => $city,
     'country'      => $country,
-    'tz'           => $tz
+    'tz'           => $tz,
+    'ha_token'     => $ha_token
 ];
+
+if ($ha_token === '' || $ha_token === null) {
+    $text_in_token = 'unset';
+} else {
+    $text_in_token = 'set';
+}
+
 
 foreach ($vars_to_check as $var_name => $value) {
     if ($value === '' || $value === null) {
@@ -191,8 +201,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
     $software = trim($_POST['software'] ?? '');
     $tz = $_POST['tz'] ?? 'UTC';
     $password_new = $_POST['password'] ?? '';
+    $ha_token = $_POST['ha_token'] ?? '';
 
-    // Validar campos
+    // Validar campos obligatorios
     $missing_field = '';
     if (!$observatorio) $missing_field = 'observatorio';
     elseif (!$latitud) $missing_field = 'latitud';
@@ -201,6 +212,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
     elseif (!$hardware) $missing_field = 'hardware';
     elseif (!$software) $missing_field = 'software';
     elseif (!$tz) $missing_field = 'tz';
+    elseif (!$ha_token) $missing_field = 'ha_token';
 
     if ($missing_field) {
         $setup_warning .= "Falta el campo '$missing_field'. ";
@@ -236,12 +248,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
         }
 
         // Hash de nueva contraseña si se ingresó
-        $password_final = $password_new ? password_hash($password_new,PASSWORD_DEFAULT) : $password_hash;
+        $password_final = $password_new ? password_hash($password_new, PASSWORD_DEFAULT) : $password_hash;
+
+        // --- Tomar token del formulario (si el campo existe) y saneado ---
+        // NOTA: usamos $_POST directamente para que el valor generado por JS llegue aquí
+        $ha_token_final = isset($_POST['ha_token']) && $_POST['ha_token'] !== '' ? trim($_POST['ha_token']) : $ha_token;
 
         // Insertar o actualizar registro único
-        $stmt = $conn->prepare("
-            INSERT INTO config (id, observatorio, latitud, longitud, elevacion, hardware, software, city, country, tz, password)
-            VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        $sql = "
+            INSERT INTO config (id, observatorio, latitud, longitud, elevacion, hardware, software, city, country, tz, password, ha_token)
+            VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON DUPLICATE KEY UPDATE
                 observatorio = VALUES(observatorio),
                 latitud = VALUES(latitud),
@@ -252,14 +268,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
                 city = VALUES(city),
                 country = VALUES(country),
                 tz = VALUES(tz),
-                password = VALUES(password)
-        ");
-        $stmt->bind_param("sddissssss", $observatorio, $latitud, $longitud, $elevacion, $hardware, $software, $city, $country, $tz, $password_final);
-        if (!$stmt->execute()) {
-            $setup_warning .= "Error al guardar la configuración en base de datos: " . $stmt->error;
+                password = VALUES(password),
+                ha_token = VALUES(ha_token)
+        ";
+        $stmt = $conn->prepare($sql);
+        if (!$stmt) {
+            $setup_warning .= "Error al preparar la consulta: " . $conn->error;
         } else {
-            header("Location: /weather/index.php");
-            exit;
+            // Tipos: s d d i s s s s s s s  => 11 parámetros: observatorio(s), latitud(d), longitud(d),
+            // elevacion(i), hardware(s), software(s), city(s), country(s), tz(s), password(s), ha_token(s)
+            $stmt->bind_param("sddisssssss",
+                              $observatorio,
+                              $latitud,
+                              $longitud,
+                              $elevacion,
+                              $hardware,
+                              $software,
+                              $city,
+                              $country,
+                              $tz,
+                              $password_final,
+                              $ha_token_final
+                             );
+
+            if (!$stmt->execute()) {
+                $setup_warning .= "Error al guardar la configuración en base de datos: " . $stmt->error;
+            } else {
+                // éxito: redirigir a la página principal
+                header("Location: /weather/index.php");
+                exit;
+            }
+            $stmt->close();
         }
     }
 }
@@ -270,20 +309,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Configuración inicial</title>
-        <style>
-            body { font-family: 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #1f4037, #99f2c8); color: #222; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-            .container { background: #fff; padding: 2rem 3rem; border-radius: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.2); max-width: 420px; width: 90%; animation: fadeIn 0.7s ease-out; }
-            h1 { text-align: center; color: #1f4037; margin-bottom: 1.5rem; }
-            label { display: block; margin-top: 1rem; font-weight: 600; }
-            input, select { width: 100%; padding: 0.6rem; border-radius: 8px; border: 1px solid #ccc; margin-top: 0.3rem; font-size: 1rem; transition: border 0.3s; }
-            input:focus, select:focus { outline: none; border-color: #1f4037; }
-            button { margin-top: 1.8rem; width: 100%; background: #1f4037; color: white; font-size: 1.1rem; font-weight: bold; padding: 0.8rem; border: none; border-radius: 10px; cursor: pointer; transition: background 0.3s, transform 0.1s; }
-            button:hover { background: #26735c; }
-            button:active { transform: scale(0.97); }
-            .warning-card { background: #ffe6e6; border-left: 6px solid #b00020; padding: 1rem; margin-top: 1.5rem; border-radius: 8px; font-weight: bold; color: #b00020; }
-            @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-            footer { text-align: center; font-size: 0.85rem; color: #666; margin-top: 1.5rem; }
-        </style>
+        <link rel="stylesheet" type="text/css" href="../css/setup.css?v=<?php echo time(); ?>">
     </head>
     <body>
         <div class="container">
@@ -319,6 +345,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
                 <label for="password">Cambiar contraseña (opcional)</label>
                 <input type="password" name="password" id="password" placeholder="Dejar vacío para no cambiar">
 
+                <label for="ha_token">Token para recibir datos de Home Assistant</label>
+                <div class="token-container">
+                    <input type="text" name="ha_token_truncado" id="ha_token_truncado" style="font-family:monospace;" value="<?php echo $text_in_token; ?>" readonly required>
+                    <button type="button" id="copyTokenBtn">📋 Copiar</button>
+                </div>
+                <input type="hidden" name="ha_token" id="ha_token" value="<?php echo $ha_token; ?>">
+                <input type="hidden" name="ha_token" id="ha_token" value="<?php echo $ha_token; ?>">
+                <button type="button" id="generateTokenBtn">Generar nuevo token</button>
+
                 <button type="submit">Guardar configuración</button>
             </form>
 
@@ -329,7 +364,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
             </div>
             <?php endif; ?>
 
-            <footer>Weather Setup · v2.2</footer>
+            <footer>Weather Setup · v3.1</footer>
         </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const tokenInputTruncated = document.getElementById('ha_token_truncado');
+                const tokenBtn = document.getElementById('generateTokenBtn');
+                const tokenInput = document.getElementById('ha_token');
+                // Copiar token completo al portapapeles
+                const copyBtn = document.getElementById('copyTokenBtn');
+                copyBtn.addEventListener('click', function() {
+                    const tokenCompleto = document.getElementById('ha_token').value;
+                    navigator.clipboard.writeText(tokenCompleto)
+                        .then(() => {
+                        alert('Token copiado al portapapeles');
+                    })
+                        .catch(err => {
+                        alert('Error al copiar token: ' + err);
+                    });
+                });
+                // Función para mostrar los 6 primeros y 6 últimos caracteres del token
+                function mostrarParcial(token) {
+                    const inicio = token.slice(0, 6);
+                    const fin = token.slice(-6);
+                    tokenInputTruncated.value = `${inicio}(...)${fin}`;
+                }
+
+                // Función para generar un token nuevo de 64 caracteres
+                function generarToken() {
+                    const nuevoToken = Array.from(crypto.getRandomValues(new Uint8Array(32)))
+                    .map(b => b.toString(16).padStart(2, '0'))
+                    .join('');
+
+                    tokenInput.value = nuevoToken;
+                    mostrarParcial(nuevoToken);
+                }
+
+                // Inicializa: si está vacío, genera uno nuevo
+                const valorInicial = tokenInput.value.trim();
+                if (!valorInicial) {
+                    generarToken();
+                } else {
+                    tokenInput.value = valorInicial;
+                    mostrarParcial(valorInicial);
+                }
+
+                // Regenerar manualmente
+                tokenBtn.addEventListener('click', generarToken);
+            });
+        </script>
     </body>
 </html>
