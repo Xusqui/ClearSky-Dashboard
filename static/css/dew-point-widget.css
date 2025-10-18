@@ -1,0 +1,102 @@
+dew-point-widget-view {
+    --dewpoint-droplet-width:0
+}
+
+dew-point-widget-view .dew-container {
+    width: 70%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content:center
+}
+
+dew-point-widget-view .droplet {
+    width: 100%;
+    aspect-ratio: .7/1;
+    position: relative;
+    background-image: var(--image-dew-point-empty-bg);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position:center
+}
+
+dew-point-widget-view[data-dew-point] .droplet {
+    background-image:var(--image-dew-point-bg)
+}
+
+dew-point-widget-view .droplet::before {
+    content: "";
+    position: absolute;
+    bottom: 7%;
+    left: 50%;
+    width: var(--dewpoint-droplet-width);
+    aspect-ratio: 1/1;
+    margin-left: calc(var(--dewpoint-droplet-width) / 2 * -1);
+    background: rgba(255, 255, 255, .4);
+    border-radius: 50%;
+    opacity:0
+}
+
+dew-point-widget-view[data-dew-point] .droplet::before {
+    opacity: .4;
+    animation:shimmer 2s ease-in-out infinite
+}
+
+dew-point-widget-view .mini-droplets {
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform:translateX(-50%)
+}
+
+dew-point-widget-view .mini-drop {
+    width: 8px;
+    height: 12px;
+    background: #4facfe;
+    border-radius: 50% 50% 50% 50%/60% 60% 40% 40%;
+    position: absolute;
+    animation:fall 1.5s ease-in infinite
+}
+
+dew-point-widget-view .mini-drop:first-child {
+    left: -10px;
+    animation-delay:0s
+}
+
+dew-point-widget-view .mini-drop:nth-child(2) {
+    left: 0;
+    animation-delay:.3s
+}
+
+dew-point-widget-view .mini-drop:nth-child(3) {
+    left: 10px;
+    animation-delay:.6s
+}
+
+@keyframes shimmer {
+    0%, 100% {
+        opacity: .4;
+        transform:scale(1)
+    }
+
+    50% {
+        opacity: .6;
+        transform:scale(1.02)
+    }
+}
+
+@keyframes fall {
+    0% {
+        transform: translateY(-20px);
+        opacity:0
+    }
+
+    50% {
+        opacity:1
+    }
+
+    100% {
+        transform: translateY(40px);
+        opacity: 0
+    }
+}

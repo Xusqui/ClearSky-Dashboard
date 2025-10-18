@@ -1,0 +1,36 @@
+dashboard-footer-view {
+    background-color: var(--page-nav-bg-color);
+    border-top: 1px solid var(--page-nav-border-color);
+    border-bottom: 2px solid var(--page-nav-border-color);
+    display: block;
+}
+
+dashboard-footer-view .max-width {
+    margin: 0 auto;
+    padding: 16px 16px 0 16px;
+    box-sizing: border-box;
+}
+dashboard-footer-view .container {
+    display: flex;
+    align-items: baseline;
+    margin: 0 0 0 0;
+    gap: 6px;
+}
+
+dashboard-footer-view .footer-text {
+    color: var(--color-secondary-font);
+    font-size: 0.75rem;
+}
+
+dashboard-footer-view wu-logo {
+    display: block;
+    background-image: var(--icon-wu-logo);
+    background-repeat: no-repeat;
+    background-size: 30px 20px;
+    background-position: center;
+    width: 30px;
+    min-width: 30px;
+    height: 20px;
+    cursor: pointer;
+    opacity: 2;
+}

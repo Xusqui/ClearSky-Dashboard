@@ -1,0 +1,52 @@
+pressure-widget-view .pressure-container {
+    width: 100%;
+    aspect-ratio: 1/1;
+    position: relative;
+    background: var(--widget-empty);
+    border-radius:100%
+}
+
+pressure-widget-view[data-pressure] .pressure-container {
+    background: var(--image-pressure-bg);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    border-radius:0
+}
+
+pressure-widget-view .pressure-needle {
+    position: absolute;
+    top: 57.5%;
+    left: 50%;
+    transform-origin: bottom center;
+    transform: translate(-50%, -100%) rotate(0);
+    transition: all .7s ease;
+    height: 44%;
+    width: 2px;
+    background: var(--wu-red);
+    border-radius: 8px;
+    opacity:0
+}
+
+@media (prefers-color-scheme: dark) {
+    pressure-widget-view .pressure-needle {
+        width:2px
+    }
+}
+
+pressure-widget-view[data-pressure] .pressure-needle {
+    opacity:1
+}
+
+pressure-widget-view .pressure-needle:before {
+    content: "";
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 12px;
+    height: 12px;
+    background: var(--wu-red);
+    border-radius: 50%;
+    box-shadow: 0 0 15px rgba(0, 0, 0, .6)
+}

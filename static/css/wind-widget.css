@@ -1,0 +1,206 @@
+wind-widget-view .wind-compass {
+    width: 100%;
+    aspect-ratio: 1/1;
+    position: relative;
+    background: var(--widget-empty);
+    border-radius: 50%;
+}
+
+wind-widget-view[data-wind-speed] .wind-compass {
+    background: var(--image-wind-bg);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    border-radius: 0;
+}
+
+wind-widget-view .wind-arrow-pointer-wrapper {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transition: transform 0.7s ease;
+}
+
+wind-widget-view:not([data-wind-dir]) .wind-arrow-pointer-wrapper {
+    opacity: 0;
+}
+
+wind-widget-view .wind-arrow-pointer {
+    width: 32px;
+    height: 32px;
+    background: var(--image-wind-arrow-tip);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    transform: translateX(-16px) rotate(225deg);
+    position: absolute;
+    top: -16px;
+    left: 50%;
+}
+
+wind-widget-view .wind-lines {
+    position: absolute;
+    top: 15%;
+    right: 15%;
+    bottom: 15%;
+    left: 15%;
+    transition: all 0.7s ease;
+    overflow: hidden;
+    opacity: 1;
+}
+
+wind-widget-view.show-wind .wind-lines {
+    opacity: 1;
+}
+
+wind-widget-view .wind-line {
+    position: absolute;
+    background: linear-gradient(to bottom, transparent, rgba(var(--black-or-white), 0.5), transparent);
+    animation: blow-across 8s linear infinite;
+    top: 20%;
+    width: 2px;
+    transform: translateY(-200%);
+}
+
+@starting-style {
+    wind-widget-view .wind-line {
+        transform: translateY(-200%);
+    }
+}
+
+wind-widget-view[data-description="gentle"] .wind-line {
+    animation-duration: 12s;
+    opacity: 0.3;
+    width: 2px;
+}
+
+wind-widget-view[data-description="gentle"] .wind-line:first-child {
+    height: 30%;
+    animation-delay: 0s;
+    left: 30%;
+}
+
+wind-widget-view[data-description="gentle"] .wind-line:nth-child(2) {
+    height: 50%;
+    animation-delay: 3s;
+    left: 50%;
+}
+
+wind-widget-view[data-description="gentle"] .wind-line:nth-child(3) {
+    height: 40%;
+    animation-delay: 6s;
+    left: 70%;
+}
+
+wind-widget-view[data-description="moderate"] .wind-line {
+    animation-duration: 6s;
+    opacity: 0.5;
+    width: 2px;
+}
+
+wind-widget-view[data-description="moderate"] .wind-line:first-child {
+    height: 30%;
+    animation-delay: 0s;
+    left: 10%;
+}
+
+wind-widget-view[data-description="moderate"] .wind-line:nth-child(2) {
+    height: 40%;
+    animation-delay: 1s;
+    left: 30%;
+}
+
+wind-widget-view[data-description="moderate"] .wind-line:nth-child(3) {
+    height: 20%;
+    animation-delay: 2s;
+    left: 50%;
+}
+
+wind-widget-view[data-description="moderate"] .wind-line:nth-child(4) {
+    height: 35%;
+    animation-delay: 1.5s;
+    left: 70%;
+}
+
+wind-widget-view[data-description="moderate"] .wind-line:nth-child(5) {
+    height: 30%;
+    animation-delay: 0.8s;
+    left: 90%;
+}
+
+wind-widget-view[data-description="strong"] .wind-line {
+    animation-duration: 3s;
+    opacity: 0.7;
+}
+
+wind-widget-view[data-description="strong"] .wind-line:first-child {
+    height: 60%;
+    animation-delay: 0s;
+    left: 5%;
+}
+
+wind-widget-view[data-description="strong"] .wind-line:nth-child(2) {
+    height: 70%;
+    animation-delay: 0.5s;
+    left: 15%;
+}
+
+wind-widget-view[data-description="strong"] .wind-line:nth-child(3) {
+    height: 50%;
+    animation-delay: 1s;
+    left: 25%;
+}
+
+wind-widget-view[data-description="strong"] .wind-line:nth-child(4) {
+    height: 65%;
+    animation-delay: 1.5s;
+    left: 35%;
+}
+
+wind-widget-view[data-description="strong"] .wind-line:nth-child(5) {
+    height: 60%;
+    animation-delay: 2s;
+    left: 45%;
+}
+
+wind-widget-view[data-description="strong"] .wind-line:nth-child(6) {
+    height: 70%;
+    animation-delay: 2.5s;
+    left: 55%;
+}
+
+wind-widget-view[data-description="strong"] .wind-line:nth-child(7) {
+    height: 55%;
+    animation-delay: 0.3s;
+    left: 65%;
+}
+
+wind-widget-view[data-description="strong"] .wind-line:nth-child(8) {
+    height: 62%;
+    animation-delay: 0.8s;
+    left: 75%;
+}
+
+wind-widget-view[data-description="strong"] .wind-line:nth-child(9) {
+    height: 67%;
+    animation-delay: 1.3s;
+    left: 85%;
+}
+
+wind-widget-view[data-description="strong"] .wind-line:nth-child(10) {
+    height: 60%;
+    animation-delay: 1.8s;
+    left: 95%;
+}
+
+@keyframes blow-across {
+    0% {
+        transform: translateY(-200%);
+    }
+
+    100% {
+        transform: translateY(200%);
+    }
+}

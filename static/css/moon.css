@@ -1,0 +1,53 @@
+/* --- Estructura general --- */
+.astro-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: #888;
+  font-family: sans-serif;
+}
+
+/* --- Contenedor del arco solar --- */
+#sun-arc-container {
+  text-align: center;
+}
+
+/* --- Estilo de los iconos solares --- */
+#sun-arc image {
+  transition: all 0.3s ease;
+}
+
+/* --- Contenedor lunar --- */
+.moon-icon {
+  position: relative;
+  width: 120px;
+  height: 90px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* --- Imagen de la luna con máscara --- */
+#moon-icon {
+  filter: none; /* Sin difuminado ni efecto */
+  transition: none;
+}
+
+/* --- Suavizado del borde de la máscara desactivado --- */
+#mask-path {
+  filter: none;
+}
+
+/* --- Eliminado cualquier efecto de brillo o halo --- */
+/* No hay ::before, radial-gradient ni blur */
+
+/* --- Texto de fase lunar sin resplandor --- */
+#moon-text {
+  fill: #888;
+  font-size: 10px;
+  text-anchor: middle;
+  user-select: none;
+  pointer-events: none;
+  filter: none; /* Sin drop-shadow */
+}

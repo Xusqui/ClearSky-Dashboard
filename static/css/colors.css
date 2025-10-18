@@ -1,0 +1,475 @@
+:root {
+    --bg-color: rgb(255, 255, 255);
+    --color-font: 30, 32, 35;
+    --font-color: rgb(30, 32, 35);
+    --color-secondary-font: rgb(105, 105, 105);
+    --link-color: rgb(0, 111, 158);
+    --black-or-white: 0, 0, 0;
+    --wu-white: rgb(255, 255, 255);
+    --wu-white-raw: 255, 255, 255;
+    --wu-white20: rgb(243, 215, 214);
+    --wu-white40: rgb(231, 174, 173);
+    --wu-white60: rgb(220, 134, 133);
+    --wu-white80: rgb(208, 93, 92);
+    --wu-red: rgb(196, 53, 51);
+    --wu-red-raw: 196, 53, 51;
+    --wu-red20: rgb(205, 71, 55);
+    --wu-red40: rgb(213, 89, 59);
+    --wu-red60: rgb(222, 106, 64);
+    --wu-red80: rgb(230, 124, 68);
+    --wu-orange: rgb(239, 142, 72);
+    --wu-orange-raw: 239, 142, 72;
+    --wu-orange20: rgb(240, 151, 73);
+    --wu-orange40: rgb(241, 160, 75);
+    --wu-orange60: rgb(243, 170, 76);
+    --wu-orange80: rgb(244, 179, 78);
+    --wu-yellow: rgb(245, 188, 79);
+    --wu-yellow-raw: 245, 188, 79;
+    --wu-yellow20: rgb(217, 182, 80);
+    --wu-yellow40: rgb(190, 176, 81);
+    --wu-yellow60: rgb(162, 169, 81);
+    --wu-yellow80: rgb(135, 163, 82);
+    --wu-green: rgb(107, 157, 83);
+    --wu-green-raw: 107, 157, 83;
+    --wu-green20: rgb(101, 159, 109);
+    --wu-green40: rgb(96, 161, 136);
+    --wu-green60: rgb(90, 163, 162);
+    --wu-green80: rgb(85, 165, 189);
+    --wu-lightblue: rgb(79, 167, 215);
+    --wu-lightblue-raw: 79, 167, 215;
+    --wu-lightblue20: rgb(70, 150, 206);
+    --wu-lightblue40: rgb(61, 133, 196);
+    --wu-lightblue60: rgb(51, 116, 187);
+    --wu-lightblue80: rgb(42, 99, 177);
+    --wu-darkblue: rgb(33, 82, 168);
+    --wu-darkblue-raw: 33, 82, 168;
+    --wu-darkblue20: rgb(59, 83, 166);
+    --wu-darkblue40: rgb(84, 85, 163);
+    --wu-darkblue60: rgb(110, 86, 161);
+    --wu-darkblue80: rgb(135, 88, 158);
+    --wu-purple: rgb(161, 89, 156);
+    --wu-purple-raw: 161, 89, 156;
+    --wu-purple20: rgb(129, 71, 125);
+    --wu-purple40: rgb(97, 53, 94);
+    --wu-purple60: rgb(64, 36, 62);
+    --wu-purple80: rgb(32, 18, 31);
+    --wu-black: rgb(0, 0, 0);
+    --wu-black-raw: 0, 0, 0;
+    --nav-menu-bg-color: rgb(247, 247, 247);
+    --nav-menu-bg-color-hover: rgb(255, 255, 255);
+    --nav-menu-font-color: rgba(0, 0, 0, 0.87);
+    --nav-menu-font-color-hover: rgb(0, 0, 0);
+    --nav-menu-item-border-color: rgb(255, 255, 255);
+    --search-bg-color: rgb(231, 231, 231);
+    --search-focus-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    --action-bar-location-hover-color: rgba(0, 0, 0, .05);
+    --action-bar-border-color: rgba(0, 0, 0, .05);
+    --page-nav-bg-color: rgb(247, 247, 247);
+    --page-nav-border-color: rgb(215, 215, 215);
+    --input-bg-color: rgb(247, 247, 247);
+    --input-border-color: rgb(163, 163, 163);
+    --blue-button-highlight: rgb(0, 143, 191);
+    --color-box-bg: rgb(242, 242, 242);
+    --color-box-alternate-bg: rgba(0, 0, 0, .1);
+    --color-box-title-bg: rgba(0, 0, 0, .1);
+    --color-box-border: rgba(0, 0, 0, .1);
+    --footer-bg-color: rgb(30, 32, 35);
+    --footer-font-color: rgb(255, 255, 255);
+    --footer-border-color: rgba(255, 255, 255, .05);
+    --map-bg-color: rgb(203, 210, 211);
+    --map-border-color: rgb(0, 0, 0, .1);
+    --map-controls-title-bg-color: rgb(247, 247, 247);
+    --map-controls-label-font-color: rgb(68, 68, 68);
+    --map-controls-border-color: rgba(0, 0, 0, .1);
+    --switch-bg-color: #ccc;
+    --switch-cirlce-color: #fff;
+    --widget-empty: #e2e8f0;
+    --sun-moon-forecast-bg-color: rgba(0, 0, 0, 0.05);
+    --sun-moon-forecast-border-color: rgba(0, 0, 0, 0.2);
+    --dashboard-widget-border-color: rgba(0, 0, 0, .1);
+    --dashboard-widget-box-shadow-color: rgba(0, 0, 0, .1);
+    --humidity-comfortable-color: var(--wu-green-raw);
+    --humidity-humid-color: var(--wu-lightblue-raw);
+    --humidity-dry-color: var(--wu-red-raw);
+    --dashboard-body-border-color: rgba(0, 0, 0, .05);
+    --chart-light-color: #fff;
+    --chart-dark-color:#e9ecef;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-color: rgb(30, 32, 35);
+        --color-font: 255, 255, 255;
+        --font-color: rgb(255, 255, 255);
+        --color-secondary-font: rgb(195, 195, 195);
+        --black-or-white: 255, 255, 255;
+        --nav-menu-bg-color: rgb(51, 51, 52);
+        --nav-menu-bg-color-hover: rgb(76, 76, 76);
+        --nav-menu-font-color: rgb(231, 231, 231);
+        --nav-menu-font-color-hover: rgb(255, 255, 255);
+        --nav-menu-item-border-color: rgb(30, 32, 35);
+        --search-focus-box-shadow: 1px 1px 2px rgba(255, 255, 255, 0.2);
+        --action-bar-location-hover-color: rgba(255, 255, 255, .05);
+        --action-bar-border-color: rgba(255, 255, 255, .05);
+        --page-nav-bg-color: rgb(51, 51, 52);
+        --page-nav-border-color: rgb(76, 76, 76);
+        --input-bg-color: rgb(51, 51, 52);
+        --input-border-color: rgb(76, 76, 76);
+        --color-box-bg: rgb(41, 43, 46);
+        --color-box-alternate-bg: rgba(255, 255, 255, .1);
+        --color-box-title-bg: rgba(255, 255, 255, .1);
+        --color-box-border: rgba(255, 255, 255, .1);
+        --map-bg-color: rgb(52, 51, 50);
+        --map-border-color: rgb(255, 255, 255, .1);
+        --map-controls-label-font-color: rgb(247, 247, 247);
+        --switch-bg-color: #333;
+        --switch-cirlce-color: #666;
+        --sun-moon-forecast-bg-color: rgba(255, 255, 255, 0.07);
+        --sun-moon-forecast-border-color: rgba(255, 255, 255, 0.15);
+        --dashboard-widget-border-color: rgba(255, 255, 255, .1);
+        --dashboard-widget-box-shadow-color: rgba(255, 255, 255, .1);
+        --widget-empty: rgb(83, 84, 87);
+        --dashboard-body-border-color: rgba(255, 255, 255, .05);
+        --chart-light-color: #f8f9fa;
+        --chart-dark-color:#e9ecef
+    }
+    sun-moon-forecast {
+        color: #eee;
+    }
+    #forecast.forecast-container > div {
+        background: rgba(30, 30, 30, 0.7);
+        color: #eee;
+    }
+
+    #forecast.forecast-container .desc {
+        color: #aaa;
+    }
+}
+
+.color-wu-white {
+    color:var(--wu-white)
+}
+
+.color-wu-white20 {
+    color:var(--wu-white20)
+}
+
+.color-wu-white40 {
+    color:var(--wu-white40)
+}
+
+.color-wu-white60 {
+    color:var(--wu-white60)
+}
+
+.color-wu-white80 {
+    color:var(--wu-white80)
+}
+
+.color-wu-red {
+    color:var(--wu-red)
+}
+
+.color-wu-red20 {
+    color:var(--wu-red20)
+}
+
+.color-wu-red40 {
+    color:var(--wu-red40)
+}
+
+.color-wu-red60 {
+    color:var(--wu-red60)
+}
+
+.color-wu-red80 {
+    color:var(--wu-red80)
+}
+
+.color-wu-orange {
+    color:var(--wu-orange)
+}
+
+.color-wu-orange20 {
+    color:var(--wu-orange20)
+}
+
+.color-wu-orange40 {
+    color:var(--wu-orange40)
+}
+
+.color-wu-orange60 {
+    color:var(--wu-orange60)
+}
+
+.color-wu-orange80 {
+    color:var(--wu-orange80)
+}
+
+.color-wu-yellow {
+    color:var(--wu-yellow)
+}
+
+.color-wu-yellow20 {
+    color:var(--wu-yellow20)
+}
+
+.color-wu-yellow40 {
+    color:var(--wu-yellow40)
+}
+
+.color-wu-yellow60 {
+    color:var(--wu-yellow60)
+}
+
+.color-wu-yellow80 {
+    color:var(--wu-yellow80)
+}
+
+.color-wu-green {
+    color:var(--wu-green)
+}
+
+.color-wu-green20 {
+    color:var(--wu-green20)
+}
+
+.color-wu-green40 {
+    color:var(--wu-green40)
+}
+
+.color-wu-green60 {
+    color:var(--wu-green60)
+}
+
+.color-wu-green80 {
+    color:var(--wu-green80)
+}
+
+.color-wu-lightblue {
+    color:var(--wu-lightblue)
+}
+
+.color-wu-lightblue20 {
+    color:var(--wu-lightblue20)
+}
+
+.color-wu-lightblue40 {
+    color:var(--wu-lightblue40)
+}
+
+.color-wu-lightblue60 {
+    color:var(--wu-lightblue60)
+}
+
+.color-wu-lightblue80 {
+    color:var(--wu-lightblue80)
+}
+
+.color-wu-darkblue {
+    color:var(--wu-darkblue)
+}
+
+.color-wu-darkblue20 {
+    color:var(--wu-darkblue20)
+}
+
+.color-wu-darkblue40 {
+    color:var(--wu-darkblue40)
+}
+
+.color-wu-darkblue60 {
+    color:var(--wu-darkblue60)
+}
+
+.color-wu-darkblue80 {
+    color:var(--wu-darkblue80)
+}
+
+.color-wu-purple {
+    color:var(--wu-purple)
+}
+
+.color-wu-purple20 {
+    color:var(--wu-purple20)
+}
+
+.color-wu-purple40 {
+    color:var(--wu-purple40)
+}
+
+.color-wu-purple60 {
+    color:var(--wu-purple60)
+}
+
+.color-wu-purple80 {
+    color:var(--wu-purple80)
+}
+
+.color-wu-black {
+    color:var(--wu-black)
+}
+
+.bg-color-wu-white {
+    background-color:var(--wu-white)
+}
+
+.bg-color-wu-white20 {
+    background-color:var(--wu-white20)
+}
+
+.bg-color-wu-white40 {
+    background-color:var(--wu-white40)
+}
+
+.bg-color-wu-white60 {
+    background-color:var(--wu-white60)
+}
+
+.bg-color-wu-white80 {
+    background-color:var(--wu-white80)
+}
+
+.bg-color-wu-red {
+    background-color:var(--wu-red)
+}
+
+.bg-color-wu-red20 {
+    background-color:var(--wu-red20)
+}
+
+.bg-color-wu-red40 {
+    background-color:var(--wu-red40)
+}
+
+.bg-color-wu-red60 {
+    background-color:var(--wu-red60)
+}
+
+.bg-color-wu-red80 {
+    background-color:var(--wu-red80)
+}
+
+.bg-color-wu-orange {
+    background-color:var(--wu-orange)
+}
+
+.bg-color-wu-orange20 {
+    background-color:var(--wu-orange20)
+}
+
+.bg-color-wu-orange40 {
+    background-color:var(--wu-orange40)
+}
+
+.bg-color-wu-orange60 {
+    background-color:var(--wu-orange60)
+}
+
+.bg-color-wu-orange80 {
+    background-color:var(--wu-orange80)
+}
+
+.bg-color-wu-yellow {
+    background-color:var(--wu-yellow)
+}
+
+.bg-color-wu-yellow20 {
+    background-color:var(--wu-yellow20)
+}
+
+.bg-color-wu-yellow40 {
+    background-color:var(--wu-yellow40)
+}
+
+.bg-color-wu-yellow60 {
+    background-color:var(--wu-yellow60)
+}
+
+.bg-color-wu-yellow80 {
+    background-color:var(--wu-yellow80)
+}
+
+.bg-color-wu-green {
+    background-color:var(--wu-green)
+}
+
+.bg-color-wu-green20 {
+    background-color:var(--wu-green20)
+}
+
+.bg-color-wu-green40 {
+    background-color:var(--wu-green40)
+}
+
+.bg-color-wu-green60 {
+    background-color:var(--wu-green60)
+}
+
+.bg-color-wu-green80 {
+    background-color:var(--wu-green80)
+}
+
+.bg-color-wu-lightblue {
+    background-color:var(--wu-lightblue)
+}
+
+.bg-color-wu-lightblue20 {
+    background-color:var(--wu-lightblue20)
+}
+
+.bg-color-wu-lightblue40 {
+    background-color:var(--wu-lightblue40)
+}
+
+.bg-color-wu-lightblue60 {
+    background-color:var(--wu-lightblue60)
+}
+
+.bg-color-wu-lightblue80 {
+    background-color:var(--wu-lightblue80)
+}
+
+.bg-color-wu-darkblue {
+    background-color:var(--wu-darkblue)
+}
+
+.bg-color-wu-darkblue20 {
+    background-color:var(--wu-darkblue20)
+}
+
+.bg-color-wu-darkblue40 {
+    background-color:var(--wu-darkblue40)
+}
+
+.bg-color-wu-darkblue60 {
+    background-color:var(--wu-darkblue60)
+}
+
+.bg-color-wu-darkblue80 {
+    background-color:var(--wu-darkblue80)
+}
+
+.bg-color-wu-purple {
+    background-color:var(--wu-purple)
+}
+
+.bg-color-wu-purple20 {
+    background-color:var(--wu-purple20)
+}
+
+.bg-color-wu-purple40 {
+    background-color:var(--wu-purple40)
+}
+
+.bg-color-wu-purple60 {
+    background-color:var(--wu-purple60)
+}
+
+.bg-color-wu-purple80 {
+    background-color:var(--wu-purple80)
+}
+
+.bg-color-wu-black {
+    background-color: var(--wu-black)
+}
