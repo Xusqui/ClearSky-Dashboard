@@ -4,10 +4,6 @@ ini_set("display_errors", 1);
 
 // Conexión a MariaDB
 include __DIR__ . '/static/config/config.php';
-//$host = "127.0.0.1";
-//$db = "weather";
-//$user = "weather";
-//$pass = "Pe5ut9tb#M3kps7yt";
 
 $conn = new mysqli($db_url, $db_user, $db_pass, $db_database);
 if ($conn->connect_error) {
