@@ -1,7 +1,0 @@
-{
-    "livePreviewUseDevServer": true,
-    "livePreviewServerURL": "http://192.168.1.100/weather/",
-    "livePreviewServerProjectPath": "",
-    "livePreviewHotReloadSupported": true,
-    "livePreviewFramework": "Docusaurus"
-}
