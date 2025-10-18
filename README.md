@@ -100,6 +100,16 @@ Para ello, abrimos la web por primera vez (http://xxxx.xx/weather/). La primera 
 
 <img width="570" height="1058" alt="Captura de pantalla 2025-10-18 a las 21 49 35" src="https://github.com/user-attachments/assets/aab3b6bd-ac97-449c-b2e7-f25e272cb51e" />
 
+La primera vez que visitas el script de configuración se crea el Token y una vez rellenados todos los datos, le das a "Coopiar" y se copia el valor del token en el portapapeles.
+Posteriormente al pulsar el botón "Guardar Configuración", se guarda todo en la base de datos.
+
+Abre el archivo secrets.yaml de Home Assistant y añade la siguiente línea al final:
+
+```yaml
+meteo_api_token: "PegaAquíElTokenGenerado"
+```
+
+Reinicia Home Assistant completamente.
 
 ### Paso 4: Crear Automatización en Home Assistant
 
