@@ -98,6 +98,7 @@ Tenemos que crear un token para que Home Assistant pueda escribir los datos en l
 
 Para ello, abrimos la web por primera vez (http://xxxx.xx/weather/). La primera visita a la web debe detectar que la base de datos no está creada, la creará y ejecutará el script setup.php para crear una contraseña y posteriormente introducir los datos de tu estación meteorológica:
 
+<img width="570" height="1058" alt="Captura de pantalla 2025-10-18 a las 21 49 35" src="https://github.com/user-attachments/assets/aab3b6bd-ac97-449c-b2e7-f25e272cb51e" />
 
 
 ### Paso 4: Crear Automatización en Home Assistant
