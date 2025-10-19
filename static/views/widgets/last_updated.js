@@ -20,7 +20,7 @@ function updateSeconds() {
 // Consulta PHP
 async function fetchLastUpdate() {
     try {
-        const url = '/weather/static/modules/get_last_update2.php?_=' + new Date().getTime();
+        const url = '/weather/static/modules/get_last_update.php?_=' + new Date().getTime();
         const response = await fetch(url, {cache: "no-store"});
         const data = await response.json();
 
