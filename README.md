@@ -29,6 +29,7 @@
   - [Paso 5: Crear el Token para que Home Assistant se autentique en la web](#5️⃣-paso-5-crear-el-token-para-que-home-assistant-se-autentique-en-la-web)
   - [Paso 6: Crear Automatización en Home Assistant](#6️⃣-paso-6-crear-automatización-en-home-assistant)
   - [Paso 7: Configurar la web](#7️⃣-paso-7-configurar-la-web)
+- [ToDo](#-todo)
 - [Feedback](#-feedback)
 
 ---
@@ -296,8 +297,12 @@ $token = "Pega-Aquí-El-Long-Lived-Access-Token"; // Long-lived access Token de 
 Guarda el archivo como /weather/static/config/config.php
 
 ---
+### &check; ToDo
 
-## 💬 Feedback
+* Está pendiente, en las gráficas modales, donde se representa la gráfica de evolución de las últimas 24 horas, introducir un selector de fechas para poner un rango concreto.
+
+
+### 💬 Feedback
 
 Si alguien llegara a probar esta configuración, ¡me gustaría saber si le funciona!
 
