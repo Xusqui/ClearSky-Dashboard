@@ -23,7 +23,7 @@
 - [Mi Configuración](#%EF%B8%8F-mi-configuración-probada-y-funcional)
 - [Guía de Configuración](#-guía-de-configuración)
   - [Paso 1: Añadir Integración "Ecowitt"](#paso-1-añadir-integración-ecowitt-a-home-assistant)
-  - [Paso 2: Configurar la Estación para enviar datos a Home Assistant](#paso-2-configurar-la-estacion-para-enviar-datos-a-home-assistant)
+  - [Paso 2: Configurar la Estación para enviar datos a Home Assistant](#2️⃣-paso-2-configurar-la-estacion-para-enviar-datos-a-home-assistant)
   - [Paso 3: Crear la Base de Datos](#paso-3-crear-la-base-de-datos)
   - [Paso 4: Añadir `rest_command`](#paso-4-añadir-rest_command-a-home-assistant)
   - [Paso 5: Crear el Token para que Home Assistant se autentique en la web](#paso-5-crear-el-token-para-que-home-assistant-se-autentique-en-la-web)
