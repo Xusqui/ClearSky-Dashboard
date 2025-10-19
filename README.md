@@ -22,7 +22,6 @@
   - [Componentes](#componentes)
 - [Mi Configuración](#%EF%B8%8F-mi-configuración-probada-y-funcional)
 - [Guía de Configuración](#-guía-de-configuración)
-<<<<<<< HEAD
   - [Paso 1: Añadir Integración "Ecowitt"](#1️⃣-paso-1-añadir-integración-ecowitt-a-home-assistant#paso)
   - [Paso 2: Configurar la Estación para enviar datos a Home Assistant](#2️⃣-paso-2-configurar-la-estacion-para-enviar-datos-a-home-assistant)
   - [Paso 3: Crear la Base de Datos](#3️⃣-paso-3-crear-la-base-de-datos)
