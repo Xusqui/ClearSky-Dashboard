@@ -1,17 +1,19 @@
-# Interfaz Web para Estación Meteorológica (con Home Assistant)
+# 🌦️ Interfaz Web para Estación Meteorológica (con Home Assistant)
 
 <p align="center">
-  <img alt="PHP" src="https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white">
-  <img alt="MySQL" src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white">
-  <img alt="Home Assistant" src="https://img.shields.io/badge/Home%20Assistant-41BDF5?style=for-the-badge&logo=home-assistant&logoColor=white">
+    <img alt="PHP" src="https://img.shields.io/badge/PHP-777BB4?logo=php&logoColor=white&style=flat">
+    <img alt="MySQL" src="https://img.shields.io/badge/MySQL-4479A1?logo=mysql&logoColor=white&style=flat">
+    <img alt="Home Assistant" src="https://img.shields.io/badge/Home%20Assistant-41BDF5?logo=homeassistant&logoColor=white&style=flat">
+    <img alt="JavaScript" src="https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black&style=flat">
+    <img alt="CSS3" src="https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white&style=flat">
 </p>
 
 <p align="center">
-  <strong>Versión totalmente funcional en: <a href="https://xusqui.com/weather/">https://xusqui.com/weather/</a></strong>
+    <strong>Versión totalmente funcional en: <a href="https://xusqui.com/weather/">https://xusqui.com/weather/</a></strong>
 </p>
 
 <p align="center">
-  <img width="800" alt="Captura de pantalla de la web" src="https://github.com/user-attachments/assets/50994aba-f6c7-4ff5-9baf-ca1f2c293047" />
+    <img width="800" alt="Captura de pantalla de la web" src="https://github.com/user-attachments/assets/50994aba-f6c7-4ff5-9baf-ca1f2c293047" />
 </p>
 
 ## 📖 Índice
@@ -37,7 +39,7 @@ Este es un software desarrollado a partir de la interfaz clásica de Weather Und
 
 > [!NOTE] No tengo mucha idea de programación, por lo que todo el código se ha creado con la ayuda de ChatGPT y Gemini.
 
-### Componentes
+### 🧩 Componentes
 
 El proyecto tiene dos partes principales:
 
@@ -66,16 +68,16 @@ El flujo de datos es: **Estación ➡️ Home Assistant ➡️ Esta Web**.
 
 Sigue estos pasos para replicar la configuración:
 
-### Paso 1: Añadir Integración "Ecowitt" a Home Assistant
+### 1️⃣ Paso 1: Añadir Integración "Ecowitt" a Home Assistant
 
 Añade la integración "Ecowitt" a tu instancia de Home Assistant de la manera habitual.
 
-### Paso 2: Configurar la Estacion para enviar datos a Home Assistant
+### 2️⃣ Paso 2: Configurar la Estacion para enviar datos a Home Assistant
 
 Sigue las instrucciones detalladas <a href="https://www.home-assistant.io/integrations/ecowitt/">aquí</a> para que tu estación Ecowitt / Ambient Weather envíe los datos a Home Assistant.
 Yo utilizo un intervalo de 60 segundos.
 
-### Paso 3: Crear la Base de Datos
+### 3️⃣ Paso 3: Crear la Base de Datos
 
 Asumimos que ya tienes un servidor con una instancia de MySQL / MariaDB funcionando.
 Accede a la base de datos, por ejemplo, con phpMyAdmin y crea la base de datos:
@@ -99,18 +101,18 @@ USE `weather`;
 --
 
 CREATE TABLE `config` (
-  `id` int(11) NOT NULL,
-  `latitud` decimal(10,6) DEFAULT NULL,
-  `longitud` decimal(10,6) DEFAULT NULL,
-  `elevacion` int(11) DEFAULT NULL,
-  `hardware` varchar(255) DEFAULT NULL,
-  `software` varchar(255) DEFAULT NULL,
-  `observatorio` varchar(255) DEFAULT NULL,
-  `city` varchar(255) DEFAULT NULL,
-  `country` varchar(255) DEFAULT NULL,
-  `tz` varchar(255) DEFAULT NULL,
-  `password` varchar(255) DEFAULT NULL,
-  `ha_token` varchar(255) DEFAULT NULL
+    `id` int(11) NOT NULL,
+    `latitud` decimal(10,6) DEFAULT NULL,
+    `longitud` decimal(10,6) DEFAULT NULL,
+    `elevacion` int(11) DEFAULT NULL,
+    `hardware` varchar(255) DEFAULT NULL,
+    `software` varchar(255) DEFAULT NULL,
+    `observatorio` varchar(255) DEFAULT NULL,
+    `city` varchar(255) DEFAULT NULL,
+    `country` varchar(255) DEFAULT NULL,
+    `tz` varchar(255) DEFAULT NULL,
+    `password` varchar(255) DEFAULT NULL,
+    `ha_token` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -118,22 +120,22 @@ CREATE TABLE `config` (
 --
 
 CREATE TABLE `meteo` (
-  `id` int(11) NOT NULL,
-  `timestamp` datetime NOT NULL,
-  `temperatura` decimal(5,2) DEFAULT NULL,
-  `humedad` decimal(5,2) DEFAULT NULL,
-  `sensacion_termica` decimal(5,2) DEFAULT NULL,
-  `presion_relativa` decimal(6,2) DEFAULT NULL,
-  `presion_absoluta` decimal(6,2) DEFAULT NULL,
-  `punto_rocio` decimal(5,2) DEFAULT NULL,
-  `viento_velocidad` decimal(5,2) DEFAULT NULL,
-  `viento_direccion` smallint(6) DEFAULT NULL,
-  `viento_racha` decimal(5,2) DEFAULT NULL,
-  `lluvia_diaria` decimal(6,2) DEFAULT NULL,
-  `indice_uv` decimal(4,2) DEFAULT NULL,
-  `radiacion_solar` decimal(6,2) DEFAULT NULL,
-  `temperatura_interior` decimal(5,2) DEFAULT NULL,
-  `humedad_interior` decimal(5,2) DEFAULT NULL
+    `id` int(11) NOT NULL,
+    `timestamp` datetime NOT NULL,
+    `temperatura` decimal(5,2) DEFAULT NULL,
+    `humedad` decimal(5,2) DEFAULT NULL,
+    `sensacion_termica` decimal(5,2) DEFAULT NULL,
+    `presion_relativa` decimal(6,2) DEFAULT NULL,
+    `presion_absoluta` decimal(6,2) DEFAULT NULL,
+    `punto_rocio` decimal(5,2) DEFAULT NULL,
+    `viento_velocidad` decimal(5,2) DEFAULT NULL,
+    `viento_direccion` smallint(6) DEFAULT NULL,
+    `viento_racha` decimal(5,2) DEFAULT NULL,
+    `lluvia_diaria` decimal(6,2) DEFAULT NULL,
+    `indice_uv` decimal(4,2) DEFAULT NULL,
+    `radiacion_solar` decimal(6,2) DEFAULT NULL,
+    `temperatura_interior` decimal(5,2) DEFAULT NULL,
+    `humedad_interior` decimal(5,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
@@ -165,7 +167,7 @@ COMMIT;
 
 Ahora añade un nuevo usuario y contraseña en phpMyAdmin y otórgale todos los permisos de la base de datos recién creada "weather"
 
-### Paso 4: Añadir `rest_command` a Home Assistant
+### 4️⃣ Paso 4: Añadir `rest_command` a Home Assistant
 
 Añade lo siguiente a tu archivo `configuration.yaml` en Home Assistant. Esto define el `rest_command` (la acción de
 enviar datos) y el `input_text` (para guardar tu token de forma segura).
@@ -213,7 +215,7 @@ input_text:
 > Haz clic en la rueda dentada dentro de este panel y en el panel nuevo que se abre, dentro de la casilla "Entity ID" Está el nombre del sensor.
 > Cambia los nombres del Payload para que coincidan con los nombres de tus sensores.
 
-### Paso 5: Crear el Token para que Home Assistant se autentique en la web.
+### 5️⃣ Paso 5: Crear el Token para que Home Assistant se autentique en la web.
 La primera vez que abres la web, p. ej: http://localhost/weather, se carga el script de configuración.
 En primer lugar se solicita una contraseña para que el script esté protegido.
 En segundo lugar se abre la configuración:
@@ -231,7 +233,7 @@ meteo_api_token: "Aquí-El-Toke-Copiado"
 
 Guarda secrets.yaml
 
-### Paso 6: Crear Automatización en Home Assistant
+### 6️⃣ Paso 6: Crear Automatización en Home Assistant
 
 Finalmente, crea una automatización para llamar al `rest_command` periódicamente.
 
@@ -248,7 +250,7 @@ Finalmente, crea una automatización para llamar al `rest_command` periódicamen
 
 ¡Y listo! Home Assistant recibirá los datos de la estación cada minuto y escribirá el último valor en tu base de datos cada 5 minutos.
 
-### Paso 7: Configurar la web
+### 7️⃣ Paso 7: Configurar la web
 
 Vamos a modificar los archivos de configuración de la web.
 
@@ -256,29 +258,29 @@ Abre el archivo config_db.php.example y modifícalo según los datos que utiliza
 
 ```php
 <?php
-// Renombrar a config_db.php
-// Datos de conexión a MariaDB
+    // Renombrar a config_db.php
+    // Datos de conexión a MariaDB
 
-$db_user = ""; // DataBase User
+    $db_user = ""; // DataBase User
 $db_pass = ""; // DataBase Password
 $db_url = "127.0.0.1"; // dadtabase url
 $db_database = "weather"; // DataBase name
 ?>
 ```
 
-Guardalo en la misma ruta con el nombre config_db.php (/weather/static/config/config_db.php
+Guardalo en la misma ruta con el nombre config_db.php (/weather/static/config/config_db.php)
 
-Ahora tenemos que crear el long-lived access token en Home Assistant:
+Ahora tenemos que crear el **long-lived access token** en Home Assistant:
 
 Abre Home Assistant y haz click en tu nombre (abajo a la izquierda), o haz clic <a href="https://my.home-assistant.io/redirect/profile/">aquí</a>
 
-Selecciona la pestaña "Security" y ve abajo del todo.
+Selecciona la pestaña "**Security**" y ve abajo del todo.
 
-En la sección Long-lived access tokens, haz clic en el botón "Create Token".
+En la sección **Long-lived access tokens**, haz clic en el botón "Create Token".
 
 Da un nombre al token, por ejemplo "weather" o "meteo" y haz clic en "OK"
 
-Se abre la ventana con el token y un botón de copiar. Copia el token y ya lo puedes cerrar.
+Se abre la ventana con el token y un botón de copiar. Copia el token y ya la puedes cerrar.
 
 Abre el archivo /weather/static/config/config.php.example y modifica las dos líneas siguientes según tus necesidades:
 
@@ -290,6 +292,7 @@ Abre el archivo /weather/static/config/config.php.example y modifica las dos lí
 $ha_url = "127.0.0.1:8123"; // IP de tu Home Assistant. I.e: http://127.0.0.1:8123
 $token = "Pega-Aquí-El-Long-Lived-Access-Token"; // Long-lived access Token de Home Assistant que acabas de copiar
 ```
+
 Guarda el archivo como /weather/static/config/config.php
 
 ---
@@ -297,3 +300,9 @@ Guarda el archivo como /weather/static/config/config.php
 ## 💬 Feedback
 
 Si alguien llegara a probar esta configuración, ¡me gustaría saber si le funciona!
+
+---
+
+<p align="center">
+    Hecho con ❤️ por <strong>Xisco</strong> · <a href="https://xusqui.com/">xusqui.com</a>
+</p>
