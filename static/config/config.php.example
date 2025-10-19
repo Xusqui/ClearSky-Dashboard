@@ -1,10 +1,12 @@
 <?php
 // Renombrar a config.php
 // CONFIGURACIÓN
+
 // Datos de Conexión a Home Assistant
-// añadido a .gitignore
 $ha_url = "127.0.0.1:8123"; // IP de tu Home Assistant. I.e: http://127.0.0.1:8123
 $token = ""; // Long-lived access Token de Home Assistant
+
+// NO MODIFICAR NADA A PARTIR DE AQUÍ A NO SER QUE SEPAS LO QUE HACES
 
 include __DIR__ . '/config_db.php';
 
