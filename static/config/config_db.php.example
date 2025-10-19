@@ -1,7 +1,7 @@
 <?php
 // Renombrar a config_db.php
 // Datos de conexión a MariaDB
-// Añadido a .gitignore
+
 $db_user = ""; // DataBase User
 $db_pass = ""; // DataBase Password
 $db_url = "127.0.0.1"; // dadtabase url
