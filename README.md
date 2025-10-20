@@ -1,4 +1,7 @@
-# 🌦️ Interfaz Web para Estación Meteorológica (con Home Assistant)
+# 🌦️ Interfaz Web para Estación Meteorológica (con Home Assistant): CLEARSKY DASHBOARD
+
+<p alight="center"><img width="1024" height="1024" alt="Gemini_Generated_Image_q710xlq710xlq710" src="https://github.com/user-attachments/assets/7d63b6cb-147a-41cb-b9cf-23e019e089f5" /></p>
+
 
 <p align="center">
     <img alt="PHP" src="https://img.shields.io/badge/PHP-777BB4?logo=php&logoColor=white&style=flat">
