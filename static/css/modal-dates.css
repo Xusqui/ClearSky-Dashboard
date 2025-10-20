@@ -1,0 +1,81 @@
+.date-range-picker {
+    display: flex;
+    flex-wrap: wrap; /* Para que se ajuste en pantallas pequeñas */
+    justify-content: center;
+    align-items: center;
+    gap: 15px; /* Espacio entre elementos */
+    margin-bottom: 20px; /* Espacio antes del título */
+    border-bottom: 1px solid #555; /* Separador visual */
+    padding-bottom: 15px;
+}
+.date-input {
+    display: flex;
+    flex-direction: column; /* Etiqueta encima del input */
+}
+.date-input label {
+    font-size: 0.9em;
+    margin-bottom: 5px;
+}
+.date-input input[type="datetime-local"] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: var(--bg-color, #fff); /* Usa tus variables CSS */
+    color: var(--font-color, #000);
+}
+.update-button {
+    padding: 10px 15px;
+    background-color: var(--wu-lightblue, #007bff); /* Usa tus variables CSS */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    align-self: flex-end; /* Alinear con la parte inferior de los inputs */
+}
+.update-button:hover {
+    opacity: 0.8;
+}
+/* --- Estilos para la cuadrícula de lluvia --- */
+.rain-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #555;
+}
+
+.stat-card {
+    background-color: rgba(0,0,0,0.1); /* Fondo ligero */
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border: 1px solid var(--wu-lightblue, #007bff);
+}
+
+.stat-label {
+    font-size: 0.9em;
+    color: var(--font-color, #333);
+    opacity: 0.8;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+}
+
+.stat-value {
+    font-size: 1.4em;
+    font-weight: bold;
+    color: var(--font-color, #000);
+}
+
+/* Ajustar el input[type="month"] */
+input[type="month"] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: var(--bg-color, #fff);
+    color: var(--font-color, #000);
+    font-family: inherit; /* Heredar la fuente */
+}

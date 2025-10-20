@@ -1,12 +1,38 @@
-// Abrir modal al hacer click en el widget
+// --- NUEVA FUNCIÓN UTILITARIA ---
+// Formatea un objeto Date al formato 'YYYY-MM-DDTHH:MM' que usa datetime-local
+function formatLocalDateTime(date) {
+    const pad = (num) => (num < 10 ? '0' + num : num);
+    const year = date.getFullYear();
+    const month = pad(date.getMonth() + 1); // getMonth() es 0-indexado
+    const day = pad(date.getDate());
+    const hours = pad(date.getHours());
+    const minutes = pad(date.getMinutes());
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+// ---------------------------------
 
+// Abrir modal al hacer click en los widgets
 document.getElementById("temp_widget").addEventListener("click", openTempModal);
 document.getElementById("dew_point").addEventListener("click", openTempModal);
 
 function openTempModal() {
     var modal = document.getElementById("tempModal");
     modal.style.display = "block";
-    loadTempChart();
+
+    // --- NUEVO: Establecer fechas por defecto (últimas 24h) ---
+    var now = new Date();
+    var yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    
+    // Usamos los IDs específicos de este modal
+    var startInput = document.getElementById("temp_startDate");
+    var endInput = document.getElementById("temp_endDate");
+    
+    startInput.value = formatLocalDateTime(yesterday);
+    endInput.value = formatLocalDateTime(now);
+    // -----------------------------------------------------
+    
+    // Cargar gráfico inicial con las fechas por defecto
+    loadTempChart(startInput.value, endInput.value);
 }
 
 // Cerrar modal al hacer click en el botón de cerrar
@@ -22,6 +48,25 @@ window.addEventListener("click", function (event) {
     }
 });
 
+// --- NUEVO: Event Listener para el botón de actualizar ---
+document.getElementById("temp_updateChartBtn").addEventListener("click", function() {
+    var startDate = document.getElementById("temp_startDate").value;
+    var endDate = document.getElementById("temp_endDate").value;
+
+    if (!startDate || !endDate) {
+        alert("Por favor, selecciona un rango de fechas y horas válido.");
+        return;
+    }
+    if (new Date(startDate) >= new Date(endDate)) {
+        alert("La fecha de inicio debe ser anterior a la fecha de fin.");
+        return;
+    }
+
+    // Volver a cargar el gráfico con el nuevo rango
+    loadTempChart(startDate, endDate);
+});
+// ---------------------------------------------------
+
 // Función para cerrar modal y destruir gráfico
 function closeTempModal() {
     var modal = document.getElementById("tempModal");
@@ -35,9 +80,17 @@ function closeTempModal() {
 }
 
 // Función para cargar datos y dibujar gráfico
-function loadTempChart() {
+// --- MODIFICADO: Acepta parámetros startDate y endDate ---
+function loadTempChart(startDate, endDate) {
     var chartDom = document.getElementById("tempChart");
-    var myChart = echarts.init(chartDom);
+
+    // --- MODIFICADO: Destruir gráfico anterior si existe ---
+    var myChart = echarts.getInstanceByDom(chartDom);
+    if (myChart) {
+        myChart.dispose();
+    }
+    myChart = echarts.init(chartDom);
+    // ---------------------------------------------------
 
     var rootStyle = getComputedStyle(document.documentElement);
     var fontColor = rootStyle.getPropertyValue("--font-color").trim();
@@ -47,9 +100,37 @@ function loadTempChart() {
     var lightBlue = rootStyle.getPropertyValue("--wu-lightblue").trim();
     var lightBlue80 = rootStyle.getPropertyValue("--wu-lightblue80").trim();
 
-    fetch("/weather/static/modules/get_temp_last24h.php")
+    // --- MODIFICADO: Construir la URL de fetch dinámicamente ---
+    var fetchUrl = "/weather/static/modules/get_temp_last24h.php";
+    if (startDate && endDate) {
+        fetchUrl += `?start=${encodeURIComponent(startDate)}&end=${encodeURIComponent(endDate)}`;
+    }
+    // -----------------------------------------------------------
+    
+    // Mostrar "cargando"
+    myChart.showLoading({
+        text: 'Cargando datos...',
+        color: redColor, // Usa uno de tus colores
+        textColor: fontColor,
+        maskColor: 'rgba(255, 255, 255, 0.1)'
+    });
+
+    fetch(fetchUrl)
         .then((response) => response.json())
         .then((data) => {
+            // Ocultar "cargando"
+            myChart.hideLoading();
+            
+            if (data.error) {
+                console.error(data.message);
+                return;
+            }
+
+            if (data.length === 0) {
+                chartDom.innerHTML = `<p style="text-align:center; color:${fontColor}; padding-top: 50px;">No hay datos disponibles para el rango seleccionado.</p>`;
+                return;
+            }
+
             var labels = data.map((row) => row.hora);
             var temperaturas = data.map((row) => parseFloat(row.temperatura));
             var sensaciones = data.map((row) => parseFloat(row.sensacion_termica));
@@ -64,6 +145,31 @@ function loadTempChart() {
                 backgroundColor: bgColor,
                 tooltip: { trigger: "axis", backgroundColor: bgColor, textStyle: { color: fontColor } },
                 legend: { data: ["Temperatura", "Sensación térmica", "Punto de rocío"], textStyle: { color: fontColor } },
+                
+                // --- NUEVO: DataZoom para hacer zoom/scroll ---
+                dataZoom: [
+                    {
+                        type: 'inside',
+                        start: 0,
+                        end: 100
+                    },
+                    {
+                        type: 'slider',
+                        start: 0,
+                        end: 100,
+                        backgroundColor: 'rgba(0,0,0,0.1)',
+                        borderColor: '#777',
+                        fillerColor: 'rgba(255, 0, 0, 0.2)', // Color rojo de tu tema
+                        handleStyle: {
+                            color: redColor
+                        },
+                        textStyle: {
+                            color: fontColor
+                        }
+                    }
+                ],
+                // ------------------------------------------------
+
                 xAxis: {
                     type: "category",
                     data: labels,
@@ -73,8 +179,8 @@ function loadTempChart() {
                 yAxis: {
                     type: "value",
                     name: "°C",
-                    min: minY,
-                    max: maxY,
+                    min: minY.toFixed(1),
+                    max: maxY.toFixed(1),
                     axisLine: { lineStyle: { color: fontColor } },
                     axisLabel: { color: fontColor }
                 },
@@ -124,5 +230,8 @@ function loadTempChart() {
 
             myChart.setOption(option);
         })
-        .catch((err) => console.error("Error al cargar datos 24h:", err));
+        .catch((err) => {
+            myChart.hideLoading();
+            console.error("Error al cargar datos:", err)
+        });
 }

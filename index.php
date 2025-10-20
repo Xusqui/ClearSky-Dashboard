@@ -94,6 +94,7 @@ if (isset($data["last_updated"])) {
         <link rel="stylesheet" type="text/css" href="/weather/static/css/forecast.css?v=<?php echo time(); ?>">
         <link rel="stylesheet" type="text/css" href="/weather/static/css/widget_seeing.css?v=<?php echo time(); ?>">
         <link rel="stylesheet" type="text/css" href="/weather/static/css/modal-seeing.css?v=<?php echo time(); ?>">
+        <link rel="stylesheet" type="text/css" href="/weather/static/css/modal-dates.css?v=<?php echo time(); ?>">
     </head>
     <body>
         <div class="widgets">
@@ -661,6 +662,17 @@ if (isset($data["last_updated"])) {
                                         <line x1="6" y1="6" x2="18" y2="18"/>
                                     </svg>
                                 </button>
+                                <div class="date-range-picker">
+                                    <div class="date-input">
+                                        <label for="temp_startDate">Desde:</label>
+                                        <input type="datetime-local" id="temp_startDate" name="temp_startDate">
+                                    </div>
+                                    <div class="date-input">
+                                        <label for="temp_endDate">Hasta:</label>
+                                        <input type="datetime-local" id="temp_endDate" name="temp_endDate">
+                                    </div>
+                                    <button id="temp_updateChartBtn" class="update-button">Actualizar Gráfico</button>
+                                </div>
                                 <h2>Evolución de la Temperatura Exterior</h2>
                                 <div id="tempChart" style="height:400px;"></div>
                             </div>
@@ -679,6 +691,17 @@ if (isset($data["last_updated"])) {
                                         <line x1="6" y1="6" x2="18" y2="18"/>
                                     </svg>
                                 </button>
+                                <div class="date-range-picker">
+                                    <div class="date-input">
+                                        <label for="hum_startDate">Desde:</label>
+                                        <input type="datetime-local" id="hum_startDate" name="hum_startDate">
+                                    </div>
+                                    <div class="date-input">
+                                        <label for="hum_endDate">Hasta:</label>
+                                        <input type="datetime-local" id="hum_endDate" name="hum_endDate">
+                                    </div>
+                                    <button id="hum_updateChartBtn" class="update-button">Actualizar Gráfico</button>
+                                </div>
                                 <h2>Evolución de la Humedad Exterior</h2>
                                 <div id="humChart" style="height:400px;"></div>
                             </div>
@@ -697,6 +720,17 @@ if (isset($data["last_updated"])) {
                                         <line x1="6" y1="6" x2="18" y2="18"></line>
                                     </svg>
                                 </button>
+                                <div class="date-range-picker">
+                                    <div class="date-input">
+                                        <label for="wind_startDate">Desde:</label>
+                                        <input type="datetime-local" id="wind_startDate" name="wind_startDate">
+                                    </div>
+                                    <div class="date-input">
+                                        <label for="wind_endDate">Hasta:</label>
+                                        <input type="datetime-local" id="wind_endDate" name="wind_endDate">
+                                    </div>
+                                    <button id="wind_updateChartBtn" class="update-button">Actualizar Gráfico</button>
+                                </div>
                                 <h2>Viento</h2>
                                 <div id="windSpeedChart" style="height: 250px; margin-bottom: 20px;"></div>
                                 <div id="windDirectionChart" style="height: 250px;"></div>
@@ -710,22 +744,51 @@ if (isset($data["last_updated"])) {
                         <!-- Modal oculto por defecto -->
                         <div id="rain-modal" class="modal">
                             <div class="modal-content">
-                                <button class="close" aria-label="Cerrar">
+                                <button class="close" id="closeRainModal" aria-label="Cerrar">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <line x1="18" y1="6" x2="6" y2="18"></line>
                                         <line x1="6" y1="6" x2="18" y2="18"></line>
                                     </svg>
                                 </button>
                                 <h2>Desglose de Precipitación</h2>
-                                <ul>
-                                    <li><strong>Estado:</strong> <span id="rain-status">No llueve</span></li>
-                                    <li><strong>Ratio de lluvia:</strong> <span id="rain-rate">a0 mm/h</span></li>
-                                    <li><strong>Hoy:</strong> <span id="rain-today">a0 mm</span></li>
-                                    <li><strong>Precipitación horaria:</strong> <span id="rain-hour">a0 mm</span></li>
-                                    <li><strong>Mensual:</strong> <span id="rain-month">a0 mm</span></li>
-                                    <li><strong>Total:</strong> <span id="rain-total">a0 mm</span></li>
-                                </ul>
-                                <!-- Nuevo contenedor para gráfico de barras mensual -->
+
+                                <div class="rain-stats-grid">
+                                    <div class="stat-card">
+                                        <span class="stat-label">Estado</span>
+                                        <span class="stat-value" id="rain-status">...</span>
+                                    </div>
+                                    <div class="stat-card">
+                                        <span class="stat-label">Ratio</span>
+                                        <span class="stat-value" id="rain-rate">...</span>
+                                    </div>
+                                    <div class="stat-card">
+                                        <span class="stat-label">Hoy</span>
+                                        <span class="stat-value" id="rain-today">...</span>
+                                    </div>
+                                    <div class="stat-card">
+                                        <span class="stat-label">Última Hora</span>
+                                        <span class="stat-value" id="rain-hour">...</span>
+                                    </div>
+                                    <div class="stat-card">
+                                        <span class="stat-label">Este Mes</span>
+                                        <span class="stat-value" id="rain-month">...</span>
+                                    </div>
+                                    <div class="stat-card">
+                                        <span class="stat-label">Total</span>
+                                        <span class="stat-value" id="rain-total">...</span>
+                                    </div>
+                                </div>
+                                <div class="date-range-picker">
+                                    <div class="date-input">
+                                        <label for="rain_startMonth">Mes Inicio:</label>
+                                        <input type="month" id="rain_startMonth" name="rain_startMonth">
+                                    </div>
+                                    <div class="date-input">
+                                        <label for="rain_endMonth">Mes Fin:</label>
+                                        <input type="month" id="rain_endMonth" name="rain_endMonth">
+                                    </div>
+                                    <button id="rain_updateChartBtn" class="update-button">Actualizar Gráfico</button>
+                                </div>
                                 <div id="rain-month-chart" style="height:300px; margin-top:20px;"></div>
                             </div>
                         </div>
@@ -743,6 +806,18 @@ if (isset($data["last_updated"])) {
                                         <line x1="6" y1="6" x2="18" y2="18"></line>
                                     </svg>
                                 </button>
+
+                                <div class="date-range-picker">
+                                    <div class="date-input">
+                                        <label for="pressure_startDate">Desde:</label>
+                                        <input type="datetime-local" id="pressure_startDate" name="pressure_startDate">
+                                    </div>
+                                    <div class="date-input">
+                                        <label for="pressure_endDate">Hasta:</label>
+                                        <input type="datetime-local" id="pressure_endDate" name="pressure_endDate">
+                                    </div>
+                                    <button id="pressure_updateChartBtn" class="update-button">Actualizar Gráfico</button>
+                                </div>
                                 <h2>Evolución de la Presión Relativa</h2>
                                 <div id="pressureChart" style="height:400px;"></div>
                             </div>
@@ -761,11 +836,24 @@ if (isset($data["last_updated"])) {
                                         <line x1="6" y1="6" x2="18" y2="18"></line>
                                     </svg>
                                 </button>
+
+                                <div class="date-range-picker">
+                                    <div class="date-input">
+                                        <label for="uv_startDate">Desde:</label>
+                                        <input type="datetime-local" id="uv_startDate" name="uv_startDate">
+                                    </div>
+                                    <div class="date-input">
+                                        <label for="uv_endDate">Hasta:</label>
+                                        <input type="datetime-local" id="uv_endDate" name="uv_endDate">
+                                    </div>
+                                    <button id="uv_updateChartBtn" class="update-button">Actualizar Gráfico</button>
+                                </div>
                                 <h2>Índice UV y Radiación Solar</h2>
                                 <div id="uvChart" style="height: 250px; margin-bottom: 20px;"></div>
                                 <div id="solarChart" style="height: 250px;"></div>
                             </div>
                         </div>
+
                         <!--************************************************************
                             ************ GRÁFICA DE TEMPERATURA INTERIOR ***************
                             *********************** M O D A L **************************
@@ -779,6 +867,17 @@ if (isset($data["last_updated"])) {
                                         <line x1="6" y1="6" x2="18" y2="18"/>
                                     </svg>
                                 </button>
+                                <div class="date-range-picker">
+                                    <div class="date-input">
+                                        <label for="startDate">Desde:</label>
+                                        <input type="datetime-local" id="startDate" name="startDate">
+                                    </div>
+                                    <div class="date-input">
+                                        <label for="endDate">Hasta:</label>
+                                        <input type="datetime-local" id="endDate" name="endDate">
+                                    </div>
+                                    <button id="updateChartBtn" class="update-button">Actualizar Gráfico</button>
+                                </div>
                                 <h2>Evolución de la Temperatura Interior</h2>
                                 <div id="tempIntChart" style="height:400px;"></div>
                             </div>
@@ -797,6 +896,18 @@ if (isset($data["last_updated"])) {
                                         <line x1="6" y1="6" x2="18" y2="18"/>
                                     </svg>
                                 </button>
+
+                                <div class="date-range-picker">
+                                    <div class="date-input">
+                                        <label for="humInt_startDate">Desde:</label>
+                                        <input type="datetime-local" id="humInt_startDate" name="humInt_startDate">
+                                    </div>
+                                    <div class="date-input">
+                                        <label for="humInt_endDate">Hasta:</label>
+                                        <input type="datetime-local" id="humInt_endDate" name="humInt_endDate">
+                                    </div>
+                                    <button id="humInt_updateChartBtn" class="update-button">Actualizar Gráfico</button>
+                                </div>
                                 <h2>Evolución de la Humedad Interior</h2>
                                 <div id="humIntChart" style="height:400px;"></div>
                             </div>
@@ -916,10 +1027,10 @@ if (isset($data["last_updated"])) {
                 </dashboard-body-view>
                 <dashboard-footer-view>
                     <div class="max-width">
-                         <div class="container">
-                             <div class="footer-text">Powered by </div>
-                             <a href="https://www.wunderground.com"><wu-logo title="WU Logo" id="WU Logo"></wu-logo></a>
-                             <div class="footer-text"> Software</div>
+                        <div class="container">
+                            <div class="footer-text">Powered by </div>
+                            <a href="https://www.wunderground.com"><wu-logo title="WU Logo" id="WU Logo"></wu-logo></a>
+                            <div class="footer-text"> Software</div>
                         </div>
                     </div>
                 </dashboard-footer-view>

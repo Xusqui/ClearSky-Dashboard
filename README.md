@@ -299,7 +299,7 @@ Guarda el archivo como /weather/static/config/config.php
 ---
 ### &check; ToDo
 
-* Está pendiente, en las gráficas modales, donde se representa la gráfica de evolución de las últimas 24 horas, introducir un selector de fechas para poner un rango concreto.
+* Cualquier sugerencia es bienvenida.
 
 
 ### 💬 Feedback
