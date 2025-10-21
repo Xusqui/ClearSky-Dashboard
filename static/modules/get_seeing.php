@@ -56,8 +56,8 @@ $detalles = [
 // --- 3. Función para obtener datos 300/500 hPa ---
 function fetch_pressure_levels($lat, $lon) {
     $url = "https://api.open-meteo.com/v1/forecast?latitude={$lat}&longitude={$lon}"
-         . "&hourly=temperature_300hPa,temperature_500hPa,wind_speed_300hPa,wind_speed_500hPa"
-         . "&forecast_days=1&timezone=UTC";
+        . "&hourly=temperature_300hPa,temperature_500hPa,wind_speed_300hPa,wind_speed_500hPa"
+        . "&forecast_days=1&timezone=UTC";
 
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
@@ -95,10 +95,10 @@ function fetch_cloud_layers_openmeteo($lat, $lon, $tz) {
     $today = $now->format("Y-m-d");
 
     $url = "https://api.open-meteo.com/v1/forecast?" .
-           "latitude={$lat}&longitude={$lon}" .
-           "&hourly=cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high" .
-           "&timezone={$tz}" .
-           "&start_date={$today}&end_date={$today}";
+        "latitude={$lat}&longitude={$lon}" .
+        "&hourly=cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high" .
+        "&timezone={$tz}" .
+        "&start_date={$today}&end_date={$today}";
 
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
