@@ -1,0 +1,123 @@
+/*
+==================================================
+Estilos para el Modal PWS (Diseño de 2 Columnas)
+==================================================
+*/
+
+/* 1. Contenedor del cuerpo (Grid) */
+.pws-info-body {
+    display: grid;
+    grid-template-columns: 1fr; /* 1 columna en móviles */
+    gap: 25px;
+}
+
+/* 2. Columnas (Mapa y Texto) */
+.pws-info-map-wrapper {
+    /* En móvil, el mapa necesita una altura fija */
+    min-height: 250px;
+    border-radius: 8px;
+    overflow: hidden; /* Para que el mapa adopte el borde redondeado */
+    border: 1px solid var(--dashboard-widget-box-shadow-color, #e0e0e0);
+}
+
+.pws-info-details-wrapper {
+    /* El texto fluye con normalidad */
+}
+
+/* 3. El contenedor real del mapa */
+#pws-map-container {
+    width: 100%;
+    height: 100%;
+    min-height: 250px; /* Asegura altura en móvil */
+}
+
+/* 4. Estilos para el texto en la columna derecha */
+.pws-info-details-wrapper h3 {
+    font-size: 1.25em;
+    font-weight: 600;
+    color: var(--font-color);
+    margin-top: 0;
+    margin-bottom: 20px;
+    text-align: left; /* Lo alineamos a la izquierda */
+    border-bottom: 1px solid var(--dashboard-widget-box-shadow-color, #e0e0e0);
+    padding-bottom: 10px;
+}
+
+/* Quitar margen superior al primer título de la columna */
+.pws-info-details-wrapper h3:first-child {
+    margin-top: 0;
+}
+
+.pws-info-details-wrapper dd:last-of-type {
+    margin-bottom: 0;
+}
+
+
+/* 5. Vista de Escritorio (2 columnas) */
+@media (min-width: 768px) {
+    .pws-info-body {
+        /* Pasa a 2 columnas (50/50) */
+        grid-template-columns: 1fr 1fr;
+    }
+
+    #pws-map-container {
+        min-height: 400px; /* Más altura en escritorio */
+    }
+}
+
+/*
+==================================================
+Estilos para las Tarjetas de Información (PWS)
+==================================================
+*/
+
+/* Grid layout (auto-ajustable) para Ubicación */
+.pws-info-card-grid {
+    display: grid;
+    /* Crea columnas de 130px mínimo, que crecen para rellenar */
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 12px;
+    margin-bottom: 25px; /* Espacio entre grupos */
+}
+
+/* Stack layout (1-columna) para Equipo */
+.pws-info-card-stack {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+/* Estilo de la Tarjeta Individual */
+.pws-info-card {
+    background: var(--color-box-bg); /* Color de fondo de tu tema */
+    border-radius: 8px;
+    padding: 12px 15px;
+    box-shadow: var(--search-focus-box-shadow); /* Sombra de tu tema */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Sutil efecto al pasar el ratón */
+.pws-info-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* Etiqueta (título) dentro de la tarjeta */
+.pws-info-card h4 {
+    font-size: 0.8em;
+    font-weight: 500;
+    color: var(--color-secondary-font);
+    margin: 0 0 4px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Valor (dato) dentro de la tarjeta */
+.pws-info-card p {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: var(--font-color);
+    margin: 0;
+    word-wrap: break-word; /* Asegura que el texto largo no se salga */
+}
