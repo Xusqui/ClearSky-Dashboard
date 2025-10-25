@@ -94,6 +94,16 @@
     --dashboard-body-border-color: rgba(0, 0, 0, .05);
     --chart-light-color: #fff;
     --chart-dark-color:#e9ecef;
+    /* Variables para el selector de tema */
+    --theme-toggle-bg: rgba(0,0,0,0.04);
+    --theme-toggle-border: rgba(0,0,0,0.08);
+    --theme-toggle-color: var(--font-color);
+    --theme-toggle-active-bg: var(--wu-lightblue);
+    --theme-toggle-active-color: var(--wu-white);
+    --theme-toggle-radius: 10px;
+    --theme-toggle-padding: 6px;
+    --theme-toggle-gap: 6px;
+    --theme-toggle-icon-size: 18px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -132,6 +142,11 @@
         --dashboard-body-border-color: rgba(255, 255, 255, .05);
         --chart-light-color: #f8f9fa;
         --chart-dark-color:#e9ecef
+            --theme-toggle-bg: rgba(255,255,255,0.03);
+        --theme-toggle-border: rgba(255,255,255,0.06);
+        --theme-toggle-color: var(--font-color);
+        --theme-toggle-active-bg: var(--wu-lightblue-40, var(--wu-lightblue));
+        --theme-toggle-active-color: var(--wu-black);
     }
     sun-moon-forecast {
         color: #eee;

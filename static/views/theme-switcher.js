@@ -1,64 +1,34 @@
-/* Archivo: theme-switcher.js */
+/* ======================================================
+   THEME SWITCHER: Día 🌞 / Noche 🌙 / Auto 🌓
+   ====================================================== */
 
-const storageKey = 'themePreference';
-const themeSwitcher = document.getElementById('theme-switcher');
+document.addEventListener("DOMContentLoaded", () => {
+  const buttons = document.querySelectorAll(".theme-buttons button");
+  const savedTheme = localStorage.getItem("theme");
 
-/**
- * Aplica el tema al body.
- * @param {string} theme 'light', 'dark', o 'auto'
- */
-function applyTheme(theme) {
-    const body = document.body;
+  // Aplica el tema guardado, si existe
+  if (savedTheme === "light" || savedTheme === "dark") {
+    document.documentElement.setAttribute("data-theme", savedTheme);
+  } else {
+    document.documentElement.removeAttribute("data-theme");
+  }
 
-    // 1. Limpia las clases existentes de tema
-    body.classList.remove('light-theme', 'dark-theme');
+  // Añade listeners a los botones
+  buttons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const theme = btn.getAttribute("data-theme");
 
-    if (theme === 'auto') {
-        // 2. Determina si el sistema prefiere un tema oscuro
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        if (prefersDark) {
-            body.classList.add('dark-theme');
-        } else {
-            body.classList.add('light-theme');
-        }
-    } else if (theme === 'dark') {
-        body.classList.add('dark-theme');
-    } else if (theme === 'light') {
-        body.classList.add('light-theme');
-    }
+      if (theme === "light" || theme === "dark") {
+        document.documentElement.setAttribute("data-theme", theme);
+        localStorage.setItem("theme", theme);
+      } else if (theme === "auto") {
+        document.documentElement.removeAttribute("data-theme");
+        localStorage.removeItem("theme");
+      }
 
-    // 3. Marca el botón activo
-    if (themeSwitcher) {
-        themeSwitcher.querySelectorAll('button').forEach(btn => {
-            btn.classList.remove('active');
-            if (btn.getAttribute('data-theme') === theme) {
-                btn.classList.add('active');
-            }
-        });
-    }
-
-    // 4. Guarda la preferencia
-    localStorage.setItem(storageKey, theme);
-}
-
-// Carga la preferencia guardada al inicio o usa 'auto' por defecto
-const initialTheme = localStorage.getItem(storageKey) || 'auto';
-applyTheme(initialTheme);
-
-// Listener para los cambios de tema del sistema (solo relevante en 'auto')
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-    if (localStorage.getItem(storageKey) === 'auto') {
-        applyTheme('auto'); // Re-aplica el tema para reflejar el cambio del sistema
-    }
-});
-
-// Listener para clics en los botones
-if (themeSwitcher) {
-    themeSwitcher.addEventListener('click', (event) => {
-        const target = event.target.closest('button');
-        if (target) {
-            const newTheme = target.getAttribute('data-theme');
-            applyTheme(newTheme);
-        }
+      // Marcar botón activo (opcional)
+      buttons.forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
     });
-}
+  });
+});

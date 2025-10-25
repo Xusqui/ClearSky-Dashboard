@@ -1,102 +1,33 @@
 <!DOCTYPE html>
-<?php
-//DEBUG:
-//ini_set('display_startup_errors', 1);
-//error_reporting(E_ALL);
-//ini_set('display_errors', 1);
-// CONFIGURACIÓN
-include __DIR__ . '/static/config/config.php';
-// ======================
-// SENSORES (entity_id ajustados a los míos (Xisco) reales de Home Assistant)
-// ======================
-//temperatura = sensor.ws2900_v2_02_03_outdoor_temperature
-//Sensación Térmica = sensor.ws2900_v2_02_03_feels_like_temperature
-//Humedad = sensor.ws2900_v2_02_03_humidity
-//Presión Relativa = sensor.ws2900_v2_02_03_relative_pressure
-//Presión Absoluta = sensor.ws2900_v2_02_03_absolute_pressure
-//Velocidad del viento = sensor.ws2900_v2_02_03_wind_speed
-//Dirección del viento = sensor.ws2900_v2_02_03_wind_direction
-//Rachas = sensor.ws2900_v2_02_03_wind_gust
-//Lluvia diaria = sensor.ws2900_v2_02_03_daily_rain
-//Índice UV = sensor.ws2900_v2_02_03_uv_index
-//Radiación solar = sensor.ws2900_v2_02_03_solar_radiation
-//Punto de rocío = sensor.ws2900_v2_02_03_dewpoint
-//Temperatura interior = sensor.ws2900_v2_02_03_indoor_temperature
-//Humedad interior = sensor.ws2900_v2_02_03_indoor_humidity
-//$gust_max = sensor.ws2900_v2_02_03_max_daily_gust
-//$rain_rate = sensor.ws2900_v2_02_03_rain_rate
-
-/*-----------------------------------------
-Vamos a obtener la fecha de actualización.
------------------------------------------*/
-
-$ch = curl_init();
-$entity = "sensor.ws2900_v2_02_03_wind_direction";
-curl_setopt($ch, CURLOPT_URL, "$ha_url/api/states/$entity");
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_HTTPHEADER, ["Authorization: Bearer $token", "Content-Type: application/json"]);
-$response = curl_exec($ch);
-curl_close($ch);
-
-if ($response === false) {
-    die("Error al conectar con Home Assistant");
-}
-
-// Decodificar JSON
-$data = json_decode($response, true);
-if (isset($data["last_updated"])) {
-    $utcTime = new DateTime($data["last_updated"], new DateTimeZone("UTC"));
-
-    // Convertir a horario de España
-    $localTime = clone $utcTime;
-    $localTime->setTimezone(new DateTimeZone("Europe/Madrid"));
-
-    // Diferencia en segundos
-    $now = new DateTime("now", new DateTimeZone("Europe/Madrid"));
-    $diffSeconds = $now->getTimestamp() - $localTime->getTimestamp();
-
-    // Formato de salida
-    $meses = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
-    $horas = $localTime->format("H");
-    $minutos = $localTime->format("i");
-    $dia = $localTime->format("j");
-    $mes = $meses[(int) $localTime->format("n") - 1];
-    $anio = $localTime->format("Y");
-
-    $ts_formatted = "$horas:$minutos del $dia de $mes de $anio";
-} else {
-    echo "No se pudo obtener la fecha de actualización";
-}
-?>
 
 <html lang="es">
     <head>
         <link rel="icon" type="image/x-icon" href="/weather/favicon.ico"/>
-        <title>Estación Meteorológica <?php echo $observatorio; ?></title>
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/images.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/global.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/colors.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/theme-switcher.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/dashboard-header.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/dashboard-body.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/dashboard-footer.css?v=<?php echo time(); ?>">
+        <title>Estación Meteorológica El Patio</title>
+        <link rel="stylesheet" type="text/css" href="/weather/static/css/images.css?v=1761404267">
+        <link rel="stylesheet" type="text/css" href="/weather/static/css/global.css?v=1761404267">
+        <link rel="stylesheet" type="text/css" href="/weather/static/css/colors.css?v=1761404267">
+        <link rel="stylesheet" type="text/css" href="/weather/static/css/theme-switcher.css?v=1761404267">
+        <link rel="stylesheet" type="text/css" href="/weather/static/css/dashboard-header.css?v=1761404267">
+        <link rel="stylesheet" type="text/css" href="/weather/static/css/dashboard-body.css?v=1761404267">
+        <link rel="stylesheet" type="text/css" href="/weather/static/css/dashboard-footer.css?v=1761404267">
         <!-- Widgets' CSS -->
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/dew-point-widget.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/humidity-widget.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/humidity-int-widget.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/pressure-widget.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/rain-widget.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/solar-radiation-widget.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/temp-widget.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/uv-widget.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/widget-base.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/wind-widget.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/moon.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/forecast.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/widget_seeing.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/modal-seeing.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/modal-dates.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/modal-pws.css?v=<?php echo time(); ?>">
+        <link rel="stylesheet" type="text/css" href="/weather/static/css/dew-point-widget.css?v=1761404267">
+        <link rel="stylesheet" type="text/css" href="/weather/static/css/humidity-widget.css?v=1761404267">
+        <link rel="stylesheet" type="text/css" href="/weather/static/css/humidity-int-widget.css?v=1761404267">
+        <link rel="stylesheet" type="text/css" href="/weather/static/css/pressure-widget.css?v=1761404267">
+        <link rel="stylesheet" type="text/css" href="/weather/static/css/rain-widget.css?v=1761404267">
+        <link rel="stylesheet" type="text/css" href="/weather/static/css/solar-radiation-widget.css?v=1761404267">
+        <link rel="stylesheet" type="text/css" href="/weather/static/css/temp-widget.css?v=1761404267">
+        <link rel="stylesheet" type="text/css" href="/weather/static/css/uv-widget.css?v=1761404267">
+        <link rel="stylesheet" type="text/css" href="/weather/static/css/widget-base.css?v=1761404267">
+        <link rel="stylesheet" type="text/css" href="/weather/static/css/wind-widget.css?v=1761404267">
+        <link rel="stylesheet" type="text/css" href="/weather/static/css/moon.css?v=1761404267">
+        <link rel="stylesheet" type="text/css" href="/weather/static/css/forecast.css?v=1761404267">
+        <link rel="stylesheet" type="text/css" href="/weather/static/css/widget_seeing.css?v=1761404267">
+        <link rel="stylesheet" type="text/css" href="/weather/static/css/modal-seeing.css?v=1761404267">
+        <link rel="stylesheet" type="text/css" href="/weather/static/css/modal-dates.css?v=1761404267">
+        <link rel="stylesheet" type="text/css" href="/weather/static/css/modal-pws.css?v=1761404267">
         <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
         <link href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" rel="stylesheet" />
     </head>
@@ -105,17 +36,17 @@ if (isset($data["last_updated"])) {
             <content-router-wc>
                 <dashboard-header-view>
                     <div class="max-width">
-                        <div class="elevation-coordinates">Elevación: <strong><?php echo $elev; ?></strong> m, Latitud: <strong><?php echo $latitud; ?></strong> Longitud: <strong><?php echo $longitud; ?></strong> Zona horaria: <strong><?php echo $tz; ?></strong></div>
+                        <div class="elevation-coordinates">Elevación: <strong>31</strong> m, Latitud: <strong>36.565670º N</strong> Longitud: <strong>4.60372º W</strong> Zona horaria: <strong>Europe/Madrid</strong></div>
                         <div class="name-actions">
-                            <h1><?php echo $observatorio; ?></h1>
+                            <h1>El Patio</h1>
                             <pws-info title="PWS Info" id="PWS_info">
                             </pws-info>
                         </div>
                         <div class="location-info">
-                            <span>En <?php echo $city; ?>, a las</span>
-                            <span class="long" id="pws-status-time-long"><?php echo $ts_formatted; ?>.</span>
+                            <span>En Fuengirola, a las</span>
+                            <span class="long" id="pws-status-time-long">16:57 del 25 de oct de 2025.</span>
                             <!-- El script de "actualizado hace x segundos", está dentro del wind_widget.js -->
-                            <span class="ago" id="pws-status-time-ago" data-updated="<?php echo $localTime->getTimestamp(); ?>">Actualizado hace 0 segundos</span>
+                            <span class="ago" id="pws-status-time-ago" data-updated="1761404230">Actualizado hace 0 segundos</span>
                             <!-- CONTROLES DE TEMA (añadir en dashboard-header-view, junto al setup-link) -->
                             <a href="./static/config/setup.php" class="setup-link"><setup-button></setup-button> Setup</a>
 <div class="theme-buttons">
@@ -177,35 +108,18 @@ if (isset($data["last_updated"])) {
                                     *************** WIDGET DE TEMPERATURA ***************
                                     ***************************************************** -->
                             <div class="widget" id="temp_widget">
-                                <?php
-                                // Calcular la posición de la aguja de la temperatura
-                                $minTemp = -20;
-                                $maxTemp = 50;
-                                $minAngle = -145;
-                                $maxAngle = 145;
-                                $temp_angle = 0; // ángulo inicial
-                                //(($temp - $minTemp) * ($maxAngle - $minAngle)) / ($maxTemp - $minTemp) + $minAngle;
-
-                                // Limitamos a los extremos
-                                if ($temp_angle < $minAngle) {
-                                    $temp_angle = $minAngle;
-                                }
-                                if ($temp_angle > $maxAngle) {
-                                    $temp_angle = $maxAngle;
-                                }
-                                ?>
-                                <div class="title">Temperatura Exterior</div>
-                                <temp-widget-view data-pws-id="IFUENG27" data-status="connected" data-unit="m" data-temp="<?php echo $temp; ?>" data-temp-angle="<?php echo $temp_angle; ?>" data-main-value="<?php echo $temp; ?>" aria-valuenow="<?php echo $temp; ?>" class="widget-view loaded">
+                                                                <div class="title">Temperatura Exterior</div>
+                                <temp-widget-view data-pws-id="IFUENG27" data-status="connected" data-unit="m" data-temp="" data-temp-angle="0" data-main-value="" aria-valuenow="" class="widget-view loaded">
                                     <div class="graphic-container">
                                         <div class="temp-gauge-container">
                                             <div class="temp-gauge-bg"></div>
                                             <div class="temp-gauge-inner"></div>
-                                            <div class="temp-needle" id="temp-widget-needle" style="transform: translate(-50%, -100%) rotate(<?php echo $temp_angle; ?>deg);"></div>
+                                            <div class="temp-needle" id="temp-widget-needle" style="transform: translate(-50%, -100%) rotate(0deg);"></div>
                                         </div>
                                     </div>
                                     <div class="value-container">
-                                        <div class="main-value value-unit degrees" id="temp-widget-main-display"><?php echo $temp; ?></div>
-                                        <div class="tertiary-value uppercase Value-unit degrees" id="temp-widget-feel-display">Sensación: <?php echo $feels_like; ?></div>
+                                        <div class="main-value value-unit degrees" id="temp-widget-main-display"></div>
+                                        <div class="tertiary-value uppercase Value-unit degrees" id="temp-widget-feel-display">Sensación: </div>
                                     </div>
                                 </temp-widget-view>
                             </div>
@@ -216,16 +130,14 @@ if (isset($data["last_updated"])) {
                             <div class="widget" id="dew_point">
                                 <div class="title">Punto de Rocío</div>
                                 <!--Calcular porcentaje de la gota, inicialmente 0-->
-                                <?php $dew = 0;
-                                $inner_percent = (100 * $dew) / 49; ?>
-                                <dew-point-widget-view data-pws-id="IFUENG27" data-status="connected" data-unit="m" data-temp="<?php echo $temp; ?>" data-dew-point="<?php echo $dew; ?>" data-main-value="<?php echo $dew; ?>" aria-valuenow="<?php echo $dew; ?>" class="widget-view loaded" style="--dewpoint-droplet-width: <?php echo $inner_percent; ?>%;">
+                                                                <dew-point-widget-view data-pws-id="IFUENG27" data-status="connected" data-unit="m" data-temp="" data-dew-point="0" data-main-value="0" aria-valuenow="0" class="widget-view loaded" style="--dewpoint-droplet-width: 0%;">
                                     <div class="graphic-container">
                                         <div class="dew-container">
                                             <div class="droplet"></div>
                                         </div>
                                     </div>
                                     <div class="value-container">
-                                        <div class="main-value value-unit degrees" id="dewpoint-widget-main-display"><?php echo $dew; ?></div>
+                                        <div class="main-value value-unit degrees" id="dewpoint-widget-main-display">0</div>
                                     </div>
                                 </dew-point-widget-view>
                             </div>
@@ -235,10 +147,10 @@ if (isset($data["last_updated"])) {
                                     ***************************************************** -->
                             <div class="widget" id="hum_widget">
                                 <div class="title">Humedad Exterior</div>
-                                <humidity-widget-view data-pws-id="IFUENG27" data-status="connected" data-humidity="<?php echo $humidity; ?>" data-humidity-string="<?php echo $humid_widget; ?>" data-main-value="<?php echo $humidity; ?>" aria-valuenow="<?php echo $humidity; ?>" data-secondary-value="<?php echo $humid_widget; ?>" class="<?php echo $humid_others; ?>">
+                                <humidity-widget-view data-pws-id="IFUENG27" data-status="connected" data-humidity="" data-humidity-string="" data-main-value="" aria-valuenow="" data-secondary-value="" class="">
                                     <div class="graphic-container">
                                         <div class="humidity-gauge-container">
-                                            <div class="humidity-gauge-bg" id="humidity-gauge-bg" style="--humidity-gauge-bg: conic-gradient(from 270deg, rgba(var(<?php echo $humidity_color; ?>), 0.8) 0deg, rgba(var(<?php echo $humidity_color; ?>), 0.8) <?php echo $angle_humidity; ?>deg, rgba(var(--black-or-white), 0.1) <?php echo $angle_humidity; ?>deg, rgba(var(--black-or-white), 0.1) 360deg);">
+                                            <div class="humidity-gauge-bg" id="humidity-gauge-bg" style="--humidity-gauge-bg: conic-gradient(from 270deg, rgba(var(), 0.8) 0deg, rgba(var(), 0.8) deg, rgba(var(--black-or-white), 0.1) deg, rgba(var(--black-or-white), 0.1) 360deg);">
                                             </div>
                                             <div class="humidity-gauge-inner"></div>
                                             <div class="humidity-mist-ring mist-ring-1"></div>
@@ -255,9 +167,9 @@ if (isset($data["last_updated"])) {
                                         </div>
                                     </div>
                                     <div class="value-container">
-                                        <div class="main-value value-unit percent" id="humidity-widget-main-display"><?php echo $humidity; ?></div>
-                                        <div class="secondary-value uppercase" id="humidity-widget-text-display"><?php echo $humid_legend; ?></div>
-                                        <div class="secondary-value uppercase" id="humidity-widget-humidex"><?php echo $humidex; ?></div>
+                                        <div class="main-value value-unit percent" id="humidity-widget-main-display"></div>
+                                        <div class="secondary-value uppercase" id="humidity-widget-text-display"></div>
+                                        <div class="secondary-value uppercase" id="humidity-widget-humidex"></div>
                                     </div>
                                 </humidity-widget-view>
                             </div>
@@ -268,42 +180,13 @@ if (isset($data["last_updated"])) {
                                     ***************************************************** -->
                             <div class="widget" id="wind_widget">
                                 <div class="title">Viento</div>
-                                <?php
-                                function windDirection($degrees)
-                                {
-                                    // Definimos los 16 rumbos de la rosa de los vientos
-                                    $dirs = [
-                                        "N",
-                                        "NNE",
-                                        "NE",
-                                        "ENE",
-                                        "E",
-                                        "ESE",
-                                        "SE",
-                                        "SSE",
-                                        "S",
-                                        "SSO",
-                                        "SO",
-                                        "OSO",
-                                        "O",
-                                        "ONO",
-                                        "NO",
-                                        "NNO",
-                                    ];
-                                    // Cada dirección ocupa 22.5º (360 / 16)
-                                    $index = round($degrees / 22.5) % 16;
-                                    return $dirs[$index];
-                                }
-                                $wind_dir = 180; // Direccón inicial del viento: 180º
-                                $wind_direction = windDirection($wind_dir);
-                                ?>
-                                <wind-widget-view id="wind-widget-view" data-pws-id="IFUENG27" data-status="connected" data-unit="m" data-wind-speed="<?php echo $wind; ?>" data-wind-gust="<?php echo $gust; ?>" data-wind-dir="<?php echo $wind_dir; ?>" data-description="gentle" data-main-value="<?php echo $wind; ?>" aria-valuenow="<?php echo $wind; ?>" data-secondary-value="<?php echo $gust; ?>" class="widget-view loaded show-wind">
+                                                                <wind-widget-view id="wind-widget-view" data-pws-id="IFUENG27" data-status="connected" data-unit="m" data-wind-speed="" data-wind-gust="" data-wind-dir="180" data-description="gentle" data-main-value="" aria-valuenow="" data-secondary-value="" class="widget-view loaded show-wind">
                                     <div class="graphic-container">
                                         <div class="wind-compass">
-                                            <div class="wind-arrow-pointer-wrapper" id="wind-arrow-pointer-wrapper" style="transform: rotate(<?php echo $wind_dir; ?>deg);">
+                                            <div class="wind-arrow-pointer-wrapper" id="wind-arrow-pointer-wrapper" style="transform: rotate(180deg);">
                                                 <div class="wind-arrow-pointer"></div>
                                             </div>
-                                            <div class="wind-lines" id="wind-widget-lines" style="transform: rotate(<?php echo $wind_dir; ?>deg);">
+                                            <div class="wind-lines" id="wind-widget-lines" style="transform: rotate(180deg);">
                                                 <div class="wind-line"></div>
                                                 <div class="wind-line"></div>
                                                 <div class="wind-line"></div>
@@ -318,12 +201,12 @@ if (isset($data["last_updated"])) {
                                         </div>
                                     </div>
                                     <div class="value-container">
-                                        <div class="main-value value-unit speed" id="wind-widget-main-display"><?php echo $wind; ?></div>
+                                        <div class="main-value value-unit speed" id="wind-widget-main-display"></div>
                                         <div class="secondary-value">
-                                            <span class="uppercase">Rachas</span> <span id="wind-widget-secondary-display" class="secondary-value value-unit speed uppercase"><?php echo $gust; ?></span>
+                                            <span class="uppercase">Rachas</span> <span id="wind-widget-secondary-display" class="secondary-value value-unit speed uppercase"></span>
                                         </div>
-                                        <div class="tertiary-value" id="wind-widget-tertiary-value"><?php echo $wind_dir; ?>° <?php echo $wind_direction; ?></div>
-                                        <div class="tertiary-value value-unit speed" id="wind-widget-cuaternary-value">Máx: <?php echo $gust_max; ?> </div>
+                                        <div class="tertiary-value" id="wind-widget-tertiary-value">180° S</div>
+                                        <div class="tertiary-value value-unit speed" id="wind-widget-cuaternary-value">Máx:  </div>
                                     </div>
                                 </wind-widget-view>
                             </div>
@@ -333,28 +216,7 @@ if (isset($data["last_updated"])) {
                                     ***************************************************** -->
                             <div class="widget" id="rain-widget">
                                 <div class="title">Precipitación</div>
-                                <?php
-                                $stroke_bucket_top = "transparent";
-                                $fill_bucket_top = "transparent";
-                                $fill_bucket_bottom = "var(--widget-empty)";
-                                $water_start = 440;
-                                $daily_rain = 0; //Inicialmente 0mm
-                                //if ($daily_rain != 0) {
-                                $max_rain = 200; //Máxima cantidad de lluvia que se puede registar en un día.
-                                $h_min = 40;
-                                $h_max = 440; //Altura máxima en píxeles del pluviómetro
-                                // Vamos a calcular la altura del pluviómetro
-                                $heigh = ($daily_rain / $max_rain) * ($h_max - $h_min);
-                                if ($heigh > 400) {
-                                    $heigh = 400;
-                                }
-                                $water_start = $h_max - $heigh;
-                                $stroke_bucket_top = "var(--wu-lightblue20)";
-                                $fill_bucket_top = "var(--wu-lightblue)";
-                                $fill_bucket_bottom = "var(--wu-lightblue20)";
-                                //}
-                                ?>
-                                <rain-widget-view id="widget_de_lluvia" data-pws-id="IFUENG27" data-status="connected" data-unit="m" data-precip-rate="0" data-precip-total="0" data-main-value="0" aria-valuenow="0" data-secondary-value="0" class="widget-view loaded">
+                                                                <rain-widget-view id="widget_de_lluvia" data-pws-id="IFUENG27" data-status="connected" data-unit="m" data-precip-rate="0" data-precip-total="0" data-main-value="0" aria-valuenow="0" data-secondary-value="0" class="widget-view loaded">
                                     <div class="graphic-container">
                                         <div class="precip-container">
                                             <div class="mini-droplets">
@@ -365,17 +227,17 @@ if (isset($data["last_updated"])) {
                                             <div class="precip-bucket">
                                                 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" title="precipitation" viewBox="0 0 234 482" height="100%" preserveAspectRatio="xMinYMid">
                                                     <ellipse fill="none" stroke="var(--widget-empty)" stroke-width="10" stroke-miterlimit="10" cx="117" cy="39" rx="107" ry="30"></ellipse><!--Boca del pluviómetro-->
-                                                    <rect id="precip-bucket-fill" fill="var(--wu-lightblue)" x="12" width="208" y="<?php echo $water_start; ?>" height="<?php echo $heigh; ?>" style="transition: y 0.6s, height 0.6s;"></rect> <!-- Columna de agua del pluviómetro -->
-                                                    <ellipse id="precip-bucket-top" stroke="<?php echo $stroke_bucket_top; ?>" stroke-width="5" fill="<?php echo $fill_bucket_top; ?>" cx="117" cy="<?php echo $water_start; ?>" rx="107" ry="30" style="transition: cy 0.6s;"></ellipse> <!-- Parte superior de la columna de agua -->
-                                                    <ellipse id="precip-bucket-bottom" fill="<?php echo $fill_bucket_bottom; ?>" cx="117" cy="440" rx="107" ry="30"></ellipse> <!-- Parte inferior de la columna de agua / pluviómetro -->
+                                                    <rect id="precip-bucket-fill" fill="var(--wu-lightblue)" x="12" width="208" y="440" height="0" style="transition: y 0.6s, height 0.6s;"></rect> <!-- Columna de agua del pluviómetro -->
+                                                    <ellipse id="precip-bucket-top" stroke="var(--wu-lightblue20)" stroke-width="5" fill="var(--wu-lightblue)" cx="117" cy="440" rx="107" ry="30" style="transition: cy 0.6s;"></ellipse> <!-- Parte superior de la columna de agua -->
+                                                    <ellipse id="precip-bucket-bottom" fill="var(--wu-lightblue20)" cx="117" cy="440" rx="107" ry="30"></ellipse> <!-- Parte inferior de la columna de agua / pluviómetro -->
                                                     <path fill="none" stroke="var(--widget-empty)" stroke-width="10" stroke-miterlimit="10" d="M10,39v394c0,16.6,47.9,40,107,40s107-23.4,107-40V39"></path><!--Cristal exterior del pluviómetro-->
                                                 </svg>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="value-container">
-                                        <div class="main-value value-unit precip-total" id="rain-widget-main-display"><?php echo $daily_rain; ?></div>
-                                        <div class="secondary-value value-unit precip-rate uppercase" id="rain-widget-secondary-display"><?php echo $rain_rate; ?></div>
+                                        <div class="main-value value-unit precip-total" id="rain-widget-main-display">0</div>
+                                        <div class="secondary-value value-unit precip-rate uppercase" id="rain-widget-secondary-display"></div>
                                     </div>
                                 </rain-widget-view>
                             </div>
@@ -385,14 +247,14 @@ if (isset($data["last_updated"])) {
                                     ***************************************************** -->
                             <div class="widget" id="pressure_widget">
                                 <div class="title">Presión Relativa</div>
-                                <pressure-widget-view data-pws-id="IFUENG27" data-status="connected" data-unit="m" data-pressure="<?php echo $pressure; ?>" data-pressure-angle="<?php echo $pres_angle; ?>" data-main-value="<?php echo $pressure; ?>" aria-valuenow="<?php echo $pressure; ?>" class="widget-view loaded">
+                                <pressure-widget-view data-pws-id="IFUENG27" data-status="connected" data-unit="m" data-pressure="" data-pressure-angle="" data-main-value="" aria-valuenow="" class="widget-view loaded">
                                     <div class="graphic-container">
                                         <div class="pressure-container">
                                             <div class="pressure-needle" id="pressure-widget-needle" style="transform: translate(-50%, -100%) rotate(0deg);"></div>
                                         </div>
                                     </div>
                                     <div class="value-container">
-                                        <div class="main-value value-unit pressure" id="pressure-widget-main-display"><?php echo $pressure; ?></div>
+                                        <div class="main-value value-unit pressure" id="pressure-widget-main-display"></div>
                                     </div>
                                 </pressure-widget-view>
                             </div>
@@ -402,66 +264,32 @@ if (isset($data["last_updated"])) {
                                     ***************************************************** -->
                             <div class="widget" id="uvi_widget">
                                 <div class="title">Índice UV</div>
-                                <?php
-                                // Vamos a calcular cuántas barras se colorean
-                                // Creamos un array con 13 posiciones, todas inicialmente "empty"
-                                $filled = array_fill(1, 13, "empty");
-                                // valor que marca hasta dónde se llenan: $uv;
-                                $uv = 0; //Inicialmente índice = 0
-                                $nivel = $uv;
-                                // Recorremos el array
-                                for ($i = 1; $i <= 13; $i++) {
-                                    if ($i <= $nivel) {
-                                        $filled[$i] = "";
-                                    } else {
-                                        $filled[$i] = "empty";
-                                    }
-                                }
-                                // Vamos calcular el valor de la radiación UV
-                                function uvIndexToCategory($uv)
-                                {
-                                    if ($uv >= 0 && $uv <= 2) {
-                                        return "Muy bajo";
-                                    } elseif ($uv >= 3 && $uv <= 5) {
-                                        return "Moderado";
-                                    } elseif ($uv >= 6 && $uv <= 7) {
-                                        return "Alto";
-                                    } elseif ($uv >= 8 && $uv <= 10) {
-                                        return "Muy alto";
-                                    } elseif ($uv >= 11) {
-                                        return "Extremo";
-                                    } else {
-                                        return "Valor inválido";
-                                    }
-                                }
-                                $categoria = uvIndexToCategory($uv);
-                                ?>
-                                <uv-widget-view data-pws-id="IFUENG27" data-status="connected" data-unit="m" data-uv="<?php echo $uv; ?>" data-main-value="<?php echo $uv; ?>" aria-valuenow="<?php echo $uv; ?>" data-secondary-value="<?php echo $uv; ?>" class="widget-view loaded">
+                                                                <uv-widget-view data-pws-id="IFUENG27" data-status="connected" data-unit="m" data-uv="0" data-main-value="0" aria-valuenow="0" data-secondary-value="0" class="widget-view loaded">
                                     <div class="graphic-container">
                                         <div class="pyramid-container" id="uv-widget-pyramid-container">
                                             <svg width="100%" height="100%" viewBox="0 0 162 136" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                                                 <title>UV</title>
                                                 <g id="UV-Index-Triangle" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                                    <polygon class="<?php echo $filled[13]; ?>" id="Fill-13" points="81.9537723 2.99975159 77.2979826 10.4602611 86.4956236 10.4362484" fill="var(--wu-purple)"></polygon>
-                                                    <polygon class="<?php echo $filled[12]; ?>" id="Fill-12" points="92.8108692 20.7694268 70.8323051 20.8356688 76.2650231 12.1248408 87.5102538 12.0925478" fill="var(--wu-purple)"></polygon>
-                                                    <polygon class="<?php echo $filled[11]; ?>" id="Fill-11" points="99.1192621 31.0946561 64.3589492 31.2022994 69.7916672 22.4914713 93.8186467 22.4177771" fill="var(--wu-purple)"></polygon>
-                                                    <polygon class="<?php echo $filled[10]; ?>" id="Fill-10" points="105.434921 41.428828 57.8945103 41.5778726 63.3272282 32.8670446 100.134305 32.751121" fill="var(--wu-red)"></polygon>
-                                                    <polygon class="<?php echo $filled[9]; ?>" id="Fill-9" points="111.751405 51.7620892 51.4218149 51.9450828 56.8627892 43.2334268 106.442533 43.0769299" fill="var(--wu-red)"></polygon>
-                                                    <polygon class="<?php echo $filled[8]; ?>" id="Fill-8" points="118.058972 62.0882293 44.9567154 62.3192484 50.3894333 53.6092484 112.758356 53.4105223" fill="var(--wu-red)"></polygon>
-                                                    <polygon class="<?php echo $filled[7]; ?>" id="Fill-7" points="124.367447 72.4134586 38.4834421 72.686707 43.9244164 63.975879 119.066832 63.7440318" fill="var(--wu-orange)"></polygon>
-                                                    <polygon class="<?php echo $filled[6]; ?>" id="Fill-6" points="130.17996 81.9276369 32.5388267 82.2331783 37.4513908 74.3512038 125.38216 74.0696752" fill="var(--wu-orange)"></polygon>
-                                                    <polygon class="<?php echo $filled[5]; ?>" id="Fill-5" points="136.495618 92.2528662 26.0661313 92.6006369 31.4988492 83.8889809 131.195003 83.5759873" fill="var(--wu-yellow)"></polygon>
-                                                    <polygon class="<?php echo $filled[4]; ?>" id="Fill-4" points="142.804011 102.58621 19.6010318 102.96793 25.0337497 94.2562739 137.503396 93.9093312" fill="var(--wu-yellow)"></polygon>
-                                                    <polygon class="<?php echo $filled[3]; ?>" id="Fill-3" points="149.111661 112.912268 13.1285841 113.342841 18.5613021 104.632013 143.819302 104.242013" fill="var(--wu-yellow)"></polygon>
-                                                    <polygon class="<?php echo $filled[2]; ?>" id="Fill-2" points="155.427732 123.23758 6.66373231 123.717834 12.0964503 115.007006 150.127117 114.560701" fill="var(--wu-green)"></polygon>
-                                                    <polygon class="<?php echo $filled[1]; ?>" id="Fill-1" points="5.62342462 125.373554 0.999834872 132.792662 161.264189 132.792662 156.435014 124.893299" fill="var(--wu-green)"></polygon>
+                                                    <polygon class="empty" id="Fill-13" points="81.9537723 2.99975159 77.2979826 10.4602611 86.4956236 10.4362484" fill="var(--wu-purple)"></polygon>
+                                                    <polygon class="empty" id="Fill-12" points="92.8108692 20.7694268 70.8323051 20.8356688 76.2650231 12.1248408 87.5102538 12.0925478" fill="var(--wu-purple)"></polygon>
+                                                    <polygon class="empty" id="Fill-11" points="99.1192621 31.0946561 64.3589492 31.2022994 69.7916672 22.4914713 93.8186467 22.4177771" fill="var(--wu-purple)"></polygon>
+                                                    <polygon class="empty" id="Fill-10" points="105.434921 41.428828 57.8945103 41.5778726 63.3272282 32.8670446 100.134305 32.751121" fill="var(--wu-red)"></polygon>
+                                                    <polygon class="empty" id="Fill-9" points="111.751405 51.7620892 51.4218149 51.9450828 56.8627892 43.2334268 106.442533 43.0769299" fill="var(--wu-red)"></polygon>
+                                                    <polygon class="empty" id="Fill-8" points="118.058972 62.0882293 44.9567154 62.3192484 50.3894333 53.6092484 112.758356 53.4105223" fill="var(--wu-red)"></polygon>
+                                                    <polygon class="empty" id="Fill-7" points="124.367447 72.4134586 38.4834421 72.686707 43.9244164 63.975879 119.066832 63.7440318" fill="var(--wu-orange)"></polygon>
+                                                    <polygon class="empty" id="Fill-6" points="130.17996 81.9276369 32.5388267 82.2331783 37.4513908 74.3512038 125.38216 74.0696752" fill="var(--wu-orange)"></polygon>
+                                                    <polygon class="empty" id="Fill-5" points="136.495618 92.2528662 26.0661313 92.6006369 31.4988492 83.8889809 131.195003 83.5759873" fill="var(--wu-yellow)"></polygon>
+                                                    <polygon class="empty" id="Fill-4" points="142.804011 102.58621 19.6010318 102.96793 25.0337497 94.2562739 137.503396 93.9093312" fill="var(--wu-yellow)"></polygon>
+                                                    <polygon class="empty" id="Fill-3" points="149.111661 112.912268 13.1285841 113.342841 18.5613021 104.632013 143.819302 104.242013" fill="var(--wu-yellow)"></polygon>
+                                                    <polygon class="empty" id="Fill-2" points="155.427732 123.23758 6.66373231 123.717834 12.0964503 115.007006 150.127117 114.560701" fill="var(--wu-green)"></polygon>
+                                                    <polygon class="empty" id="Fill-1" points="5.62342462 125.373554 0.999834872 132.792662 161.264189 132.792662 156.435014 124.893299" fill="var(--wu-green)"></polygon>
                                                 </g>
                                             </svg>
                                         </div>
                                     </div>
                                     <div class="value-container">
-                                        <div class="main-value value-unit" id="uv-widget-main-display"><?php echo $uv; ?></div>
-                                        <div class="secondary-value uppercase" id="uv-widget-secondary-display"><?php echo $categoria; ?></div>
+                                        <div class="main-value value-unit" id="uv-widget-main-display">0</div>
+                                        <div class="secondary-value uppercase" id="uv-widget-secondary-display">Muy bajo</div>
                                     </div>
                                 </uv-widget-view>
                             </div>
@@ -471,15 +299,15 @@ if (isset($data["last_updated"])) {
                                     ***************************************************** -->
                             <div class="widget" id="solar_widget">
                                 <div class="title">Radiación Solar</div>
-                                <solar-radiation-widget-view data-pws-id="IFUENG27" data-status="connected" data-unit="m" data-solar-radiation="<?php echo $solar; ?>" data-main-value="<?php echo $solar; ?>" aria-valuenow="<?php echo $solar; ?>" data-secondary-value="<?php echo $solar; ?>" class="widget-view loaded">
+                                <solar-radiation-widget-view data-pws-id="IFUENG27" data-status="connected" data-unit="m" data-solar-radiation="" data-main-value="" aria-valuenow="" data-secondary-value="" class="widget-view loaded">
                                     <div class="graphic-container">
                                         <div class="circle-container">
-                                            <div class="inner-circle" id="solar-radiation-widget-inner-circle" style="width: <?php echo $percentage; ?>%;"></div>
-                                            <div class="circle-ring ring-1 show" id="solar-radiation-widget-ring" style="width: <?php echo $percentage; ?>%;"></div>
+                                            <div class="inner-circle" id="solar-radiation-widget-inner-circle" style="width: %;"></div>
+                                            <div class="circle-ring ring-1 show" id="solar-radiation-widget-ring" style="width: %;"></div>
                                         </div>
                                     </div>
                                     <div class="value-container">
-                                        <div class="main-value value-unit radiation" id="solar-radiation-widget-main-display"><?php echo $solar; ?></div>
+                                        <div class="main-value value-unit radiation" id="solar-radiation-widget-main-display"></div>
                                     </div>
                                 </solar-radiation-widget-view>
                             </div>
@@ -488,31 +316,17 @@ if (isset($data["last_updated"])) {
                                     ********** WIDGET DE TEMPERATURA INTERIOR ***********
                                     ***************************************************** -->
                             <div class="widget" id="tempint_widget">
-                                <?php
-                                // Calcular la posición de la aguja de la temperatura interior
-                                // Usamos los mismos valores de máximos y mínimos que para calcular la posición de la aguja de la temperatura exterior.
-                                $in_temp = 0; // Inicialmente 0º
-                                $in_temp_angle =
-                                    (($in_temp - $minTemp) * ($maxAngle - $minAngle)) / ($maxTemp - $minTemp) + $minAngle;
-                                // Limitamos a los extremos
-                                if ($temp_angle < $minAngle) {
-                                    $temp_angle = $minAngle;
-                                }
-                                if ($temp_angle > $maxAngle) {
-                                    $temp_angle = $maxAngle;
-                                }
-                                ?>
-                                <div class="title">Temperatura Interior</div>
-                                <temp-widget-view data-pws-id="IFUENG27" data-status="connected" data-unit="m" data-temp="<?php echo $in_temp; ?>" data-temp-angle="<?php echo $in_temp_angle; ?>" data-main-value="<?php echo $in_temp; ?>" aria-valuenow="<?php echo $in_temp; ?>" class="widget-view loaded">
+                                                                <div class="title">Temperatura Interior</div>
+                                <temp-widget-view data-pws-id="IFUENG27" data-status="connected" data-unit="m" data-temp="0" data-temp-angle="-62.142857142857" data-main-value="0" aria-valuenow="0" class="widget-view loaded">
                                     <div class="graphic-container">
                                         <div class="temp-gauge-container">
                                             <div class="temp-gauge-bg"></div>
                                             <div class="temp-gauge-inner"></div>
-                                            <div class="temp-needle" id="temp-int-widget-needle" style="transform: translate(-50%, -100%) rotate(<?php echo $in_temp_angle; ?>deg);"></div>
+                                            <div class="temp-needle" id="temp-int-widget-needle" style="transform: translate(-50%, -100%) rotate(-62.142857142857deg);"></div>
                                         </div>
                                     </div>
                                     <div class="value-container">
-                                        <div class="main-value value-unit degrees" id="temp-int-widget-main-display"><?php echo $in_temp; ?></div>
+                                        <div class="main-value value-unit degrees" id="temp-int-widget-main-display">0</div>
                                     </div>
                                 </temp-widget-view>
                             </div>
@@ -522,30 +336,10 @@ if (isset($data["last_updated"])) {
                                     ***************************************************** -->
                             <div class="widget" id="humint_widget">
                                 <div class="title">Humedad Interior</div>
-                                <?php
-                                // Calcular el ángulo del sector rellenado
-                                $in_humidity = 0; //Inicialmente 0%
-                                $in_angle_humidity = 360 * ($in_humidity / 100);
-                                // Determinar estado (colores) en base a la humedad
-                                if ($in_humidity < 35) {
-                                    $in_humid_state = "dry";
-                                    $in_humid_legend = "Seco";
-                                } elseif ($in_humidity >= 60) {
-                                    $in_humid_state = "humid";
-                                    $in_humid_legend = "Húmedo";
-                                } else {
-                                    $in_humid_state = "comfortable";
-                                    $in_humid_legend = "Confortable";
-                                }
-                                // Variables dependientes del estado
-                                $in_humidity_color = "--humidity-{$in_humid_state}-color";
-                                $in_humid_widget = $in_humid_state;
-                                $in_humid_others = "widget-view {$in_humid_state} loaded";
-                                ?>
-                                <humidity-int-widget-view data-pws-id="IFUENG27" data-status="connected" data-humidity="<?php echo $in_humidity; ?>" data-humidity-string="<?php echo $in_humid_widget; ?>" data-main-value="<?php echo $in_humidity; ?>" aria-valuenow="<?php echo $in_humidity; ?>" data-secondary-value="<?php echo $in_humid_widget; ?>" class="<?php echo $in_humid_others; ?>">
+                                                                <humidity-int-widget-view data-pws-id="IFUENG27" data-status="connected" data-humidity="0" data-humidity-string="dry" data-main-value="0" aria-valuenow="0" data-secondary-value="dry" class="widget-view dry loaded">
                                     <div class="graphic-container">
                                         <div class="humidity-int-gauge-container">
-                                            <div class="humidity-int-gauge-bg" id="humidity-int-gauge-bg" style="--humidity-int-gauge-bg: conic-gradient(from 270deg, rgba(var(<?php echo $in_humidity_color; ?>), 0.8) 0deg, rgba(var(<?php echo $in_humidity_color; ?>), 0.8) <?php echo $in_angle_humidity; ?>deg, rgba(var(--black-or-white), 0.1) <?php echo $in_angle_humidity; ?>deg, rgba(var(--black-or-white), 0.1) 360deg);">
+                                            <div class="humidity-int-gauge-bg" id="humidity-int-gauge-bg" style="--humidity-int-gauge-bg: conic-gradient(from 270deg, rgba(var(--humidity-dry-color), 0.8) 0deg, rgba(var(--humidity-dry-color), 0.8) 0deg, rgba(var(--black-or-white), 0.1) 0deg, rgba(var(--black-or-white), 0.1) 360deg);">
                                             </div>
                                             <div class="humidity-int-gauge-inner"></div>
                                             <div class="humidity-int-mist-ring mist-ring-1"></div>
@@ -562,8 +356,8 @@ if (isset($data["last_updated"])) {
                                         </div>
                                     </div>
                                     <div class="value-container">
-                                        <div class="main-value value-unit percent" id="humidity-int-widget-main-display"><?php echo $in_humidity; ?></div>
-                                        <div class="secondary-value uppercase" id="humidity-int-widget-text-display"><?php echo $in_humid_legend; ?></div>
+                                        <div class="main-value value-unit percent" id="humidity-int-widget-main-display">0</div>
+                                        <div class="secondary-value uppercase" id="humidity-int-widget-text-display">Seco</div>
                                     </div>
                                 </humidity-int-widget-view>
                             </div>
@@ -1054,8 +848,8 @@ if (isset($data["last_updated"])) {
                             ************************************************************* -->
                         <!-- Modal oculto por defecto -->
                         <div id="pws-info-dialog" class="modal"
-                             data-lat="<?php echo $lat; ?>"
-                             data-lon="<?php echo $lon; ?>">
+                             data-lat="36.565670"
+                             data-lon="-4.603720">
 
                             <div class="modal-content">
                                 <button class="close" id="pws-info-dialog-close" aria-label="Cerrar">
@@ -1066,7 +860,7 @@ if (isset($data["last_updated"])) {
                                     </svg>
                                 </button>
 
-                                <h2 class="pws-info-title">Estación Meteorológica / Observatorio: <?php echo $observatorio; ?></h2>
+                                <h2 class="pws-info-title">Estación Meteorológica / Observatorio: El Patio</h2>
 
                                 <div class="pws-info-body">
 
@@ -1082,22 +876,22 @@ if (isset($data["last_updated"])) {
 
                                             <div class="pws-info-card">
                                                 <h4>Latitud</h4>
-                                                <p><?php echo $latitud; ?></p>
+                                                <p>36.565670º N</p>
                                             </div>
 
                                             <div class="pws-info-card">
                                                 <h4>Longitud</h4>
-                                                <p><?php echo $longitud; ?></p>
+                                                <p>4.60372º W</p>
                                             </div>
 
                                             <div class="pws-info-card">
                                                 <h4>Elevación</h4>
-                                                <p><?php echo $elev; ?> m</p>
+                                                <p>31 m</p>
                                             </div>
 
                                             <div class="pws-info-card">
                                                 <h4>Ciudad / País</h4>
-                                                <p><?php echo $city; ?>, <?php echo $country; ?></p>
+                                                <p>Fuengirola, ESPAÑA</p>
                                             </div>
 
                                         </div>
@@ -1107,12 +901,12 @@ if (isset($data["last_updated"])) {
 
                                             <div class="pws-info-card">
                                                 <h4>Hardware</h4>
-                                                <p><?php echo $hardware; ?></p>
+                                                <p>Ambient Weather WS-2090 (Wireless)</p>
                                             </div>
 
                                             <div class="pws-info-card">
                                                 <h4>Software</h4>
-                                                <p><?php echo $software; ?></p>
+                                                <p>EasyWeatherPro_V5.2.2 + Home Assistant</p>
                                             </div>
 
                                         </div>
@@ -1135,34 +929,34 @@ if (isset($data["last_updated"])) {
             </content-router-wc>
         </div>
         <script src="/weather/static/config/conf_to_js.php"></script>
-        <script type="module" src="/weather/static/views/widgets/wind_widget.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/widgets/dew_widget.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/widgets/temp_widget.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/widgets/humidity_widget.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/widgets/rain_widget.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/widgets/pressure_widget.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/widgets/uv_widget.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/widgets/solar_widget.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/widgets/temp_interior_widget.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/widgets/humidity_interior_widget.js?v=<?php echo time(); ?>"></script>
-        <script src="/weather/static/views/widgets/seeing_widget.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/widgets/forecast.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/date-time.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="/weather/static/views/widgets/wind_widget.js?v=1761404267"></script>
+        <script type="module" src="/weather/static/views/widgets/dew_widget.js?v=1761404267"></script>
+        <script type="module" src="/weather/static/views/widgets/temp_widget.js?v=1761404267"></script>
+        <script type="module" src="/weather/static/views/widgets/humidity_widget.js?v=1761404267"></script>
+        <script type="module" src="/weather/static/views/widgets/rain_widget.js?v=1761404267"></script>
+        <script type="module" src="/weather/static/views/widgets/pressure_widget.js?v=1761404267"></script>
+        <script type="module" src="/weather/static/views/widgets/uv_widget.js?v=1761404267"></script>
+        <script type="module" src="/weather/static/views/widgets/solar_widget.js?v=1761404267"></script>
+        <script type="module" src="/weather/static/views/widgets/temp_interior_widget.js?v=1761404267"></script>
+        <script type="module" src="/weather/static/views/widgets/humidity_interior_widget.js?v=1761404267"></script>
+        <script src="/weather/static/views/widgets/seeing_widget.js?v=1761404267"></script>
+        <script type="module" src="/weather/static/views/widgets/forecast.js?v=1761404267"></script>
+        <script type="module" src="/weather/static/views/date-time.js?v=1761404267"></script>
         <script src="https://unpkg.com/suncalc@1.9.0/suncalc.js"></script>
-        <script src="/weather/static/views/moon.js?v<?php echo time(); ?>"></script>
-        <script src="/weather/static/views/sun.js?lat=<?php echo $lat; ?>&lon=<?php echo $lon; ?>&v=<?php echo time(); ?>"></script>
+        <script src="/weather/static/views/moon.js?v1761404267"></script>
+        <script src="/weather/static/views/sun.js?lat=36.565670&lon=-4.603720&v=1761404267"></script>
         <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
-        <script type="module" src="/weather/static/views/widgets/modal_temp.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/widgets/modal_humidity.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/widgets/modal_wind.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/widgets/modal_rain.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/widgets/modal_pressure.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/widgets/modal_solar.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/widgets/modal_tempint.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/widgets/modal_humidityint.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/widgets/modal_seeing.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/widgets/pws_info.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/theme-switcher.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="/weather/static/views/widgets/modal_temp.js?v=1761404267"></script>
+        <script type="module" src="/weather/static/views/widgets/modal_humidity.js?v=1761404267"></script>
+        <script type="module" src="/weather/static/views/widgets/modal_wind.js?v=1761404267"></script>
+        <script type="module" src="/weather/static/views/widgets/modal_rain.js?v=1761404267"></script>
+        <script type="module" src="/weather/static/views/widgets/modal_pressure.js?v=1761404267"></script>
+        <script type="module" src="/weather/static/views/widgets/modal_solar.js?v=1761404267"></script>
+        <script type="module" src="/weather/static/views/widgets/modal_tempint.js?v=1761404267"></script>
+        <script type="module" src="/weather/static/views/widgets/modal_humidityint.js?v=1761404267"></script>
+        <script type="module" src="/weather/static/views/widgets/modal_seeing.js?v=1761404267"></script>
+        <script type="module" src="/weather/static/views/widgets/pws_info.js?v=1761404267"></script>
+        <script type="module" src="/weather/static/views/theme-switcher.js?v=1761404267"></script>
         <!-- SCRIPT de depuración -->
         <script>
             (function() {
@@ -1188,5 +982,5 @@ if (isset($data["last_updated"])) {
                 }, true);
             })();
         </script>
-    </body>
+    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9942917fbce3f777',t:'MTc2MTQwNDI2Nw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
