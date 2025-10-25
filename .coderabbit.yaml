@@ -1,0 +1,22 @@
+# Este archivo configura Code Rabbit para tu repositorio.
+
+# Configuración básica:
+linter:
+  enabled: true # Activa la revisión de estilo y sintaxis.
+
+# Configuración avanzada:
+reviews:
+  # Indica a Code Rabbit qué tipo de revisión debe realizar.
+  security:
+    enabled: true # ¡Esto es lo que pediste! Activa la búsqueda de vulnerabilidades.
+  suggestions:
+    enabled: true # Activa las sugerencias de mejora de código y buenas prácticas.
+  # Puedes añadir más cosas como 'complexity' (para revisar la complejidad del código) si lo deseas.
+
+# Qué archivos debe ignorar Code Rabbit.
+# Esto es útil para que no revise archivos de configuración o dependencias.
+ignore:
+  - 'package-lock.json'
+  - 'yarn.lock'
+  - 'dist/*'
+  - 'build/*'
