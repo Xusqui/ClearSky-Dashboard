@@ -936,7 +936,6 @@ if (isset($data["last_updated"])) {
                             ******************** DATOS DEL SEEING **********************
                             *********************** M O D A L **************************
                             ************************************************************ -->
-                        <!-- Modal oculto por defecto -->
                         <div id="seeingModal" class="modal">
                             <div class="modal-content">
                                 <button class="close" aria-label="Cerrar" id="closeSeeingModal">
@@ -949,11 +948,10 @@ if (isset($data["last_updated"])) {
                                 <div class="infografia">
                                     <h1 class="seeing-modal-title">🌠 Datos del Seeing Astronómico</h1>
                                     <h2 class="seeing-group-title">Datos de Superficie</h2>
-                                    <div class="bloque">
-                                        <div class="card">
-                                            <h3 class="seeing-card-title">🌡️ Variación térmica</h3>
-                                            <p class="seeing-card-value" id="t8h">-</p>
-                                            <span class="seeing-card-desc">ºC (Últimas 8h)</span>
+                                    <div class="bloque bloque-fixed-3"> <div class="card">
+                                        <h3 class="seeing-card-title">🌡️ Variación térmica</h3>
+                                        <p class="seeing-card-value" id="t8h">-</p>
+                                        <span class="seeing-card-desc">ºC (Últimas 8h)</span>
                                         </div>
                                         <div class="card">
                                             <h3 class="seeing-card-title">💧 Variación de humedad</h3>
@@ -982,11 +980,10 @@ if (isset($data["last_updated"])) {
                                         </div>
                                     </div>
                                     <h2 class="seeing-group-title">Datos en Altura</h2>
-                                    <div class="bloque">
-                                        <div class="card">
-                                            <h3 class="seeing-card-title">🌀 Temp. a 500 hPa</h3>
-                                            <p class="seeing-card-value" id="t500">-</p>
-                                            <span class="seeing-card-desc">ºC</span>
+                                    <div class="bloque bloque-fixed-3"> <div class="card">
+                                        <h3 class="seeing-card-title">🌀 Temp. a 500 hPa</h3>
+                                        <p class="seeing-card-value" id="t500">-</p>
+                                        <span class="seeing-card-desc">ºC</span>
                                         </div>
                                         <div class="card">
                                             <h3 class="seeing-card-title">🌀 Temp. a 300 hPa</h3>
@@ -1016,11 +1013,10 @@ if (isset($data["last_updated"])) {
                                     </div>
 
                                     <h2 class="seeing-group-title">Cobertura de Nubes</h2>
-                                    <div class="bloque">
-                                        <div class="card">
-                                            <h3 class="seeing-card-title">☁️ Nubes bajas</h3>
-                                            <p class="seeing-card-value" id="clow">-</p>
-                                            <span class="seeing-card-desc">% Cobertura</span>
+                                    <div class="bloque"> <div class="card">
+                                        <h3 class="seeing-card-title">☁️ Nubes bajas</h3>
+                                        <p class="seeing-card-value" id="clow">-</p>
+                                        <span class="seeing-card-desc">% Cobertura</span>
                                         </div>
                                         <div class="card">
                                             <h3 class="seeing-card-title">🌥️ Nubes medias</h3>

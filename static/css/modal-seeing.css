@@ -37,16 +37,27 @@
 
 .bloque {
     display: grid;
-    /* --- LA MEJORA PRINCIPAL --- */
-    /* Crea columnas automáticas:
-    - Cada columna tiene un mínimo de 160px.
-    - Se expanden (1fr) para rellenar el espacio.
-    - Se ajustan solas (auto-fit) a la pantalla.
-    */
+    /* Comportamiento original: Columnas adaptables con un mínimo de 160px */
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     gap: 15px; /* Espacio entre tarjetas */
     margin-bottom: 15px;
 }
+
+/* === REGLAS PARA FORZAR LA DISTRIBUCIÓN 3x2 === */
+.bloque-fixed-3 {
+    /* Fuerza exactamente 3 columnas en pantallas suficientemente grandes */
+    grid-template-columns: repeat(3, 1fr);
+}
+
+/* Media Query para mejorar la visualización de 3 columnas en móviles */
+@media (max-width: 600px) {
+    .bloque-fixed-3 {
+        /* En móvil, se reduce a 2 columnas para que las tarjetas no sean diminutas */
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+/* ============================================= */
+
 
 .card {
     background: var(--color-box-bg);
@@ -68,7 +79,7 @@
 
 /* Título de la tarjeta (reemplaza a h2-seeing) */
 .seeing-card-title {
-    font-size: 0.9em; /* Más pequeño para dar jerarquía */
+    font-size: 1.1em; /* 🎉 ¡MODIFICADO A 1.1em! */
     margin-top: 0;
     margin-bottom: 10px;
     color: var(--color-secondary-font);
