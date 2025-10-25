@@ -140,7 +140,7 @@ if (isset($data["last_updated"])) {
                             <!-- Contenedor general de tarjetas -->
                             <div class="cards-grid">
                                 <!-- Tarjeta Sol -->
-                                <div class="big-card sun-card">
+                                <div class="big-card-sun sun-card">
                                     <div id="sun-arc-container">
                                         <svg id="sun-arc" width="100" height="100" viewBox="0 0 100 100">
                                             <path d="M 10 60 A 35 35 0 0 1 90 60" stroke="orange" stroke-width="4" fill="none" stroke-linecap="round"/>
@@ -153,7 +153,7 @@ if (isset($data["last_updated"])) {
                                     </div>
                                 </div>
                                 <!-- Tarjeta Luna -->
-                                <div class="big-card moon-card">
+                                <div class="big-card-moon moon-card">
                                     <div class="moon-icon">
                                         <svg width="100%" height="100%" viewBox="0 0 120 90">
                                             <defs>

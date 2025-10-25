@@ -73,6 +73,7 @@
     --image-temp-arrow-tip: url(/weather/static/images/widgets/temp-arrow-tip.svg);
     --image-pressure-bg: url(/weather/static/images/widgets/pressure-bg.svg);
     --icon-wu-logo: url(/weather/static/images/icons/wu-logo.svg);
+    --image-background-moon-card: url(/weather/static/images/backgrounds/stars1.png);
 }
 
 @media (prefers-color-scheme: dark) {
