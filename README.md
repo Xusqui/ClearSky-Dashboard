@@ -51,7 +51,7 @@ El proyecto tiene dos partes principales:
     estación meteorológica en la base de datos (MySQL/MariaDB).
 2.  **La Web (index.php)**: La propia página web que lee y muestra los datos de la base de datos.
 
-Se asume que el software se instala en el directorio `/weather/` de tu servidor web.
+Inicialmente se asumína que el software se instalaba en el directorio `/weather/` de tu servidor web. Actualmente se han corregido las rutas estáticas tipo `/weather/`por `./`o `../`, etc... No obstante no está probado si funciona en un directorio raíz y estas instrucciones siguen asumiento que lo instalas en el directorio `/weather` de tu servidor. Cambia esto a tu conveniencia y bajo tu responsabilidad.
 
 ---
 
