@@ -12,6 +12,8 @@ reviews:
   suggestions:
     enabled: true # Activa las sugerencias de mejora de código y buenas prácticas.
   # Puedes añadir más cosas como 'complexity' (para revisar la complejidad del código) si lo deseas.
+auto_review:
+  enabled: true
 
 # Qué archivos debe ignorar Code Rabbit.
 # Esto es útil para que no revise archivos de configuración o dependencias.
