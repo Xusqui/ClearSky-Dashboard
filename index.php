@@ -1114,7 +1114,7 @@ if (isset($data["last_updated"])) {
                     <div class="max-width">
                         <div class="container">
                             <div class="footer-text">Powered by </div>
-                            <a href="https://www.wunderground.com"><wu-logo title="WU Logo" id="WU Logo"></wu-logo></a>
+                            <a href="https://www.wunderground.com"><wu-logo title="WU Logo" id="wu-logo"></wu-logo></a>
                             <div class="footer-text"> Software</div>
                         </div>
                     </div>
