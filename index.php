@@ -117,18 +117,20 @@ if (isset($data["last_updated"])) {
                             <!-- El script de "actualizado hace x segundos", está dentro del wind_widget.js -->
                             <span class="ago" id="pws-status-time-ago" data-updated="<?php echo $localTime->getTimestamp(); ?>">Actualizado hace 0 segundos</span>
                             <!-- CONTROLES DE TEMA (añadir en dashboard-header-view, junto al setup-link) -->
+                            <!-- Enlace setup -->
                             <a href="./static/config/setup.php" class="setup-link"><setup-button></setup-button> Setup</a>
-<div class="theme-buttons">
-    <button data-theme="light" title="Modo Día">
-        <img src="/weather/static/images/icons/day.svg" alt="Día" />
-    </button>
-    <button data-theme="dark" title="Modo Noche">
-        <img src="/weather/static/images/icons/night.svg" alt="Noche" />
-    </button>
-    <button data-theme="auto" title="Modo Automático">
-        <img src="/weather/static/images/icons/auto.svg" alt="Auto" />
-    </button>
-</div>
+                            <!-- Selector de tema de color -->
+                            <div class="theme-buttons">
+                                <button data-theme="light" title="Modo Día">
+                                    <img src="/weather/static/images/icons/day.svg" alt="Día" />
+                                </button>
+                                <button data-theme="dark" title="Modo Noche">
+                                    <img src="/weather/static/images/icons/night.svg" alt="Noche" />
+                                </button>
+                                <button data-theme="auto" title="Modo Automático">
+                                    <img src="/weather/static/images/icons/auto.svg" alt="Auto" />
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </dashboard-header-view>
