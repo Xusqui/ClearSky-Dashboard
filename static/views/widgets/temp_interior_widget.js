@@ -2,7 +2,7 @@
 
 async function updateTempInteriorWidget() {
     try {
-        const response = await fetch("/weather/static/modules/get_temp_interior_data.php");
+        const response = await fetch("./static/modules/get_temp_interior_data.php");
         const data = await response.json();
 
         if (data.error) {

@@ -1,5 +1,5 @@
 function updateTempWidget() {
-    fetch('/weather/static/modules/get_temp_data.php')
+    fetch('./static/modules/get_temp_data.php')
         .then(response => response.json())
         .then(data => {
             if (data.error) {

@@ -101,7 +101,7 @@ function loadTempChart(startDate, endDate) {
     var lightBlue80 = rootStyle.getPropertyValue("--wu-lightblue80").trim();
 
     // --- MODIFICADO: Construir la URL de fetch dinámicamente ---
-    var fetchUrl = "/weather/static/modules/get_temp_last24h.php";
+    var fetchUrl = "./static/modules/get_temp_last24h.php";
     if (startDate && endDate) {
         fetchUrl += `?start=${encodeURIComponent(startDate)}&end=${encodeURIComponent(endDate)}`;
     }

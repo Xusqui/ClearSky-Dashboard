@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   //Actualizar el modal de Seeing
   function actualizarModal() {
-    fetch('/weather/static/modules/get_seeing.php')
+    fetch('./static/modules/get_seeing.php')
       .then(response => response.json())
       .then(data => {
       if (data.error) {

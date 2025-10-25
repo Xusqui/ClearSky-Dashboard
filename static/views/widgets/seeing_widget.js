@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
   function actualizarSeeing() {
-    fetch('/weather/static/modules/get_seeing.php')
+    fetch('./static/modules/get_seeing.php')
       .then(response => response.json())
       .then(data => {
         if (data.error) {

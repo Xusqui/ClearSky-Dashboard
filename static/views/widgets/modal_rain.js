@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
         
         // 1. Cargar datos de estado (la cuadrícula de estadísticas)
         // (Esto consulta 'get_rain_historic_data.php')
-        fetch("/weather/static/modules/get_rain_historic_data.php")
+        fetch("./static/modules/get_rain_historic_data.php")
             .then(response => response.json())
             .then(data => {
                 let estado = (parseFloat(data.status) > 0) ? "Lloviendo" : "No llueve";
@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const bgColor = rootStyle.getPropertyValue('--bg-color').trim();
         
         // URL con parámetros (consulta 'get_rain_monthly.php')
-        const fetchUrl = `/weather/static/modules/get_rain_monthly.php?start=${encodeURIComponent(startMonth)}&end=${encodeURIComponent(endMonth)}`;
+        const fetchUrl = `./static/modules/get_rain_monthly.php?start=${encodeURIComponent(startMonth)}&end=${encodeURIComponent(endMonth)}`;
 
         // Mostrar "cargando"
         rainChart.showLoading({

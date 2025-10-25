@@ -2,7 +2,7 @@
 
 async function updateSolarWidget() {
     try {
-        const response = await fetch("/weather/static/modules/get_solar_data.php");
+        const response = await fetch("./static/modules/get_solar_data.php");
         const data = await response.json();
 
         if (data.error) {

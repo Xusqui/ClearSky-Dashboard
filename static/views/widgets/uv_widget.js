@@ -2,7 +2,7 @@
 
 async function updateUVWidget() {
     try {
-        const response = await fetch("/weather/static/modules/get_uv_data.php");
+        const response = await fetch("./static/modules/get_uv_data.php");
         const data = await response.json();
 
         if (data.error) {

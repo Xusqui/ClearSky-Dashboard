@@ -71,32 +71,32 @@ if (isset($data["last_updated"])) {
 
 <html lang="es">
     <head>
-        <link rel="icon" type="image/x-icon" href="/weather/favicon.ico"/>
+        <link rel="icon" type="image/x-icon" href="./favicon.ico"/>
         <title>Estación Meteorológica <?php echo $observatorio; ?></title>
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/images.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/global.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/colors.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/theme-switcher.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/dashboard-header.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/dashboard-body.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/dashboard-footer.css?v=<?php echo time(); ?>">
+        <link rel="stylesheet" type="text/css" href="./static/css/images.css?v=<?php echo time(); ?>">
+        <link rel="stylesheet" type="text/css" href="./static/css/global.css?v=<?php echo time(); ?>">
+        <link rel="stylesheet" type="text/css" href="./static/css/colors.css?v=<?php echo time(); ?>">
+        <link rel="stylesheet" type="text/css" href="./static/css/theme-switcher.css?v=<?php echo time(); ?>">
+        <link rel="stylesheet" type="text/css" href="./static/css/dashboard-header.css?v=<?php echo time(); ?>">
+        <link rel="stylesheet" type="text/css" href="./static/css/dashboard-body.css?v=<?php echo time(); ?>">
+        <link rel="stylesheet" type="text/css" href="./static/css/dashboard-footer.css?v=<?php echo time(); ?>">
         <!-- Widgets' CSS -->
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/dew-point-widget.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/humidity-widget.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/humidity-int-widget.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/pressure-widget.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/rain-widget.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/solar-radiation-widget.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/temp-widget.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/uv-widget.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/widget-base.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/wind-widget.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/moon.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/forecast.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/widget_seeing.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/modal-seeing.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/modal-dates.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="/weather/static/css/modal-pws.css?v=<?php echo time(); ?>">
+        <link rel="stylesheet" type="text/css" href="./static/css/dew-point-widget.css?v=<?php echo time(); ?>">
+        <link rel="stylesheet" type="text/css" href="./static/css/humidity-widget.css?v=<?php echo time(); ?>">
+        <link rel="stylesheet" type="text/css" href="./static/css/humidity-int-widget.css?v=<?php echo time(); ?>">
+        <link rel="stylesheet" type="text/css" href="./static/css/pressure-widget.css?v=<?php echo time(); ?>">
+        <link rel="stylesheet" type="text/css" href="./static/css/rain-widget.css?v=<?php echo time(); ?>">
+        <link rel="stylesheet" type="text/css" href="./static/css/solar-radiation-widget.css?v=<?php echo time(); ?>">
+        <link rel="stylesheet" type="text/css" href="./static/css/temp-widget.css?v=<?php echo time(); ?>">
+        <link rel="stylesheet" type="text/css" href="./static/css/uv-widget.css?v=<?php echo time(); ?>">
+        <link rel="stylesheet" type="text/css" href="./static/css/widget-base.css?v=<?php echo time(); ?>">
+        <link rel="stylesheet" type="text/css" href="./static/css/wind-widget.css?v=<?php echo time(); ?>">
+        <link rel="stylesheet" type="text/css" href="./static/css/moon.css?v=<?php echo time(); ?>">
+        <link rel="stylesheet" type="text/css" href="./static/css/forecast.css?v=<?php echo time(); ?>">
+        <link rel="stylesheet" type="text/css" href="./static/css/widget_seeing.css?v=<?php echo time(); ?>">
+        <link rel="stylesheet" type="text/css" href="./static/css/modal-seeing.css?v=<?php echo time(); ?>">
+        <link rel="stylesheet" type="text/css" href="./static/css/modal-dates.css?v=<?php echo time(); ?>">
+        <link rel="stylesheet" type="text/css" href="./static/css/modal-pws.css?v=<?php echo time(); ?>">
         <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
         <link href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" rel="stylesheet" />
     </head>
@@ -122,13 +122,13 @@ if (isset($data["last_updated"])) {
                             <!-- Selector de tema de color -->
                             <div class="theme-buttons">
                                 <button data-theme="light" title="Modo Día">
-                                    <img src="/weather/static/images/icons/day.svg" alt="Día" />
+                                    <img src="./static/images/icons/day.svg" alt="Día" />
                                 </button>
                                 <button data-theme="dark" title="Modo Noche">
-                                    <img src="/weather/static/images/icons/night.svg" alt="Noche" />
+                                    <img src="./static/images/icons/night.svg" alt="Noche" />
                                 </button>
                                 <button data-theme="auto" title="Modo Automático">
-                                    <img src="/weather/static/images/icons/auto.svg" alt="Auto" />
+                                    <img src="./static/images/icons/auto.svg" alt="Auto" />
                                 </button>
                             </div>
                         </div>
@@ -144,10 +144,10 @@ if (isset($data["last_updated"])) {
                                     <div id="sun-arc-container">
                                         <svg id="sun-arc" width="100" height="100" viewBox="0 0 100 100">
                                             <path d="M 10 60 A 35 35 0 0 1 90 60" stroke="orange" stroke-width="4" fill="none" stroke-linecap="round"/>
-                                            <image id="sun-icon" href="/weather/static/images/icons/sun.svg" width="30" height="30" x="0" y="0" visibility="hidden"/>
-                                            <image id="sunrise-icon" href="/weather/static/images/icons/sunrise.svg" width="18" height="18" x="3" y="60"/>
+                                            <image id="sun-icon" href="./static/images/icons/sun.svg" width="30" height="30" x="0" y="0" visibility="hidden"/>
+                                            <image id="sunrise-icon" href="./static/images/icons/sunrise.svg" width="18" height="18" x="3" y="60"/>
                                             <text id="sunrise-time" x="11" y="80" text-anchor="middle" font-size="9" fill="gray">sunrise</text>
-                                            <image id="sunset-icon" href="/weather/static/images/icons/sunset.svg" width="18" height="18" x="83" y="60"/>
+                                            <image id="sunset-icon" href="./static/images/icons/sunset.svg" width="18" height="18" x="83" y="60"/>
                                             <text id="sunset-time" x="89" y="80" text-anchor="middle" font-size="9" fill="gray">sunset</text>
                                         </svg>
                                     </div>
@@ -162,7 +162,7 @@ if (isset($data["last_updated"])) {
                                                     <path id="mask-path" fill="white"/>
                                                 </mask>
                                             </defs>
-                                            <image id="moon-icon" href="/weather/static/images/icons/moons/full_moon.svg"
+                                            <image id="moon-icon" href="./static/images/icons/moons/full_moon.svg"
                                                    width="120" height="88" x="0" y="0" mask="url(#moon-mask)"/>
                                             <text id="moon-text" x="60" y="90" text-anchor="middle">Calculando</text>
                                         </svg>
@@ -1062,35 +1062,35 @@ if (isset($data["last_updated"])) {
                 </dashboard-footer-view>
             </content-router-wc>
         </div>
-        <script src="/weather/static/config/conf_to_js.php"></script>
-        <script type="module" src="/weather/static/views/widgets/wind_widget.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/widgets/dew_widget.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/widgets/temp_widget.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/widgets/humidity_widget.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/widgets/rain_widget.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/widgets/pressure_widget.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/widgets/uv_widget.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/widgets/solar_widget.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/widgets/temp_interior_widget.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/widgets/humidity_interior_widget.js?v=<?php echo time(); ?>"></script>
-        <script src="/weather/static/views/widgets/seeing_widget.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/widgets/forecast.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/date-time.js?v=<?php echo time(); ?>"></script>
+        <script src="./static/config/conf_to_js.php"></script>
+        <script type="module" src="./static/views/widgets/wind_widget.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/views/widgets/dew_widget.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/views/widgets/temp_widget.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/views/widgets/humidity_widget.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/views/widgets/rain_widget.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/views/widgets/pressure_widget.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/views/widgets/uv_widget.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/views/widgets/solar_widget.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/views/widgets/temp_interior_widget.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/views/widgets/humidity_interior_widget.js?v=<?php echo time(); ?>"></script>
+        <script src="./static/views/widgets/seeing_widget.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/views/widgets/forecast.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/views/date-time.js?v=<?php echo time(); ?>"></script>
         <script src="https://unpkg.com/suncalc@1.9.0/suncalc.js"></script>
-        <script src="/weather/static/views/moon.js?v<?php echo time(); ?>"></script>
-        <script src="/weather/static/views/sun.js?lat=<?php echo $lat; ?>&lon=<?php echo $lon; ?>&v=<?php echo time(); ?>"></script>
+        <script src="./static/views/moon.js?v<?php echo time(); ?>"></script>
+        <script src="./static/views/sun.js?lat=<?php echo $lat; ?>&lon=<?php echo $lon; ?>&v=<?php echo time(); ?>"></script>
         <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
-        <script type="module" src="/weather/static/views/widgets/modal_temp.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/widgets/modal_humidity.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/widgets/modal_wind.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/widgets/modal_rain.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/widgets/modal_pressure.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/widgets/modal_solar.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/widgets/modal_tempint.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/widgets/modal_humidityint.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/widgets/modal_seeing.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/widgets/pws_info.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="/weather/static/views/theme-switcher.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/views/widgets/modal_temp.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/views/widgets/modal_humidity.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/views/widgets/modal_wind.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/views/widgets/modal_rain.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/views/widgets/modal_pressure.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/views/widgets/modal_solar.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/views/widgets/modal_tempint.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/views/widgets/modal_humidityint.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/views/widgets/modal_seeing.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/views/widgets/pws_info.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/views/theme-switcher.js?v=<?php echo time(); ?>"></script>
         <!-- SCRIPT de depuración -->
         <script>
             (function() {

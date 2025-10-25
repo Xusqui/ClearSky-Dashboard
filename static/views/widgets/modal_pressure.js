@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", function () {
         pressureChart = echarts.init(chartDom);
 
         // Construir URL
-        var fetchUrl = "/weather/static/modules/get_pressure_last24h.php";
+        var fetchUrl = "./static/modules/get_pressure_last24h.php";
         if (startDate && endDate) {
             fetchUrl += `?start=${encodeURIComponent(startDate)}&end=${encodeURIComponent(endDate)}`;
         }

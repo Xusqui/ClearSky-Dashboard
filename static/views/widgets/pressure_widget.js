@@ -1,5 +1,5 @@
 function fetchPressureData() {
-    fetch("/weather/static/modules/get_pressure_data.php")
+    fetch("./static/modules/get_pressure_data.php")
         .then(response => response.json())
         .then(data => {
             const pressure = parseFloat(data.pressure);

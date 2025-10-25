@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", function () {
         solarChart = echarts.init(solarDom);
 
         // 3. Construir URL
-        var fetchUrl = "/weather/static/modules/get_uv_solar_last24h.php";
+        var fetchUrl = "./static/modules/get_uv_solar_last24h.php";
         if (startDate && endDate) {
             fetchUrl += `?start=${encodeURIComponent(startDate)}&end=${encodeURIComponent(endDate)}`;
         }

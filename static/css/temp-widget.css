@@ -21,7 +21,7 @@ temp-widget-view .temp-gauge-bg {
     border: 2px solid rgba(255, 255, 255, .1);
     position: relative;
     overflow: hidden;
-    mask-image: url(/weather/static/images/widgets/temp-bg.svg);
+    mask-image: url(../../static/images/widgets/temp-bg.svg);
     mask-size: cover;
     mask-repeat: no-repeat;
     mask-position:center
@@ -45,7 +45,7 @@ temp-widget-view:not([data-temp]) .temp-gauge-bg::before {
 }
 
 temp-widget-view .temp-gauge-inner {
-    mask-image: url(/weather/static/images/widgets/temp-bg.svg);
+    mask-image: url(../../static/images/widgets/temp-bg.svg);
     mask-size: cover;
     mask-repeat: no-repeat;
     mask-position: center;

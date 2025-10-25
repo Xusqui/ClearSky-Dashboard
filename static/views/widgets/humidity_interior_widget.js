@@ -1,5 +1,5 @@
 function updateHumidityWidget() {
-    fetch('/weather/static/modules/get_humidity_interior_data.php')
+    fetch('./static/modules/get_humidity_interior_data.php')
         .then(response => response.json())
         .then(data => {
             if (data.error) {

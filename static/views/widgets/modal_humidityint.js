@@ -98,7 +98,7 @@ function loadHumIntChart(startDate, endDate) {
     var darkBlue = rootStyle.getPropertyValue("--wu-darkblue").trim();
 
     // --- MODIFICADO: Construir la URL de fetch dinámicamente ---
-    var fetchUrl = "/weather/static/modules/get_humint_last24h.php";
+    var fetchUrl = "./static/modules/get_humint_last24h.php";
     if (startDate && endDate) {
         fetchUrl += `?start=${encodeURIComponent(startDate)}&end=${encodeURIComponent(endDate)}`;
     }

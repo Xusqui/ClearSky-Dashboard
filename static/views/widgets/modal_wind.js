@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
         dirChart = echarts.init(dirDom);
 
         // 3. Construir URL
-        var fetchUrl = "/weather/static/modules/get_wind_last24h.php";
+        var fetchUrl = "./static/modules/get_wind_last24h.php";
         if (startDate && endDate) {
             fetchUrl += `?start=${encodeURIComponent(startDate)}&end=${encodeURIComponent(endDate)}`;
         }

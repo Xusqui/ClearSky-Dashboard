@@ -295,7 +295,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
                 $setup_warning .= "Error al guardar la configuración en base de datos: " . $stmt->error;
             } else {
                 // éxito: redirigir a la página principal
-                header("Location: /weather/index.php");
+                header("Location: ../../index.php");
                 exit;
             }
             $stmt->close();

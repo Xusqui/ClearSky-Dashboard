@@ -93,7 +93,7 @@ function loadTempIntChart(startDate, endDate) {
     // (Omitido el resto de colores por brevedad, ya los tienes)
 
     // --- MODIFICADO: Construir la URL de fetch dinámicamente ---
-    var fetchUrl = "/weather/static/modules/get_tempint_last24h.php";
+    var fetchUrl = "./static/modules/get_tempint_last24h.php";
     if (startDate && endDate) {
         // Añadir parámetros a la URL
         fetchUrl += `?start=${encodeURIComponent(startDate)}&end=${encodeURIComponent(endDate)}`;

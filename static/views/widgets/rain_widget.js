@@ -1,7 +1,7 @@
 let rainInterval = null;
 
 function updateRainWidget() {
-    fetch('/weather/static/modules/get_rain_data.php')
+    fetch('./static/modules/get_rain_data.php')
         .then(response => response.json())
         .then(data => {
             if (data.error) {

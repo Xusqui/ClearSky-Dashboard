@@ -19,7 +19,7 @@ function startUpdateTimer() {
 }
 
 function updateWindWidget() {
-    fetch("/weather/static/modules/get_wind_data.php")
+    fetch("./static/modules/get_wind_data.php")
         .then((response) => response.json())
         .then((data) => {
             if (data.error) {

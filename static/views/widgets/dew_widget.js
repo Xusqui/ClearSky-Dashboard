@@ -1,5 +1,5 @@
 function updateDewWidget() {
-    fetch('/weather/static/modules/get_dew_data.php')
+    fetch('./static/modules/get_dew_data.php')
         .then(response => response.json())
         .then(data => {
             if (data.error) {
