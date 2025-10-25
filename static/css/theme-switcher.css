@@ -1,0 +1,30 @@
+/* Estilos para el Selector de Temas */
+.theme-switcher {
+    display: inline-flex;
+    gap: 5px;
+    margin-left: 15px;
+    padding: 4px;
+    border-radius: 20px;
+    background-color: var(--page-nav-bg-color); /* Fondo ligero del tema */
+    box-shadow: 0 1px 3px rgba(var(--black-or-white), 0.1);
+}
+
+.theme-switcher button {
+    background: transparent;
+    border: none;
+    padding: 6px;
+    cursor: pointer;
+    border-radius: 50%;
+    color: var(--color-secondary-font);
+    transition: var(--default-transtion);
+}
+
+.theme-switcher button.active {
+    background-color: var(--bg-color); /* Fondo de la tarjeta */
+    color: var(--link-color); /* Color de enlace para destacar el activo */
+    box-shadow: 0 1px 4px rgba(var(--black-or-white), 0.2);
+}
+
+.theme-switcher button:hover {
+    color: var(--font-color);
+}

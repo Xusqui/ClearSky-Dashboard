@@ -114,7 +114,8 @@ if (isset($data["last_updated"])) {
                             <span>En <?php echo $city; ?>, a las</span>
                             <span class="long" id="pws-status-time-long"><?php echo $ts_formatted; ?>.</span>
                             <!-- El script de "actualizado hace x segundos", está dentro del wind_widget.js -->
-                            <span class="ago" id="pws-status-time-ago" data-updated="<?php echo $localTime->getTimestamp(); ?>">Actualizado hace 0 segundos</span> <a href="./static/config/setup.php" class="setup-link"><setup-button></setup-button> Setup</a>
+                            <span class="ago" id="pws-status-time-ago" data-updated="<?php echo $localTime->getTimestamp(); ?>">Actualizado hace 0 segundos</span>
+                            <a href="./static/config/setup.php" class="setup-link"><setup-button></setup-button> Setup</a>
                         </div>
                     </div>
                 </dashboard-header-view>
