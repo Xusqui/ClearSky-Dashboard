@@ -1124,7 +1124,7 @@ if (isset($data["last_updated"])) {
                 <dashboard-footer-view>
                     <div class="max-width">
                         <div class="container">
-                            <div class="footer-text">Powered by </div>
+                            <div class="footer-text">Inspired by </div>
                             <a href="https://www.wunderground.com"><wu-logo title="WU Logo" id="wu-logo"></wu-logo></a>
                             <div class="footer-text"> Software</div>
                         </div>
