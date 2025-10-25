@@ -25,13 +25,13 @@
   - [Componentes](#componentes)
 - [Mi Configuración](#%EF%B8%8F-mi-configuración-probada-y-funcional)
 - [Guía de Configuración](#-guía-de-configuración)
-  - [Paso 1: Añadir Integración "Ecowitt"](#1️⃣-paso-1-añadir-integración-ecowitt-a-home-assistant)
-  - [Paso 2: Configurar la Estación para enviar datos a Home Assistant](#2️⃣-paso-2-configurar-la-estacion-para-enviar-datos-a-home-assistant)
-  - [Paso 3: Crear la Base de Datos](#3️⃣-paso-3-crear-la-base-de-datos)
-  - [Paso 4: Añadir `rest_command`](#4️⃣-paso-4-añadir-rest_command-a-home-assistant)
-  - [Paso 5: Crear el Token para que Home Assistant se autentique en la web](#5️⃣-paso-5-crear-el-token-para-que-home-assistant-se-autentique-en-la-web)
-  - [Paso 6: Crear Automatización en Home Assistant](#6️⃣-paso-6-crear-automatización-en-home-assistant)
-  - [Paso 7: Configurar la web](#7️⃣-paso-7-configurar-la-web)
+  - [Paso 1: Añadir Integración "Ecowitt"](#paso-1-añadir-integración-ecowitt-a-home-assistant)
+  - [Paso 2: Configurar la Estación para enviar datos a Home Assistant](#paso-2-configurar-la-estacion-para-enviar-datos-a-home-assistant)
+  - [Paso 3: Crear la Base de Datos](#paso-3-crear-la-base-de-datos)
+  - [Paso 4: Añadir `rest_command`](#paso-4-añadir-rest_command-a-home-assistant)
+  - [Paso 5: Modificar archivos de configuración](#paso-5-archivos-de-configuración)
+  - [Paso 6: Crear el Token para que Home Assistant se autentique en la web](#paso-6-crear-el-token-para-que-home-assistant-se-autentique-en-la-web)
+  - [Paso 7: Crear Automatización en Home Assistant](#paso-7-crear-automatización-en-home-assistant)
 - [ToDo](#-todo)
 - [Feedback](#-feedback)
 
@@ -219,56 +219,21 @@ input_text:
 > Haz clic en la rueda dentada dentro de este panel y en el panel nuevo que se abre, dentro de la casilla "Entity ID" Está el nombre del sensor.
 > Cambia los nombres del Payload para que coincidan con los nombres de tus sensores.
 
-### 5️⃣ Paso 5: Crear el Token para que Home Assistant se autentique en la web.
-La primera vez que abres la web, p. ej: http://localhost/weather, se carga el script de configuración.
-En primer lugar se solicita una contraseña para que el script esté protegido.
-En segundo lugar se abre la configuración:
-
-<img width="570" height="1058" alt="Captura de pantalla 2025-10-18 a las 21 49 35" src="https://github.com/user-attachments/assets/e0cbd6dd-4f01-45c7-9997-bc2878e141ac" />
-
-Dentro de ésta, en la casilla "Token", se guarda el token generado para que Home Assistant pueda autenticarse. 
-Rellena todos los datos y haz clic en el botón "Copiar" para copiar el Token.
-
-Abre el archivo secrets.yaml de Home Assistanta e introduce lo siguiente:
-
-```yaml
-meteo_api_token: "Aquí-El-Toke-Copiado"
-```
-
-Guarda secrets.yaml
-
-### 6️⃣ Paso 6: Crear Automatización en Home Assistant
-
-Finalmente, crea una automatización para llamar al `rest_command` periódicamente.
-
-1.  Ve a **Settings / Automations & scenes / Create automation / Create new automation**.
-2.  **Trigger (Disparador):**
-    * **+ Add trigger** / **Time and location** / **Time pattern**
-    * **Trigger ID (Optional):** `Cada 5 minutos`
-    * **Minutes:** `/5`
-3.  **Actions (Acciones):**
-    * **+ Add Action**
-    * Busca y selecciona **RESTful Command: `send_all_meteo_data`**
-4.  **Guardar:**
-    * Ponle un nombre (ej: `Enviar datos meteorológicos a la base de datos`) y guarda.
-
-¡Y listo! Home Assistant recibirá los datos de la estación cada minuto y escribirá el último valor en tu base de datos cada 5 minutos.
-
-### 7️⃣ Paso 7: Configurar la web
+### 5️⃣ Paso 5: Archivos de Configuración
 
 Vamos a modificar los archivos de configuración de la web.
 
-Abre el archivo config_db.php.example y modifícalo según los datos que utilizaste en el paso 3:
+Abre el archivo config_db.php.example y modifícalo según los datos que utilizaste en el [paso 3](#3️⃣-paso-3-crear-la-base-de-datos):
 
 ```php
 <?php
-    // Renombrar a config_db.php
-    // Datos de conexión a MariaDB
+  // Renombrar a config_db.php
+  // Datos de conexión a MariaDB
 
-    $db_user = ""; // DataBase User
-$db_pass = ""; // DataBase Password
-$db_url = "127.0.0.1"; // dadtabase url
-$db_database = "weather"; // DataBase name
+  $db_user = ""; // DataBase User
+  $db_pass = ""; // DataBase Password
+  $db_url = "127.0.0.1"; // dadtabase url
+  $db_database = "weather"; // DataBase name
 ?>
 ```
 
@@ -298,6 +263,43 @@ $token = "Pega-Aquí-El-Long-Lived-Access-Token"; // Long-lived access Token de 
 ```
 
 Guarda el archivo como /weather/static/config/config.php
+
+### 6️⃣ Paso 6: Crear el Token para que Home Assistant se autentique en la web.
+La primera vez que abres la web, p. ej: http://localhost/weather, se carga el script de configuración.
+En primer lugar se solicita una contraseña para que el script esté protegido.
+En segundo lugar se abre la configuración:
+
+<img width="570" height="1058" alt="Captura de pantalla 2025-10-18 a las 21 49 35" src="https://github.com/user-attachments/assets/e0cbd6dd-4f01-45c7-9997-bc2878e141ac" />
+
+Dentro de ésta, en la casilla "Token", se guarda el token generado para que Home Assistant pueda autenticarse.
+Rellena todos los datos y haz clic en el botón "Copiar" para copiar el Token.
+
+Abre el archivo secrets.yaml de Home Assistanta e introduce lo siguiente:
+
+```yaml
+meteo_api_token: "Aquí-El-Toke-Copiado"
+```
+
+Guarda secrets.yaml
+
+### 7️⃣ Paso 7: Crear Automatización en Home Assistant
+
+Finalmente, crea una automatización para llamar al `rest_command` periódicamente.
+
+1.  Ve a **Settings / Automations & scenes / Create automation / Create new automation**.
+2.  **Trigger (Disparador):**
+    * **+ Add trigger** / **Time and location** / **Time pattern**
+    * **Trigger ID (Optional):** `Cada 5 minutos`
+    * **Minutes:** `/5`
+3.  **Actions (Acciones):**
+    * **+ Add Action**
+    * Busca y selecciona **RESTful Command: `send_all_meteo_data`**
+4.  **Guardar:**
+    * Ponle un nombre (ej: `Enviar datos meteorológicos a la base de datos`) y guarda.
+
+¡Y listo! Home Assistant recibirá los datos de la estación cada minuto y escribirá el último valor en tu base de datos cada 5 minutos.
+
+
 
 ---
 ### &check; ToDo
