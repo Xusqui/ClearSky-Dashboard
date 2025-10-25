@@ -11,3 +11,5 @@
 
 # Archivos de Sistema Operativo
 *.DS_Store
+/.phcode.json
+/error.log
