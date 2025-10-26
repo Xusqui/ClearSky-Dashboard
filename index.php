@@ -1049,6 +1049,28 @@ if (isset($data["last_updated"])) {
                                 </div>
                             </div>
                         </div>
+
+<!-- Modal Fase Lunar -->
+<div id="moonModal" class="modal">
+  <div class="modal-content">
+    <button class="close" id="closeMoonModal" aria-label="Cerrar">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+
+    <h2>Información de la Fase Lunar</h2>
+    <div id="moon-info">
+      <p><strong>Fase actual:</strong> <span id="moon-phase-text">Calculando...</span></p>
+      <p><strong>Colongitud solar:</strong> <span id="moon-colong">–</span>°</p>
+    </div>
+
+    <h3>Accidentes mejor visibles en el terminador</h3>
+    <ul id="moon-features-list"></ul>
+  </div>
+</div>
+
                     </div>
                 </dashboard-body-view>
                 <dashboard-footer-view>
@@ -1079,6 +1101,7 @@ if (isset($data["last_updated"])) {
         <script src="https://unpkg.com/suncalc@1.9.0/suncalc.js"></script>
         <script src="./static/views/moon.js?v<?php echo time(); ?>"></script>
         <script src="./static/views/sun.js?lat=<?php echo $lat; ?>&lon=<?php echo $lon; ?>&v=<?php echo time(); ?>"></script>
+        <script src="./static/views/modals/moon_modal.js?v<?php echo time(); ?>"></script>
         <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
         <script type="module" src="./static/views/widgets/modal_temp.js?v=<?php echo time(); ?>"></script>
         <script type="module" src="./static/views/widgets/modal_humidity.js?v=<?php echo time(); ?>"></script>

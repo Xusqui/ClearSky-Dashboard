@@ -1,8 +1,9 @@
 // Para probar la fase problemática, puedes usar esta fecha:
 // const now = new Date("2025-09-08T12:00:00"); // Debería ser Cuarto Menguante
 const now = new Date();
-const moon = SunCalc.getMoonIllumination(now);
-const { fraction, phase } = moon;
+window.moon = SunCalc.getMoonIllumination(now);
+window.fraction = window.moon.fraction;
+window.phase = window.moon.phase;
 
 const radius = 40;
 const cx = 20 + 40;
@@ -68,5 +69,7 @@ if ((phase >= 0 && phase < tol) || phase > 1 - tol) {
 }
 
 phaseText += ` (${fractionPercent}%)`;
+
+window.phaseText = phaseText;
 
 document.getElementById("moon-text").textContent = phaseText;
