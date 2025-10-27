@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // --- Evento para ABRIR el modal ---
     widget.onclick = function () {
         modal.style.display = "block";
-        
+
         // 1. Cargar datos de estado (la cuadrícula de estadísticas)
         // (Esto consulta 'get_rain_historic_data.php')
         fetch("./static/modules/get_rain_historic_data.php")
@@ -63,10 +63,10 @@ document.addEventListener("DOMContentLoaded", function () {
             alert("El mes de inicio debe ser anterior o igual al mes de fin.");
             return;
         }
-        
+
         loadRainChart(startDate, endDate);
     });
-    
+
     // --- Función para CERRAR el modal ---
     function closeRainModal() {
         modal.style.display = "none";
@@ -88,7 +88,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // --- FUNCIÓN PRINCIPAL: Cargar Gráfico de Lluvia ---
     function loadRainChart(startMonth, endMonth) {
         const chartDom = document.getElementById("rain-month-chart");
-        
+
         // Limpiar "No hay datos" anterior
         chartDom.innerHTML = '';
 
@@ -97,13 +97,13 @@ document.addEventListener("DOMContentLoaded", function () {
             rainChart.dispose();
         }
         rainChart = echarts.init(chartDom);
-        
+
         // Colores
         const rootStyle = getComputedStyle(document.documentElement);
         const barColor = rootStyle.getPropertyValue('--wu-lightblue').trim();
         const fontColor = rootStyle.getPropertyValue('--font-color').trim();
         const bgColor = rootStyle.getPropertyValue('--bg-color').trim();
-        
+
         // URL con parámetros (consulta 'get_rain_monthly.php')
         const fetchUrl = `./static/modules/get_rain_monthly.php?start=${encodeURIComponent(startMonth)}&end=${encodeURIComponent(endMonth)}`;
 
@@ -125,7 +125,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     chartDom.innerHTML = `<p style="text-align:center; color:red; padding-top: 50px;">Error al cargar datos: ${chartData.message}</p>`;
                     return;
                 }
-                
+
                 if (chartData.data.length === 0) {
                      chartDom.innerHTML = `<p style="text-align:center; color:${fontColor}; padding-top: 50px;">No hay datos de precipitación para el rango seleccionado.</p>`;
                     return;
@@ -137,7 +137,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 const option = {
                     backgroundColor: bgColor,
-                    tooltip: { 
+                    tooltip: {
                         trigger: 'axis',
                         backgroundColor : bgColor,
                         textStyle: { color: fontColor }

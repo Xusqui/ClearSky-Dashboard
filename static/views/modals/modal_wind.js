@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const updateBtn = document.getElementById("wind_updateChartBtn"); // Nuevo
     const startInput = document.getElementById("wind_startDate"); // Nuevo
     const endInput = document.getElementById("wind_endDate"); // Nuevo
-    
+
     const speedDom = document.getElementById("windSpeedChart");
     const dirDom = document.getElementById("windDirectionChart");
 
@@ -29,11 +29,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // --- NUEVA FUNCIÓN: Cargar Gráficos ---
     function loadWindCharts(startDate, endDate) {
-        
+
         // 1. Destruir gráficos anteriores
         if (speedChart) { speedChart.dispose(); speedChart = null; }
         if (dirChart) { dirChart.dispose(); dirChart = null; }
-        
+
         // Limpiar HTML en caso de que hubiera un "No hay datos"
         speedDom.innerHTML = '';
         dirDom.innerHTML = '';
@@ -47,12 +47,12 @@ document.addEventListener("DOMContentLoaded", function () {
         if (startDate && endDate) {
             fetchUrl += `?start=${encodeURIComponent(startDate)}&end=${encodeURIComponent(endDate)}`;
         }
-        
+
         // 4. Mostrar "Cargando"
         const rootStyle = getComputedStyle(document.documentElement); // Necesitamos esto para los colores
         const fontColor = rootStyle.getPropertyValue('--font-color').trim();
         const wuOrange = rootStyle.getPropertyValue('--wu-orange').trim();
-        
+
         speedChart.showLoading({
             text: 'Cargando datos...',
             color: wuOrange,
@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 backgroundColor: bgColor,
                                 textStyle: { color: fontColor } },
                     legend: { data: ['Velocidad', 'Rachas'], textStyle: { color: fontColor } },
-                    
+
                     // --- NUEVO: DataZoom ---
                     dataZoom: [
                         {
@@ -220,7 +220,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // --- MODIFICADO: Event Listener para abrir el modal ---
     widget.addEventListener("click", function() {
         modal.style.display = "block";
-        
+
         // Establecer fechas por defecto
         var now = new Date();
         var yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
@@ -248,7 +248,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Volver a cargar los gráficos con el nuevo rango
         loadWindCharts(startDate, endDate);
     });
-    
+
 
     // --- MODIFICADO: Event Listeners para cerrar el modal ---
     closeBtn.addEventListener("click", closeWindModal);

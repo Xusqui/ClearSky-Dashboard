@@ -22,15 +22,15 @@ function openTempModal() {
     // --- NUEVO: Establecer fechas por defecto (últimas 24h) ---
     var now = new Date();
     var yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-    
+
     // Usamos los IDs específicos de este modal
     var startInput = document.getElementById("temp_startDate");
     var endInput = document.getElementById("temp_endDate");
-    
+
     startInput.value = formatLocalDateTime(yesterday);
     endInput.value = formatLocalDateTime(now);
     // -----------------------------------------------------
-    
+
     // Cargar gráfico inicial con las fechas por defecto
     loadTempChart(startInput.value, endInput.value);
 }
@@ -106,7 +106,7 @@ function loadTempChart(startDate, endDate) {
         fetchUrl += `?start=${encodeURIComponent(startDate)}&end=${encodeURIComponent(endDate)}`;
     }
     // -----------------------------------------------------------
-    
+
     // Mostrar "cargando"
     myChart.showLoading({
         text: 'Cargando datos...',
@@ -120,7 +120,7 @@ function loadTempChart(startDate, endDate) {
         .then((data) => {
             // Ocultar "cargando"
             myChart.hideLoading();
-            
+
             if (data.error) {
                 console.error(data.message);
                 return;
@@ -145,7 +145,7 @@ function loadTempChart(startDate, endDate) {
                 backgroundColor: bgColor,
                 tooltip: { trigger: "axis", backgroundColor: bgColor, textStyle: { color: fontColor } },
                 legend: { data: ["Temperatura", "Sensación térmica", "Punto de rocío"], textStyle: { color: fontColor } },
-                
+
                 // --- NUEVO: DataZoom para hacer zoom/scroll ---
                 dataZoom: [
                     {

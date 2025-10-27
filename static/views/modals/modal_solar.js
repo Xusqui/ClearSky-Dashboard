@@ -22,21 +22,21 @@ document.addEventListener("DOMContentLoaded", function () {
     const updateBtn = document.getElementById("uv_updateChartBtn"); // Nuevo
     const startInput = document.getElementById("uv_startDate"); // Nuevo
     const endInput = document.getElementById("uv_endDate"); // Nuevo
-    
+
     const uvDom = document.getElementById("uvChart");
     const solarDom = document.getElementById("solarChart");
-    
+
     // --- Instancias de Gráficos ---
     let uvChart = null;
     let solarChart = null;
 
     // --- NUEVA FUNCIÓN: Cargar Gráficos ---
     function loadUvSolarCharts(startDate, endDate) {
-        
+
         // 1. Destruir gráficos anteriores
         if (uvChart) { uvChart.dispose(); uvChart = null; }
         if (solarChart) { solarChart.dispose(); solarChart = null; }
-        
+
         // Limpiar HTML en caso de que hubiera un "No hay datos"
         uvDom.innerHTML = '';
         solarDom.innerHTML = '';
@@ -50,12 +50,12 @@ document.addEventListener("DOMContentLoaded", function () {
         if (startDate && endDate) {
             fetchUrl += `?start=${encodeURIComponent(startDate)}&end=${encodeURIComponent(endDate)}`;
         }
-        
+
         // 4. Obtener colores y mostrar "Cargando"
         const rootStyle = getComputedStyle(document.documentElement);
         const fontColor = rootStyle.getPropertyValue('--font-color').trim();
         const highColor = rootStyle.getPropertyValue('--wu-red').trim();
-        
+
         uvChart.showLoading({
             text: 'Cargando datos...',
             color: highColor, // Color rojo/solar
@@ -86,7 +86,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const lowColor = rootStyle.getPropertyValue('--wu-lightblue').trim();
 
                 // 8. Opciones de Gráficos
-                
+
                 // --- Gráfica UV (MODIFICADA con dataZoom y rangos Y) ---
                 const maxUv = Math.max(...uvValues) + 1;
                 uvChart.setOption({
@@ -218,7 +218,7 @@ document.addEventListener("DOMContentLoaded", function () {
     widgets.forEach(w => {
         if (w) w.addEventListener("click", function() {
             modal.style.display = "block";
-            
+
             // Establecer fechas por defecto
             var now = new Date();
             var yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
@@ -247,7 +247,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Volver a cargar los gráficos con el nuevo rango
         loadUvSolarCharts(startDate, endDate);
     });
-    
+
     // --- MODIFICADO: Event Listeners para cerrar el modal ---
     closeBtn.addEventListener("click", closeUvSolarModal);
 

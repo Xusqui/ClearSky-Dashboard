@@ -6,9 +6,9 @@ require_once '../config/config.php';
 
 // Lista de sensores
 $sensors = [
-    "status" => "sensor.ws2900_v2_02_03_event_rain",
+    "status" => "sensor.ws2900_v2_02_03_rain_rate",
     "rate"   => "sensor.ws2900_v2_02_03_rain_rate",
-    "daily"  => "sensor.ws2900_v2_02_03_daily_rain",
+    "daily"  => "sensor.ws2900_v2_02_03_event_rain",
     "hourly" => "sensor.ws2900_v2_02_03_hourly_rain",
     "monthly"=> "sensor.ws2900_v2_02_03_monthly_rain",
     "total"  => "sensor.ws2900_v2_02_03_total_rain"

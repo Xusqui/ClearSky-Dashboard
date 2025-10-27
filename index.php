@@ -1101,17 +1101,17 @@ if (isset($data["last_updated"])) {
         <script src="https://unpkg.com/suncalc@1.9.0/suncalc.js"></script>
         <script src="./static/views/moon.js?v<?php echo time(); ?>"></script>
         <script src="./static/views/sun.js?lat=<?php echo $lat; ?>&lon=<?php echo $lon; ?>&v=<?php echo time(); ?>"></script>
-        <script src="./static/views/modals/moon_modal.js?v<?php echo time(); ?>"></script>
+        <script type="module" src="./static/views/modals/modal_moon.js?v<?php echo time(); ?>"></script>
         <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
-        <script type="module" src="./static/views/widgets/modal_temp.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/views/widgets/modal_humidity.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/views/widgets/modal_wind.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/views/widgets/modal_rain.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/views/widgets/modal_pressure.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/views/widgets/modal_solar.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/views/widgets/modal_tempint.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/views/widgets/modal_humidityint.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/views/widgets/modal_seeing.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/views/modals/modal_temp.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/views/modals/modal_humidity.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/views/modals/modal_wind.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/views/modals/modal_rain.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/views/modals/modal_pressure.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/views/modals/modal_solar.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/views/modals/modal_tempint.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/views/modals/modal_humidityint.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/views/modals/modal_seeing.js?v=<?php echo time(); ?>"></script>
         <script type="module" src="./static/views/widgets/pws_info.js?v=<?php echo time(); ?>"></script>
         <script type="module" src="./static/views/theme-switcher.js?v=<?php echo time(); ?>"></script>
         <!-- SCRIPT de depuración -->

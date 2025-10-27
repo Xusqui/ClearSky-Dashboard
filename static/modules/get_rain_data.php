@@ -3,7 +3,7 @@ include '../config/config.php';
 
 // Entidades de lluvia en Home Assistant
 $entities = [
-    "daily" => "sensor.ws2900_v2_02_03_daily_rain",
+    "daily" => "sensor.ws2900_v2_02_03_event_rain",
     "rate"  => "sensor.ws2900_v2_02_03_rain_rate"
 ];
 

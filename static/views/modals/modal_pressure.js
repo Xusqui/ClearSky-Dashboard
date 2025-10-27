@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (startDate && endDate) {
             fetchUrl += `?start=${encodeURIComponent(startDate)}&end=${encodeURIComponent(endDate)}`;
         }
-        
+
         // Obtener colores
         const rootStyle = getComputedStyle(document.documentElement);
         const fontColor = rootStyle.getPropertyValue('--font-color').trim();
@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(response => response.json())
             .then(data => {
                 pressureChart.hideLoading();
-                
+
                 if (data.error) {
                     console.error(data.message);
                     return;
@@ -77,7 +77,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const option = {
                     backgroundColor: bgColor,
                     tooltip: { trigger: 'axis', backgroundColor : bgColor, textStyle: { color: fontColor } },
-                    
+
                     // --- NUEVO: DataZoom ---
                     dataZoom: [
                         {
@@ -177,7 +177,7 @@ document.addEventListener("DOMContentLoaded", function () {
             alert("La fecha de inicio debe ser anterior a la fecha de fin.");
             return;
         }
-        
+
         loadPressureChart(startDate, endDate);
     });
 
