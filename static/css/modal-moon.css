@@ -1,0 +1,137 @@
+/* ======================================================= */
+/* === REGLAS DE CORRECCIÓN EXCLUSIVAS PARA MODAL LUNAR === */
+/* ======================================================= */
+
+/*
+|-----------------------------------------------------------
+| 1. ESTILOS DE LA SECCIÓN SUPERIOR: DATOS DE LA LUNA (#moon-info)
+|    - Enfocados en la limpieza y alineación simple.
+|-----------------------------------------------------------
+*/
+
+/* Contenedor de las 3 tarjetas de datos */
+.moon-infografia #moon-info {
+    /* Asumo que ya usa un display que alinea los elementos, como grid o flex */
+    /* .bloque-fixed-3 debe manejar la distribución de estas 3 tarjetas */
+}
+
+/* Tarjetas individuales de datos (Fase, Terminador, Longitud) */
+.moon-infografia #moon-info .card {
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centrado vertical */
+    align-items: center; /* Centrado horizontal */
+    padding: 10px;
+}
+
+/* Títulos de las tarjetas de datos (Fase actual, Terminador visible, Longitud Terminador) */
+.moon-infografia #moon-info .seeing-card-title {
+    font-size: 0.9em;
+    font-weight: 500;
+    opacity: 0.8;
+    color: var(--font-color); /* Usar el color base */
+    text-align: center;
+    padding: 0;
+    margin-bottom: 5px;
+}
+
+/* Valores de las tarjetas de datos (Creciente, Amanecer lunar, 27.40° E) */
+.moon-infografia #moon-info .seeing-card-value {
+    /* CLAVE: Revertimos las propiedades absolutas y de tamaño excesivo */
+    position: static;
+    font-size: 1.8em;
+    font-weight: 700;
+    opacity: 1;
+    text-align: center;
+    transform: none;
+    margin: 0;
+    padding: 0;
+}
+
+
+/*
+|---------------------------------------------------------------------
+| 2. ESTILOS DE LA SECCIÓN INFERIOR: ACCIDENTES GEOGRÁFICOS (#moon-features-list)
+|    - Enfocados en la altura uniforme y el efecto watermark.
+|---------------------------------------------------------------------
+*/
+
+/* 0. Contenedor de la cuadrícula de accidentes */
+.moon-infografia #moon-features-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+/* 1. Estilos de la Tarjeta (Contenedor principal de los accidentes) */
+.moon-infografia #moon-features-list .card {
+    /* CLAVE: Flexbox para alinear contenido superior e inferior */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    position: relative;
+    min-height: 180px; /* CLAVE: Altura consistente */
+    padding: 10px 15px;
+    overflow: hidden;
+}
+
+/* 2. Título del Accidente (h3.feature-card-title) */
+.moon-infografia #moon-features-list .feature-card-title {
+    margin: 0;
+    padding: 10px 0 0 0;
+    font-size: 1.3em;
+    color: var(--font-color);
+    font-weight: 500;
+}
+
+/* 3. Coordenadas del Accidente (small.feature-coords-info) */
+.moon-infografia #moon-features-list .feature-coords-info {
+    display: block;
+    margin: 0 0 5px 0;
+    opacity: 0.5;
+    font-size: 0.8em;
+}
+
+/* 4. NÚMERO DE CATÁLOGO (#Nº en grande - Watermark) */
+.moon-infografia #moon-features-list .seeing-card-value {
+    /* CLAVE: Posición absoluta para no interferir con el flujo del texto */
+    position: absolute;
+    top: 60%;
+    right: 15px;
+    transform: translateY(-50%);
+
+    font-size: 4em;
+    font-weight: 900;
+    color: currentColor;
+    opacity: 0.1; /* Efecto fondo */
+    z-index: 1;
+
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* 5. COMENTARIO (Descripción) */
+.moon-infografia #moon-features-list .seeing-card-desc {
+    display: block;
+    font-size: 0.9em;
+    color: #a0a0a0;
+    /* CLAVE: Empuja la descripción a la parte inferior del contenedor */
+    margin-top: auto;
+}
+
+/*
+|-----------------------------------------------------------
+| 3. OTROS ESTILOS GLOBALES (Si son necesarios)
+|-----------------------------------------------------------
+*/
+
+/* Los estilos de .feature-card-title y .feature-coords-info que tenías al principio: */
+/* Estos se mantienen para la sección de accidentes, pero ahora con mayor especificidad. */
+
+/* 2. Estilos para las Coordenadas (small.feature-coords-info) [Sobreescritos para #moon-features-list] */
+.moon-infografia .feature-coords-info {
+    /* Si esta clase se usa en otros lugares, esta será la regla general.
+       Las reglas específicas de #moon-features-list la sobreescriben. */
+}
