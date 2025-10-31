@@ -154,7 +154,7 @@ sun-moon-forecast .big-card-sun {
 sun-moon-forecast .big-card-moon {
     position: relative;
     background: var(--sun-moon-forecast-bg-color);
-    cursor: pointer;
+    cursor: default;
     border-radius: 16px;
     border: 1px solid var(--sun-moon-forecast-border-color);
     padding: 16px 20px;
