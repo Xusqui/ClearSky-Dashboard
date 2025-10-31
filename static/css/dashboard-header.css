@@ -14,6 +14,7 @@ dashboard-header-view .max-width {
 dashboard-header-view .elevation-coordinates {
     color: var(--color-secondary-font);
     font-size: 0.75rem;
+    display: flex;
 }
 
 dashboard-header-view .name-actions {
@@ -32,12 +33,12 @@ dashboard-header-view h1 {
 
 dashboard-header-view .location-info {
     margin: 8px 0 16px 0;
-    display: flex;
+    display: block;
     align-items: center;
     gap: 8px;
     font-weight: 700;
     text-transform: uppercase;
-    font-size: clamp(0.8rem, 2vw, 1.2rem);
+    font-size: clamp(0.8rem, 2vw, 1.0rem);
     color: var(--font-color);
     justify-content: space-between;
     flex-wrap: nowrap;

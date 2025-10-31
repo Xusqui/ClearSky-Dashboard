@@ -97,6 +97,7 @@ if (isset($data["last_updated"])) {
         <link rel="stylesheet" type="text/css" href="./static/css/modal-seeing.css?v=<?php echo time(); ?>">
         <link rel="stylesheet" type="text/css" href="./static/css/modal-dates.css?v=<?php echo time(); ?>">
         <link rel="stylesheet" type="text/css" href="./static/css/modal-pws.css?v=<?php echo time(); ?>">
+        <link rel="stylesheet" type="text/css" href="./static/css/modal-moon.css?v=<?php echo time(); ?>">
         <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
         <link href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" rel="stylesheet" />
     </head>
@@ -105,20 +106,13 @@ if (isset($data["last_updated"])) {
             <content-router-wc>
                 <dashboard-header-view>
                     <div class="max-width">
-                        <div class="elevation-coordinates">Elevación: <strong><?php echo $elev; ?></strong> m, Latitud: <strong><?php echo $latitud; ?></strong> Longitud: <strong><?php echo $longitud; ?></strong> Zona horaria: <strong><?php echo $tz; ?></strong></div>
-                        <div class="name-actions">
-                            <h1><?php echo $observatorio; ?></h1>
-                            <pws-info title="PWS Info" id="PWS_info">
-                            </pws-info>
-                        </div>
-                        <div class="location-info">
-                            <span>En <?php echo $city; ?>, a las</span>
-                            <span class="long" id="pws-status-time-long"><?php echo $ts_formatted; ?>.</span>
-                            <!-- El script de "actualizado hace x segundos", está dentro del wind_widget.js -->
-                            <span class="ago" id="pws-status-time-ago" data-updated="<?php echo $localTime->getTimestamp(); ?>">Actualizado hace 0 segundos</span>
-                            <!-- CONTROLES DE TEMA (añadir en dashboard-header-view, junto al setup-link) -->
+                        <div class="elevation-coordinates">Elevación: <strong><?php echo $elev; ?></strong> m, Latitud: <strong><?php echo $latitud; ?></strong> Longitud: <strong><?php echo $longitud; ?></strong> Zona horaria: <strong><?php echo $tz; ?></strong>
                             <!-- Enlace setup -->
                             <a href="./static/config/setup.php" class="setup-link"><setup-button></setup-button> Setup</a>
+                        </div>
+                        <div class="name-actions">
+                            <h1><?php echo $observatorio; ?></h1>
+                            <pws-info title="PWS Info" id="PWS_info"></pws-info>
                             <!-- Selector de tema de color -->
                             <div class="theme-buttons">
                                 <button data-theme="light" title="Modo Día">
@@ -131,6 +125,13 @@ if (isset($data["last_updated"])) {
                                     <img src="./static/images/icons/auto.svg" alt="Auto" />
                                 </button>
                             </div>
+
+                        </div>
+                        <div class="location-info">
+                            <span>En <?php echo $city; ?>, a las</span>
+                            <span class="long" id="pws-status-time-long"><?php echo $ts_formatted; ?>.</span>
+                            <!-- El script de "actualizado hace x segundos", está dentro del wind_widget.js -->
+                            <span class="ago" id="pws-status-time-ago" data-updated="<?php echo $localTime->getTimestamp(); ?>">Actualizado hace 0 sec</span>
                         </div>
                     </div>
                 </dashboard-header-view>
@@ -595,7 +596,7 @@ if (isset($data["last_updated"])) {
                         </div>
 
                         <!-- ############################################################
-                        <!-- ################### GRÁFICAS MODALES #######################
+                             ################### GRÁFICAS MODALES #######################
                              ############################################################ -->
 
                         <!--*************************************************************
@@ -1050,26 +1051,53 @@ if (isset($data["last_updated"])) {
                             </div>
                         </div>
 
-<!-- Modal Fase Lunar -->
-<div id="moonModal" class="modal">
-  <div class="modal-content">
-    <button class="close" id="closeMoonModal" aria-label="Cerrar">
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2">
-        <line x1="18" y1="6" x2="6" y2="18"/>
-        <line x1="6" y1="6" x2="18" y2="18"/>
-      </svg>
-    </button>
+                        <!--*************************************************************
+                            ************* DATOS DE LA OBSERVACIÓN LUNAR *****************
+                            *********************** M O D A L ***************************
+                            ************************************************************* -->
+                        <!-- Modal oculto por defecto -->
+                        <div id="moonModal" class="modal">
+                            <div class="modal-content">
+                                <button class="close" id="closeMoonModal" aria-label="Cerrar">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                        stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="18" y1="6" x2="6" y2="18" />
+                                        <line x1="6" y1="6" x2="18" y2="18" />
+                                    </svg>
+                                </button>
 
-    <h2>Información de la Fase Lunar</h2>
-    <div id="moon-info">
-      <p><strong>Fase actual:</strong> <span id="moon-phase-text">Calculando...</span></p>
-      <p><strong>Colongitud solar:</strong> <span id="moon-colong">–</span>°</p>
-    </div>
+                                <div class="infografia moon-infografia">
+                                    <h1 class="seeing-modal-title">🌙 Información de la Fase Lunar</h1>
 
-    <h3>Accidentes mejor visibles en el terminador</h3>
-    <ul id="moon-features-list"></ul>
-  </div>
-</div>
+                                    <h2 class="seeing-group-title">Datos de la Luna</h2>
+                                    <div id="moon-info" class="bloque bloque-fixed-3">
+                                        <div class="card">
+                                            <h3 class="seeing-card-title">Fase actual</h3>
+                                            <p class="seeing-card-value"><span id="moon-phase-text">Calculando...</span></p>
+                                        </div>
+                                        <div class="card">
+                                            <h3 class="seeing-card-title">Terminador visible</h3>
+                                            <p class="seeing-card-value"><span id="terminator-visible">Calculando...</span></p>
+                                        </div>
+                                        <div class="card">
+                                            <h3 class="seeing-card-title">Longitud Terminador</h3>
+                                            <p class="seeing-card-value"><span id="terminator-long">–</span></p>
+                                        </div>
+
+                                    </div>
+
+                                    <h2 class="seeing-group-title">Catálogo Lunar 100 visibles en el terminador</h2>
+                                    <div id="moon-features-list" class="bloque"></div>
+
+                                    <div class="footer" id="moon-footer">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ############################################################
+                             ############## FIN DE LAS GRÁFICAS MODALES #################
+                             ############################################################ -->
 
                     </div>
                 </dashboard-body-view>
@@ -1077,7 +1105,7 @@ if (isset($data["last_updated"])) {
                     <div class="max-width">
                         <div class="container">
                             <div class="footer-text">Inspired by </div>
-                            <a href="https://www.wunderground.com"><wu-logo title="WU Logo" id="wu-logo"></wu-logo></a>
+                            <a href="https://www.wunderground.com/dashboard/pws/IFUENG27"><wu-logo title="WU Logo" id="wu-logo"></wu-logo></a>
                             <div class="footer-text"> Software</div>
                         </div>
                     </div>
@@ -1085,35 +1113,35 @@ if (isset($data["last_updated"])) {
             </content-router-wc>
         </div>
         <script src="./static/config/conf_to_js.php"></script>
-        <script type="module" src="./static/views/widgets/wind_widget.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/views/widgets/dew_widget.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/views/widgets/temp_widget.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/views/widgets/humidity_widget.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/views/widgets/rain_widget.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/views/widgets/pressure_widget.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/views/widgets/uv_widget.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/views/widgets/solar_widget.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/views/widgets/temp_interior_widget.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/views/widgets/humidity_interior_widget.js?v=<?php echo time(); ?>"></script>
-        <script src="./static/views/widgets/seeing_widget.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/views/widgets/forecast.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/views/date-time.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/js/widgets/wind_widget.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/js/widgets/dew_widget.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/js/widgets/temp_widget.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/js/widgets/humidity_widget.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/js/widgets/rain_widget.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/js/widgets/pressure_widget.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/js/widgets/uv_widget.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/js/widgets/solar_widget.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/js/widgets/temp_interior_widget.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/js/widgets/humidity_interior_widget.js?v=<?php echo time(); ?>"></script>
+        <script src="./static/js/widgets/seeing_widget.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/js/widgets/forecast.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/js/date-time.js?v=<?php echo time(); ?>"></script>
         <script src="https://unpkg.com/suncalc@1.9.0/suncalc.js"></script>
-        <script src="./static/views/moon.js?v<?php echo time(); ?>"></script>
-        <script src="./static/views/sun.js?lat=<?php echo $lat; ?>&lon=<?php echo $lon; ?>&v=<?php echo time(); ?>"></script>
-        <script src="./static/views/modals/moon_modal.js?v<?php echo time(); ?>"></script>
+        <script src="./static/js/moon.js?v<?php echo time(); ?>"></script>
+        <script src="./static/js/sun.js?lat=<?php echo $lat; ?>&lon=<?php echo $lon; ?>&v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/js/modals/modal_moon.js?v<?php echo time(); ?>"></script>
         <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
-        <script type="module" src="./static/views/widgets/modal_temp.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/views/widgets/modal_humidity.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/views/widgets/modal_wind.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/views/widgets/modal_rain.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/views/widgets/modal_pressure.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/views/widgets/modal_solar.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/views/widgets/modal_tempint.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/views/widgets/modal_humidityint.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/views/widgets/modal_seeing.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/views/widgets/pws_info.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/views/theme-switcher.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/js/modals/modal_temp.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/js/modals/modal_humidity.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/js/modals/modal_wind.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/js/modals/modal_rain.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/js/modals/modal_pressure.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/js/modals/modal_solar.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/js/modals/modal_tempint.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/js/modals/modal_humidityint.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/js/modals/modal_seeing.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/js/widgets/pws_info.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/js/theme-switcher.js?v=<?php echo time(); ?>"></script>
         <!-- SCRIPT de depuración -->
         <script>
             (function() {
