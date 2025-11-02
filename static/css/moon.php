@@ -53,9 +53,9 @@ height: <?= rem(19, $scale) ?>;
 border-radius: 50%;
 position: absolute;
 margin-top: <?= rem(-20, $scale) ?>;
-background-image: url(https://xusqui.com/weather/static/images/icons/moons/full_moon2.svg);
+background-image: url(../images/icons/moons/full_moon.svg);
 background-position: center center;
-background-size: 100%;
+background-size: 125%;
 background-repeat: no-repeat;
 mix-blend-mode: multiply;
 }
@@ -67,12 +67,21 @@ height: <?= rem(19.75, $scale) ?>;
 border-radius: 100%;
 box-shadow:
 inset 0 0 <?= rem(10, $scale) ?> #000,
-inset 0 0 <?= rem(5, $scale) ?> var(--moon-surround),
+inset 0 0 <?= rem(5, $scale) ?> #000,
 inset 0 0 <?= rem(3, $scale) ?> #000;
 position: absolute;
 margin-top: <?= rem(-20.3, $scale) ?>;
 margin-left: <?= rem(-0.3, $scale) ?>;
 filter: blur(<?= rem(2, $scale) ?>);
+}
+
+.moon-card .moon-phase-name #moon-text {
+color: var(--color-secondary-font);
+font-size: 0.7rem;
+font-weight: 800;
+text-align: center;
+margin-top: 0.5rem;
+letter-spacing: 0.05em;
 }
 
 #moonFeatureModal .modal-content {

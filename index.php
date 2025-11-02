@@ -176,7 +176,8 @@ $phase = getMoonPhaseValue();
                                             <div class="sphere"></div>
                                         </div>
                                         <div class="moon-phase-name">
-                                            <text id="moon-text" text-anchor="middle">Calculando</text>
+                                            <!--<text id="moon-text" text-anchor="middle">Calculando</text>-->
+                                            <p id="moon-text"></p>
                                         </div>
                                     </div>
                                 </div>
