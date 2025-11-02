@@ -67,39 +67,53 @@ if (isset($data["last_updated"])) {
 } else {
     echo "No se pudo obtener la fecha de actualización";
 }
+
+// Calcular la fase de la luna:
+function getMoonPhaseValue($timestamp = null) {
+    $known_new_moon = strtotime("2000-01-06 18:14:00 UTC");
+    $timestamp = $timestamp ?? time();
+    $days_since = ($timestamp - $known_new_moon) / 86400;
+    $lunar_cycle = 29.53058867;
+    $phase = fmod($days_since, $lunar_cycle) / $lunar_cycle;
+    if ($phase < 0) $phase += 1;
+    return (int) round($phase * 99);
+}
+
+$phase = getMoonPhaseValue();
 ?>
 
 <html lang="es">
     <head>
         <link rel="icon" type="image/x-icon" href="./favicon.ico"/>
         <title>Estación Meteorológica <?php echo $observatorio; ?></title>
-        <link rel="stylesheet" type="text/css" href="./static/css/images.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="./static/css/global.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="./static/css/colors.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="./static/css/theme-switcher.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="./static/css/dashboard-header.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="./static/css/dashboard-body.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="./static/css/dashboard-footer.css?v=<?php echo time(); ?>">
+        <link rel="stylesheet" type="text/css" href="./static/css/images.css?v=<?php echo time(); ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/global.css?v=<?php echo time(); ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/colors.css?v=<?php echo time(); ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/theme-switcher.css?v=<?php echo time(); ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/dashboard-header.css?v=<?php echo time(); ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/dashboard-body.css?v=<?php echo time(); ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/dashboard-footer.css?v=<?php echo time(); ?>" />
         <!-- Widgets' CSS -->
-        <link rel="stylesheet" type="text/css" href="./static/css/dew-point-widget.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="./static/css/humidity-widget.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="./static/css/humidity-int-widget.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="./static/css/pressure-widget.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="./static/css/rain-widget.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="./static/css/solar-radiation-widget.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="./static/css/temp-widget.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="./static/css/uv-widget.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="./static/css/widget-base.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="./static/css/wind-widget.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="./static/css/moon.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="./static/css/forecast.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="./static/css/widget_seeing.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="./static/css/modal-seeing.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="./static/css/modal-dates.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="./static/css/modal-pws.css?v=<?php echo time(); ?>">
-        <link rel="stylesheet" type="text/css" href="./static/css/modal-moon.css?v=<?php echo time(); ?>">
+        <link rel="stylesheet" type="text/css" href="./static/css/dew-point-widget.css?v=<?php echo time(); ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/humidity-widget.css?v=<?php echo time(); ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/humidity-int-widget.css?v=<?php echo time(); ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/pressure-widget.css?v=<?php echo time(); ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/rain-widget.css?v=<?php echo time(); ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/solar-radiation-widget.css?v=<?php echo time(); ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/temp-widget.css?v=<?php echo time(); ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/uv-widget.css?v=<?php echo time(); ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/widget-base.css?v=<?php echo time(); ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/wind-widget.css?v=<?php echo time(); ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/moon.css?v=<?php echo time(); ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/forecast.css?v=<?php echo time(); ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/widget_seeing.css?v=<?php echo time(); ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/modal-seeing.css?v=<?php echo time(); ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/modal-dates.css?v=<?php echo time(); ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/modal-pws.css?v=<?php echo time(); ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/modal-moon.css?v=<?php echo time(); ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/moon.php?position=<?php echo $phase; ?>&scale=0.4&v=<?php echo time(); ?>">
         <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
-        <link href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" rel="stylesheet" />
+        <link rel="stylesheet" type="text/css" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" />
     </head>
     <body>
         <div class="widgets">
@@ -155,18 +169,15 @@ if (isset($data["last_updated"])) {
                                 </div>
                                 <!-- Tarjeta Luna -->
                                 <div class="big-card-moon moon-card">
-                                    <div class="moon-icon">
-                                        <svg width="100%" height="100%" viewBox="0 0 120 90">
-                                            <defs>
-                                                <mask id="moon-mask">
-                                                    <rect width="120" height="90" fill="black"/>
-                                                    <path id="mask-path" fill="white"/>
-                                                </mask>
-                                            </defs>
-                                            <image id="moon-icon" href="./static/images/icons/moons/full_moon.svg"
-                                                   width="120" height="88" x="0" y="0" mask="url(#moon-mask)"/>
-                                            <text id="moon-text" x="60" y="90" text-anchor="middle">Calculando</text>
-                                        </svg>
+                                    <div class="moon-card-container">
+                                        <div class="moon">
+                                            <div class="light"></div>
+                                            <div class="texture"></div>
+                                            <div class="sphere"></div>
+                                        </div>
+                                        <div class="moon-phase-name">
+                                            <text id="moon-text" text-anchor="middle">Calculando</text>
+                                        </div>
                                     </div>
                                 </div>
                                 <!-- Tarjeta Previsión -->
@@ -1092,6 +1103,26 @@ if (isset($data["last_updated"])) {
                                     <div class="footer" id="moon-footer">
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+
+                        <!--*************************************************************
+                        ***** LOCALIZAR ACCIDENTE GEOGRÁFICO EN LA SUPERFICIE LUNAR *****
+                        ************************* M O D A L *****************************
+                        ****************************************************************-->
+                        <div id="moonFeatureModal" class="modal">
+                            <div class="modal-content">
+                                <button class="close" id="closeMoonFeatureModal" aria-label="Cerrar">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                         stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="18" y1="6" x2="6" y2="18" />
+                                        <line x1="6" y1="6" x2="18" y2="18" />
+                                    </svg>
+                                </button>
+
+                                <canvas id="moonFeatureCanvas" width="400" height="400" style="display:block;margin:2rem auto;border-radius:50%;background:#000;"></canvas>
+                                <p id="moonFeatureInfo" style="text-align:center;margin-top:0.5rem;font-size:0.9rem;color: var(--font-secondary-color);"></p>
+                                <p id="moonFeatureDescription" style="text-align:center;margin-top:0.5rem;font-size:0.9rem;color: var(--font-secondary-color);"></p>
                             </div>
                         </div>
 

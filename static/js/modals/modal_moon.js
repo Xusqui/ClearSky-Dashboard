@@ -41,7 +41,7 @@ function computeMoonData(date){
     const subsolarDeg = 360 * phase - 180;
 
     // Terminador del amanecer = subsolar + 90°
-    let terminatorDeg360 = (360 * phase - 90) % 360;
+    let terminatorDeg360 = (-360 * phase - 90) % 360;
     if (terminatorDeg360 < 0) terminatorDeg360 += 360;
 
     // Normaliza y ajusta a rango visible
@@ -63,10 +63,85 @@ function computeMoonData(date){
     };
 }
 
+function openMoonFeatureModalCanvas(lonDeg, latDeg, name, description) {
+    const modal = document.getElementById('moonFeatureModal');
+    const canvas = document.getElementById('moonFeatureCanvas');
+    const ctx = canvas.getContext('2d');
+    const info = document.getElementById('moonFeatureInfo');
+    const desc = document.getElementById('moonFeatureDescription');
+
+    const width = canvas.width;
+    const height = canvas.height;
+    const cx = width / 2;
+    const cy = height / 2;
+    const R = Math.min(cx, cy);
+
+    // Limpiar canvas
+    ctx.clearRect(0, 0, width, height);
+
+    // Imagen de la luna
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.src = './static/images/full_moon_big.png';
+
+    img.onload = () => {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(cx, cy, R, 0, 2 * Math.PI);
+        ctx.clip();
+
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // Terminador simple: degradado de luz
+        const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, R);
+        grad.addColorStop(0, 'rgba(0,0,0,0)');
+        grad.addColorStop(0.5, 'rgba(0,0,0,0.2)');
+        grad.addColorStop(1, 'rgba(0,0,0,0.5)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, width, height);
+
+        // Punto rojo
+        const deg2rad = d => d * Math.PI / 180;
+        const lon = deg2rad(lonDeg);
+        const lat = deg2rad(latDeg);
+
+        const visible = (Math.cos(lat) * Math.cos(lon)) > 0;
+
+        if (visible) {
+            const x_proj = R * Math.cos(lat) * Math.sin(lon);
+            const y_proj = R * Math.sin(lat);
+            const xPixel = cx + x_proj;
+            const yPixel = cy - y_proj;
+
+            ctx.beginPath();
+            ctx.arc(xPixel, yPixel, Math.max(5, Math.round(R*0.015)), 0, 2*Math.PI);
+            ctx.fillStyle = 'red';
+            ctx.fill();
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = 'white';
+            ctx.stroke();
+
+            info.textContent = `${name}: lon=${lonDeg.toFixed(1)}°, lat=${latDeg.toFixed(1)}° (cara visible)`;
+        } else {
+            info.textContent = `${name}: lon=${lonDeg.toFixed(1)}°, lat=${latDeg.toFixed(1)}° (cara oculta)`;
+        }
+            desc.textContent = `${description}`;
+
+        ctx.restore();
+    };
+
+    img.onerror = () => {
+        info.textContent = 'Error cargando la imagen de la luna.';
+    };
+
+    modal.style.display = 'block';
+}
+
+
 // --- Función para mostrar datos en el modal --
 
 function updateMoonModal(){
-    const date = new Date();
+    const date = new Date();//Date("2025-11-05T14:00:00");
     const moonData = computeMoonData(date);
 
     // Obtener el valor de la longitud del terminador y redondearlo a 2 decimales
@@ -149,6 +224,11 @@ function updateMoonModal(){
         card.appendChild(value);        // Posición 3: #Nº (Grande)
         card.appendChild(desc);         // Posición 4: Comentario
         container.appendChild(card);
+
+        // 8. Añadir eventListener a cada tarjeta:
+        card.addEventListener('click', () => {
+            openMoonFeatureModalCanvas(f.long, f.lat, f.name, f.description);
+        });
     });
 }
 
@@ -198,5 +278,18 @@ window.addEventListener('click', (event) => {
         moonModal.style.display = 'none';
     }
 });
+
+// --- Cerrar modal secundario (moonFeatureModal) ---
+document.getElementById('closeMoonFeatureModal').addEventListener('click', () => {
+    document.getElementById('moonFeatureModal').style.display = 'none';
+});
+
+window.addEventListener('click', (event) => {
+    const modal = document.getElementById('moonFeatureModal');
+    if (event.target === modal) {
+        modal.style.display = 'none';
+    }
+});
+
 // --- Cálculo inicial si quieres autoactualizar ---
 updateMoonModal();

@@ -5,7 +5,7 @@ window.moon = SunCalc.getMoonIllumination(now);
 window.fraction = window.moon.fraction;
 window.phase = window.moon.phase;
 
-const radius = 40;
+/*const radius = 40;
 const cx = 20 + 40;
 const cy = 5 + 40;
 const offset = 0;
@@ -44,7 +44,7 @@ const pathD = `
 `;
 
 document.getElementById("mask-path").setAttribute("d", pathD);
-
+*/
 // --- Texto de la fase lunar ---
 const fractionPercent = Math.round(fraction * 100);
 let phaseText = "";

@@ -104,6 +104,9 @@
     --theme-toggle-padding: 6px;
     --theme-toggle-gap: 6px;
     --theme-toggle-icon-size: 18px;
+    --moon_sunlight: rgb(255, 255, 255);
+    --moon_shadow: rgb(64, 64, 64);
+    --moon-surround: rgb(230,230,230);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -141,8 +144,8 @@
         --widget-empty: rgb(83, 84, 87);
         --dashboard-body-border-color: rgba(255, 255, 255, .05);
         --chart-light-color: #f8f9fa;
-        --chart-dark-color:#e9ecef
-            --theme-toggle-bg: rgba(255,255,255,0.03);
+        --chart-dark-color:#e9ecef;
+        --theme-toggle-bg: rgba(255,255,255,0.03);
         --theme-toggle-border: rgba(255,255,255,0.06);
         --theme-toggle-color: var(--font-color);
         --theme-toggle-active-bg: var(--wu-lightblue-40, var(--wu-lightblue));
