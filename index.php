@@ -6,25 +6,6 @@
 //ini_set('display_errors', 1);
 // CONFIGURACIÓN
 include __DIR__ . '/static/config/config.php';
-// ======================
-// SENSORES (entity_id ajustados a los míos (Xisco) reales de Home Assistant)
-// ======================
-//temperatura = sensor.ws2900_v2_02_03_outdoor_temperature
-//Sensación Térmica = sensor.ws2900_v2_02_03_feels_like_temperature
-//Humedad = sensor.ws2900_v2_02_03_humidity
-//Presión Relativa = sensor.ws2900_v2_02_03_relative_pressure
-//Presión Absoluta = sensor.ws2900_v2_02_03_absolute_pressure
-//Velocidad del viento = sensor.ws2900_v2_02_03_wind_speed
-//Dirección del viento = sensor.ws2900_v2_02_03_wind_direction
-//Rachas = sensor.ws2900_v2_02_03_wind_gust
-//Lluvia diaria = sensor.ws2900_v2_02_03_daily_rain
-//Índice UV = sensor.ws2900_v2_02_03_uv_index
-//Radiación solar = sensor.ws2900_v2_02_03_solar_radiation
-//Punto de rocío = sensor.ws2900_v2_02_03_dewpoint
-//Temperatura interior = sensor.ws2900_v2_02_03_indoor_temperature
-//Humedad interior = sensor.ws2900_v2_02_03_indoor_humidity
-//$gust_max = sensor.ws2900_v2_02_03_max_daily_gust
-//$rain_rate = sensor.ws2900_v2_02_03_rain_rate
 
 /*-----------------------------------------
 Vamos a obtener la fecha de actualización.
@@ -86,6 +67,8 @@ $phase = getMoonPhaseValue();
     <head>
         <link rel="icon" type="image/x-icon" href="./favicon.ico"/>
         <title>Estación Meteorológica <?php echo $observatorio; ?></title>
+        <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
+        <link rel="stylesheet" type="text/css" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" />
         <link rel="stylesheet" type="text/css" href="./static/css/images.css?v=<?php echo time(); ?>" />
         <link rel="stylesheet" type="text/css" href="./static/css/global.css?v=<?php echo time(); ?>" />
         <link rel="stylesheet" type="text/css" href="./static/css/colors.css?v=<?php echo time(); ?>" />
@@ -112,8 +95,6 @@ $phase = getMoonPhaseValue();
         <link rel="stylesheet" type="text/css" href="./static/css/modal-pws.css?v=<?php echo time(); ?>" />
         <link rel="stylesheet" type="text/css" href="./static/css/modal-moon.css?v=<?php echo time(); ?>" />
         <link rel="stylesheet" type="text/css" href="./static/css/moon.php?position=<?php echo $phase; ?>&scale=0.4&v=<?php echo time(); ?>">
-        <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
-        <link rel="stylesheet" type="text/css" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" />
     </head>
     <body>
         <div class="widgets">
@@ -151,7 +132,7 @@ $phase = getMoonPhaseValue();
                 </dashboard-header-view>
                 <dashboard-body-view>
                     <div class="max-width">
-                        <sun-moon-forecast data-last-updated-long-string="" data-last-updated-short-string="" data-pws-id="IFUENG27" data-place-id="" data-iana-time-zone="Europe/Madrid" data-time-zone-abbreviation="CEST" data-status="connected" data-obs-time-utc="" data-time-ago-string="">
+                        <sun-moon-forecast data-last-updated-long-string="" data-last-updated-short-string="" data-pws-id="<?php echo $observatorio; ?>" data-place-id="" data-iana-time-zone="Europe/Madrid" data-time-zone-abbreviation="CEST" data-status="connected" data-obs-time-utc="" data-time-ago-string="">
                             <!-- Contenedor general de tarjetas -->
                             <div class="cards-grid">
                                 <!-- Tarjeta Sol -->
@@ -210,7 +191,7 @@ $phase = getMoonPhaseValue();
                                 }
                                 ?>
                                 <div class="title">Temperatura Exterior</div>
-                                <temp-widget-view data-pws-id="IFUENG27" data-status="connected" data-unit="m" data-temp="<?php echo $temp; ?>" data-temp-angle="<?php echo $temp_angle; ?>" data-main-value="<?php echo $temp; ?>" aria-valuenow="<?php echo $temp; ?>" class="widget-view loaded">
+                                <temp-widget-view data-pws-id="<?php echo $observatorio; ?>" data-status="connected" data-unit="m" data-temp="<?php echo $temp; ?>" data-temp-angle="<?php echo $temp_angle; ?>" data-main-value="<?php echo $temp; ?>" aria-valuenow="<?php echo $temp; ?>" class="widget-view loaded">
                                     <div class="graphic-container">
                                         <div class="temp-gauge-container">
                                             <div class="temp-gauge-bg"></div>
@@ -233,7 +214,7 @@ $phase = getMoonPhaseValue();
                                 <!--Calcular porcentaje de la gota, inicialmente 0-->
                                 <?php $dew = 0;
                                 $inner_percent = (100 * $dew) / 49; ?>
-                                <dew-point-widget-view data-pws-id="IFUENG27" data-status="connected" data-unit="m" data-temp="<?php echo $temp; ?>" data-dew-point="<?php echo $dew; ?>" data-main-value="<?php echo $dew; ?>" aria-valuenow="<?php echo $dew; ?>" class="widget-view loaded" style="--dewpoint-droplet-width: <?php echo $inner_percent; ?>%;">
+                                <dew-point-widget-view data-pws-id="<?php echo $observatorio; ?>" data-status="connected" data-unit="m" data-temp="<?php echo $temp; ?>" data-dew-point="<?php echo $dew; ?>" data-main-value="<?php echo $dew; ?>" aria-valuenow="<?php echo $dew; ?>" class="widget-view loaded" style="--dewpoint-droplet-width: <?php echo $inner_percent; ?>%;">
                                     <div class="graphic-container">
                                         <div class="dew-container">
                                             <div class="droplet"></div>
@@ -250,7 +231,7 @@ $phase = getMoonPhaseValue();
                                     ***************************************************** -->
                             <div class="widget" id="hum_widget">
                                 <div class="title">Humedad Exterior</div>
-                                <humidity-widget-view data-pws-id="IFUENG27" data-status="connected" data-humidity="<?php echo $humidity; ?>" data-humidity-string="<?php echo $humid_widget; ?>" data-main-value="<?php echo $humidity; ?>" aria-valuenow="<?php echo $humidity; ?>" data-secondary-value="<?php echo $humid_widget; ?>" class="<?php echo $humid_others; ?>">
+                                <humidity-widget-view data-pws-id="<?php echo $observatorio; ?>" data-status="connected" data-humidity="<?php echo $humidity; ?>" data-humidity-string="<?php echo $humid_widget; ?>" data-main-value="<?php echo $humidity; ?>" aria-valuenow="<?php echo $humidity; ?>" data-secondary-value="<?php echo $humid_widget; ?>" class="<?php echo $humid_others; ?>">
                                     <div class="graphic-container">
                                         <div class="humidity-gauge-container">
                                             <div class="humidity-gauge-bg" id="humidity-gauge-bg" style="--humidity-gauge-bg: conic-gradient(from 270deg, rgba(var(<?php echo $humidity_color; ?>), 0.8) 0deg, rgba(var(<?php echo $humidity_color; ?>), 0.8) <?php echo $angle_humidity; ?>deg, rgba(var(--black-or-white), 0.1) <?php echo $angle_humidity; ?>deg, rgba(var(--black-or-white), 0.1) 360deg);">
@@ -312,7 +293,7 @@ $phase = getMoonPhaseValue();
                                 $wind_dir = 180; // Direccón inicial del viento: 180º
                                 $wind_direction = windDirection($wind_dir);
                                 ?>
-                                <wind-widget-view id="wind-widget-view" data-pws-id="IFUENG27" data-status="connected" data-unit="m" data-wind-speed="<?php echo $wind; ?>" data-wind-gust="<?php echo $gust; ?>" data-wind-dir="<?php echo $wind_dir; ?>" data-description="gentle" data-main-value="<?php echo $wind; ?>" aria-valuenow="<?php echo $wind; ?>" data-secondary-value="<?php echo $gust; ?>" class="widget-view loaded show-wind">
+                                <wind-widget-view id="wind-widget-view" data-pws-id="<?php echo $observatorio; ?>" data-status="connected" data-unit="m" data-wind-speed="<?php echo $wind; ?>" data-wind-gust="<?php echo $gust; ?>" data-wind-dir="<?php echo $wind_dir; ?>" data-description="gentle" data-main-value="<?php echo $wind; ?>" aria-valuenow="<?php echo $wind; ?>" data-secondary-value="<?php echo $gust; ?>" class="widget-view loaded show-wind">
                                     <div class="graphic-container">
                                         <div class="wind-compass">
                                             <div class="wind-arrow-pointer-wrapper" id="wind-arrow-pointer-wrapper" style="transform: rotate(<?php echo $wind_dir; ?>deg);">
@@ -369,7 +350,7 @@ $phase = getMoonPhaseValue();
                                 $fill_bucket_bottom = "var(--wu-lightblue20)";
                                 //}
                                 ?>
-                                <rain-widget-view id="widget_de_lluvia" data-pws-id="IFUENG27" data-status="connected" data-unit="m" data-precip-rate="0" data-precip-total="0" data-main-value="0" aria-valuenow="0" data-secondary-value="0" class="widget-view loaded">
+                                <rain-widget-view id="widget_de_lluvia" data-pws-id="<?php echo $observatorio; ?>" data-status="connected" data-unit="m" data-precip-rate="0" data-precip-total="0" data-main-value="0" aria-valuenow="0" data-secondary-value="0" class="widget-view loaded">
                                     <div class="graphic-container">
                                         <div class="precip-container">
                                             <div class="mini-droplets">
@@ -400,7 +381,7 @@ $phase = getMoonPhaseValue();
                                     ***************************************************** -->
                             <div class="widget" id="pressure_widget">
                                 <div class="title">Presión Relativa</div>
-                                <pressure-widget-view data-pws-id="IFUENG27" data-status="connected" data-unit="m" data-pressure="<?php echo $pressure; ?>" data-pressure-angle="<?php echo $pres_angle; ?>" data-main-value="<?php echo $pressure; ?>" aria-valuenow="<?php echo $pressure; ?>" class="widget-view loaded">
+                                <pressure-widget-view data-pws-id="<?php echo $observatorio; ?>" data-status="connected" data-unit="m" data-pressure="<?php echo $pressure; ?>" data-pressure-angle="<?php echo $pres_angle; ?>" data-main-value="<?php echo $pressure; ?>" aria-valuenow="<?php echo $pressure; ?>" class="widget-view loaded">
                                     <div class="graphic-container">
                                         <div class="pressure-container">
                                             <div class="pressure-needle" id="pressure-widget-needle" style="transform: translate(-50%, -100%) rotate(0deg);"></div>
@@ -451,7 +432,7 @@ $phase = getMoonPhaseValue();
                                 }
                                 $categoria = uvIndexToCategory($uv);
                                 ?>
-                                <uv-widget-view data-pws-id="IFUENG27" data-status="connected" data-unit="m" data-uv="<?php echo $uv; ?>" data-main-value="<?php echo $uv; ?>" aria-valuenow="<?php echo $uv; ?>" data-secondary-value="<?php echo $uv; ?>" class="widget-view loaded">
+                                <uv-widget-view data-pws-id="<?php echo $observatorio; ?>" data-status="connected" data-unit="m" data-uv="<?php echo $uv; ?>" data-main-value="<?php echo $uv; ?>" aria-valuenow="<?php echo $uv; ?>" data-secondary-value="<?php echo $uv; ?>" class="widget-view loaded">
                                     <div class="graphic-container">
                                         <div class="pyramid-container" id="uv-widget-pyramid-container">
                                             <svg width="100%" height="100%" viewBox="0 0 162 136" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -486,7 +467,7 @@ $phase = getMoonPhaseValue();
                                     ***************************************************** -->
                             <div class="widget" id="solar_widget">
                                 <div class="title">Radiación Solar</div>
-                                <solar-radiation-widget-view data-pws-id="IFUENG27" data-status="connected" data-unit="m" data-solar-radiation="<?php echo $solar; ?>" data-main-value="<?php echo $solar; ?>" aria-valuenow="<?php echo $solar; ?>" data-secondary-value="<?php echo $solar; ?>" class="widget-view loaded">
+                                <solar-radiation-widget-view data-pws-id="<?php echo $observatorio; ?>" data-status="connected" data-unit="m" data-solar-radiation="<?php echo $solar; ?>" data-main-value="<?php echo $solar; ?>" aria-valuenow="<?php echo $solar; ?>" data-secondary-value="<?php echo $solar; ?>" class="widget-view loaded">
                                     <div class="graphic-container">
                                         <div class="circle-container">
                                             <div class="inner-circle" id="solar-radiation-widget-inner-circle" style="width: <?php echo $percentage; ?>%;"></div>
@@ -518,7 +499,7 @@ $phase = getMoonPhaseValue();
                                 }
                                 ?>
                                 <div class="title">Temperatura Interior</div>
-                                <temp-widget-view data-pws-id="IFUENG27" data-status="connected" data-unit="m" data-temp="<?php echo $in_temp; ?>" data-temp-angle="<?php echo $in_temp_angle; ?>" data-main-value="<?php echo $in_temp; ?>" aria-valuenow="<?php echo $in_temp; ?>" class="widget-view loaded">
+                                <temp-widget-view data-pws-id="<?php echo $observatorio; ?>" data-status="connected" data-unit="m" data-temp="<?php echo $in_temp; ?>" data-temp-angle="<?php echo $in_temp_angle; ?>" data-main-value="<?php echo $in_temp; ?>" aria-valuenow="<?php echo $in_temp; ?>" class="widget-view loaded">
                                     <div class="graphic-container">
                                         <div class="temp-gauge-container">
                                             <div class="temp-gauge-bg"></div>
@@ -557,7 +538,7 @@ $phase = getMoonPhaseValue();
                                 $in_humid_widget = $in_humid_state;
                                 $in_humid_others = "widget-view {$in_humid_state} loaded";
                                 ?>
-                                <humidity-int-widget-view data-pws-id="IFUENG27" data-status="connected" data-humidity="<?php echo $in_humidity; ?>" data-humidity-string="<?php echo $in_humid_widget; ?>" data-main-value="<?php echo $in_humidity; ?>" aria-valuenow="<?php echo $in_humidity; ?>" data-secondary-value="<?php echo $in_humid_widget; ?>" class="<?php echo $in_humid_others; ?>">
+                                <humidity-int-widget-view data-pws-id="<?php echo $observatorio; ?>" data-status="connected" data-humidity="<?php echo $in_humidity; ?>" data-humidity-string="<?php echo $in_humid_widget; ?>" data-main-value="<?php echo $in_humidity; ?>" aria-valuenow="<?php echo $in_humidity; ?>" data-secondary-value="<?php echo $in_humid_widget; ?>" class="<?php echo $in_humid_others; ?>">
                                     <div class="graphic-container">
                                         <div class="humidity-int-gauge-container">
                                             <div class="humidity-int-gauge-bg" id="humidity-int-gauge-bg" style="--humidity-int-gauge-bg: conic-gradient(from 270deg, rgba(var(<?php echo $in_humidity_color; ?>), 0.8) 0deg, rgba(var(<?php echo $in_humidity_color; ?>), 0.8) <?php echo $in_angle_humidity; ?>deg, rgba(var(--black-or-white), 0.1) <?php echo $in_angle_humidity; ?>deg, rgba(var(--black-or-white), 0.1) 360deg);">
@@ -588,7 +569,7 @@ $phase = getMoonPhaseValue();
                                     ***************************************************** -->
                             <div class="widget" id="seeing">
                                 <div class="title">Seeing</div>
-                                <seeing-widget-view id="seeing-widget-view" data-pws-id="IFUENG27" data-status="connected" data-unit="" class="widget-view loaded show-wind">
+                                <seeing-widget-view id="seeing-widget-view" data-pws-id="<?php echo $observatorio; ?>" data-status="connected" data-unit="" class="widget-view loaded show-wind">
                                     <div class="graphic-container">
                                         <div class="svg-container">
                                             <svg viewBox="0 0 1190 1706" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto;">
@@ -1100,9 +1081,7 @@ $phase = getMoonPhaseValue();
 
                                     <h2 class="seeing-group-title">Catálogo Lunar 100 visibles en el terminador</h2>
                                     <div id="moon-features-list" class="bloque"></div>
-
-                                    <div class="footer" id="moon-footer">
-                                    </div>
+                                    <div class="footer" id="moon-footer"></div>
                                 </div>
                             </div>
                         </div>
@@ -1111,6 +1090,7 @@ $phase = getMoonPhaseValue();
                         ***** LOCALIZAR ACCIDENTE GEOGRÁFICO EN LA SUPERFICIE LUNAR *****
                         ************************* M O D A L *****************************
                         ****************************************************************-->
+                        <!-- Modal Oculto por defecto -->
                         <div id="moonFeatureModal" class="modal">
                             <div class="modal-content">
                                 <button class="close" id="closeMoonFeatureModal" aria-label="Cerrar">
@@ -1124,6 +1104,20 @@ $phase = getMoonPhaseValue();
                                 <canvas id="moonFeatureCanvas" width="400" height="400" style="display:block;margin:2rem auto;border-radius:50%;background:#000;"></canvas>
                                 <p id="moonFeatureInfo" style="text-align:center;margin-top:0.5rem;font-size:0.9rem;color: var(--font-secondary-color);"></p>
                                 <p id="moonFeatureDescription" style="text-align:center;margin-top:0.5rem;font-size:0.9rem;color: var(--font-secondary-color);"></p>
+                            </div>
+                        </div>
+
+                        <!--*************************************************************
+                        ***** MODAL ZOOM LUNAR A TAMAÑO COMPLETO ***********************
+                        ****************************************************************-->
+                        <!-- Modal de imagen completa -->
+                        <div id="moonZoomModal" class="moon-modal">
+                            <div class="moon-modal-content">
+                                <button class="moon-modal-close" id="closeMoonZoomModal" aria-label="Cerrar">✕</button>
+                                <div id="zoomViewer" class="zoom-viewer">
+                                    <img id="zoomMoonImage" src="./static/images/hires/lunar-100-2.jpg" alt="Luna" />
+                                    <div id="zoomMarker"></div>
+                                </div>
                             </div>
                         </div>
 

@@ -126,6 +126,89 @@
 | 3. OTROS ESTILOS GLOBALES (Si son necesarios)
 |-----------------------------------------------------------
 */
+/* === MODAL DE ZOOM LUNAR === */
+.moon-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(6px);
+    z-index: 1500;
+    justify-content: center;
+    align-items: center;
+}
+
+.moon-modal.show {
+    display: flex;
+}
+
+.moon-modal-content {
+    position: relative;
+    width: 90vw;
+    height: 90vh;
+    background: #000;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+}
+
+/* --- Botón de cierre grande --- */
+.moon-modal-close {
+    position: absolute;
+    right: 12px;
+    top: 12px;
+    z-index: 100;
+    color: white;
+    background: rgba(0, 0, 0, 0.5);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    font-size: 32px;
+    line-height: 32px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.25s;
+}
+
+.moon-modal-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+/* --- Contenedor del visor --- */
+.zoom-viewer {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+/* --- Imagen lunar --- */
+.zoom-viewer img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    user-select: none;
+    pointer-events: none;
+}
+
+/* --- Marcador de posición --- */
+#zoomMarker {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--wu-white);
+    border-radius: 50%;
+    background: var(--wu-red);
+    opacity: 0.5;
+    box-shadow: 0 0 10px red;
+    pointer-events: none;
+    display: none;
+}
 
 /* Los estilos de .feature-card-title y .feature-coords-info que tenías al principio: */
 /* Estos se mantienen para la sección de accidentes, pero ahora con mayor especificidad. */
@@ -133,5 +216,5 @@
 /* 2. Estilos para las Coordenadas (small.feature-coords-info) [Sobreescritos para #moon-features-list] */
 .moon-infografia .feature-coords-info {
     /* Si esta clase se usa en otros lugares, esta será la regla general.
-       Las reglas específicas de #moon-features-list la sobreescriben. */
+    Las reglas específicas de #moon-features-list la sobreescriben. */
 }

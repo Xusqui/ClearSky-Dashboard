@@ -19,19 +19,28 @@ function rem($value, $scale) {
 ?>
 /* Contenedor principal */
 .moon-card-container {
-position: relative;
-top: 50%;
-transform: translateY(-50%);
+  position: relative;
+  display: flex;
+  flex-direction: column; /* Luna arriba, texto debajo */
+  align-items: center;    /* Centra horizontalmente */
+  justify-content: center;/* Centra verticalmente */
+  height: 100%;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 /* Esfera principal de la luna */
 .moon {
-display: inline-block;
-width: <?= rem(19, $scale) ?>;
-height: <?= rem(19, $scale) ?>;
-border-radius: 50%;
-overflow: hidden;
-margin: 0 <?= rem(0.25, $scale) ?>;
+position: relative; /* Necesario para posicionar las capas internas */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: <?= rem(19, $scale) ?>;
+  height: <?= rem(19, $scale) ?>;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 <?= rem(0.25, $scale) ?>;
+
 }
 
 /* Capa de luz */
@@ -43,7 +52,7 @@ background-color: var(--moon_shadow);
 border-radius: 50%;
 animation: cycle 100s linear paused reverse;
 animation-delay: <?= $phase ?>s;
-filter: blur(<?= rem(0.5, $scale) ?>);
+filter: blur(<?= rem(0.3, $scale) ?>);
 }
 
 /* Textura de la superficie */
@@ -58,13 +67,14 @@ background-position: center center;
 background-size: 125%;
 background-repeat: no-repeat;
 mix-blend-mode: multiply;
+transform: translateY(52%);
 }
 
 /* Capa de sombreado interior */
 .sphere {
 width: <?= rem(19.75, $scale) ?>;
 height: <?= rem(19.75, $scale) ?>;
-border-radius: 100%;
+border-radius: 10%;
 box-shadow:
 inset 0 0 <?= rem(10, $scale) ?> #000,
 inset 0 0 <?= rem(5, $scale) ?> #000,
@@ -73,6 +83,7 @@ position: absolute;
 margin-top: <?= rem(-20.3, $scale) ?>;
 margin-left: <?= rem(-0.3, $scale) ?>;
 filter: blur(<?= rem(2, $scale) ?>);
+transform:translateY(52%);
 }
 
 .moon-card .moon-phase-name #moon-text {
@@ -93,6 +104,7 @@ position: relative;
 #moonFeatureCanvas {
 border-radius: 50%;
 box-shadow: inset 0 0 20px #000, 0 0 10px rgba(0,0,0,0.3);
+cursor: zoom-in;
 }
 
 /* Animación de las fases */

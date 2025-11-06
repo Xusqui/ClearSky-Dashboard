@@ -1,5 +1,4 @@
 // moon_modal.js
-
 // --- Importar el Catálogo oficial Lunar 100 desde el nuevo archivo ---
 import { LUNAR_100_FEATURES } from './lunar_data.js';
 
@@ -121,11 +120,11 @@ function openMoonFeatureModalCanvas(lonDeg, latDeg, name, description) {
             ctx.strokeStyle = 'white';
             ctx.stroke();
 
-            info.textContent = `${name}: lon=${lonDeg.toFixed(1)}°, lat=${latDeg.toFixed(1)}° (cara visible)`;
+            info.textContent = `${name}: lon=${lonDeg.toFixed(1)}°, lat=${latDeg.toFixed(1)}°`;
         } else {
             info.textContent = `${name}: lon=${lonDeg.toFixed(1)}°, lat=${latDeg.toFixed(1)}° (cara oculta)`;
         }
-            desc.textContent = `${description}`;
+        desc.textContent = `${description}`;
 
         ctx.restore();
     };
@@ -165,7 +164,7 @@ function updateMoonModal(){
     document.getElementById('terminator-long').textContent = formattedTerminator;
 
     // Filtrar accidentes cercanos al terminador (±10°)
-    const tolerance = 5;
+    const tolerance = 3;
     const featuresNearTerminator = LUNAR_100_FEATURES.filter(f => {
         let delta = Math.abs(f.long - moonData.terminatorVisible90);
         return delta <= tolerance;
@@ -203,7 +202,7 @@ function updateMoonModal(){
 
         // Ajusta el margen inferior para la separación, si es necesaria.
         //locationInfo.style.marginBottom = '10px';
-        //locationInfo.style.opacity = '0.5';
+        locationInfo.style.opacity = '0.5';
         locationInfo.textContent = `[${formattedLat}, ${formattedLong}]`;
 
         // 5. NÚMERO DE CATÁLOGO (#Nº en grande)
@@ -245,6 +244,9 @@ const formattedTime = now.toLocaleTimeString('es-ES', {
 });
 
 moonFooter.innerHTML = `
+    <p class="seeing-attribution">
+        Descargar mapa de Lunar 100 en super Alta Resolución <a href="./static/images/hires/lunar-100.jpg">aquí</a> por <a href="https://www.cloudynights.com/profile/382918-dylanjiva/">Dylan Evans</a>
+    </p>
     <p class="seeing-attribution">
         La información mostrada es un **cálculo astronómico en tiempo real** para la fecha y hora: <strong>${formattedDate}, ${formattedTime}</strong>.
     </p>
@@ -290,6 +292,95 @@ window.addEventListener('click', (event) => {
         modal.style.display = 'none';
     }
 });
+// ==========================================================
+// === MODAL DE ZOOM LUNAR A TAMAÑO COMPLETO ================
+// ==========================================================
+
+const moonFeatureCanvas = document.getElementById("moonFeatureCanvas");
+const moonZoomModal = document.getElementById("moonZoomModal");
+const closeMoonZoomModal = document.getElementById("closeMoonZoomModal");
+const moonFeatureInfo = document.getElementById("moonFeatureInfo");
+
+// --- Abrir modal de zoom al hacer clic en el canvas ---
+moonFeatureCanvas.addEventListener("click", () => {
+    const text = moonFeatureInfo.textContent.trim();
+
+    const match = text.match(/lon\s*=\s*([-+]?\d+(?:\.\d+)?)°?[,;\s]*lat\s*=\s*([-+]?\d+(?:\.\d+)?)°?/i);
+    if (!match) {
+        alert("⚠️ No se pudieron extraer las coordenadas del texto:\n" + text);
+        return;
+    }
+
+    const lon = parseFloat(match[1]);
+    const lat = parseFloat(match[2]);
+
+    moonZoomModal.classList.add("show");
+    document.body.style.overflow = "hidden";
+
+    const img = document.getElementById("zoomMoonImage");
+    if (img.complete) {
+        centerZoomOn(lon, lat);
+    } else {
+        img.onload = () => centerZoomOn(lon, lat);
+    }
+});
+
+// --- Cerrar modal ---
+closeMoonZoomModal.addEventListener("click", () => {
+    moonZoomModal.classList.remove("show");
+    document.body.style.overflow = "";
+});
+
+// Cerrar al hacer clic fuera
+moonZoomModal.addEventListener("click", (e) => {
+    if (e.target === moonZoomModal) {
+        moonZoomModal.classList.remove("show");
+        document.body.style.overflow = "";
+    }
+});
+
+// -------------------------------------------------------------
+// --- FUNCIÓN DE CENTRADO (proyección ortográfica) -------------
+// -------------------------------------------------------------
+function centerZoomOn(lonDeg, latDeg) {
+    const img = document.getElementById("zoomMoonImage");
+    const marker = document.getElementById("zoomMarker");
+    const viewer = document.getElementById("zoomViewer");
+
+    const W = img.naturalWidth;
+    const H = img.naturalHeight;
+    const cx = W / 2;
+    const cy = H / 2;
+    const R = Math.min(W, H) / 2;
+
+    const lon = lonDeg * Math.PI / 180;
+    const lat = latDeg * Math.PI / 180;
+
+    const x = Math.cos(lat) * Math.sin(lon);
+    const y = Math.sin(lat);
+    const z = Math.cos(lat) * Math.cos(lon);
+
+    if (z < 0) {
+        alert("⚠️ El punto está en la cara oculta de la Luna (no visible).");
+        return;
+    }
+
+    const px = cx + R * x;
+    const py = cy - R * y;
+
+    const vw = viewer.clientWidth;
+    const vh = viewer.clientHeight;
+
+    img.style.width = W + "px";
+    img.style.height = H + "px";
+    img.style.left = (vw / 2 - px) + "px";
+    img.style.top = (vh / 2 - py) + "px";
+
+    marker.style.display = "block";
+    marker.style.left = (vw / 2 - 10) + "px";
+    marker.style.top = (vh / 2 - 10) + "px";
+}
+// HASTA AQUÍ EL MODAL DE LA LUNA CON ZOOM
 
 // --- Cálculo inicial si quieres autoactualizar ---
 updateMoonModal();
