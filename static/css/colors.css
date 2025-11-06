@@ -151,17 +151,6 @@
         --theme-toggle-active-bg: var(--wu-lightblue-40, var(--wu-lightblue));
         --theme-toggle-active-color: var(--wu-black);
     }
-    sun-moon-forecast {
-        color: #eee;
-    }
-    #forecast.forecast-container > div {
-        background: rgba(30, 30, 30, 0.7);
-        color: #eee;
-    }
-
-    #forecast.forecast-container .desc {
-        color: #aaa;
-    }
 }
 
 .color-wu-white {

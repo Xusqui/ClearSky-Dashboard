@@ -1,3 +1,15 @@
+sun-moon-forecast {
+  color: #eee;
+}
+#forecast.forecast-container > div {
+  background: rgba(30, 30, 30, 0.7);
+  color: #eee;
+}
+
+#forecast.forecast-container .desc {
+  color: #aaa;
+}
+
 .forecast-container {
   display: flex;
   gap: 12px;
@@ -64,5 +76,10 @@
 
 .forecast-desc {
   font-size: 12px;
+  color: var(--color-secondary-font);
+}
+
+.forecast-seeing {
+  font-size: 16px;
   color: var(--color-secondary-font);
 }
