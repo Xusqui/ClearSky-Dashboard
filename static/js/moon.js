@@ -5,46 +5,6 @@ window.moon = SunCalc.getMoonIllumination(now);
 window.fraction = window.moon.fraction;
 window.phase = window.moon.phase;
 
-/*const radius = 40;
-const cx = 20 + 40;
-const cy = 5 + 40;
-const offset = 0;
-const arcRadius = radius - offset;
-const arcDiameter = arcRadius * 2;
-
-let waxingArc = arcRadius;
-let waxingSweep = 1;
-let waningArc = arcRadius;
-let waningSweep = 1;
-
-let sweep = 0;
-let arcFraction = 1 - fraction * 2;
-
-if (arcFraction < 0) {
-    arcFraction = -arcFraction;
-    sweep = 1;
-}
-
-if (phase <= 0.5) {
-    // creciente
-    waxingArc = arcFraction * arcRadius;
-    waxingSweep = sweep;
-} else {
-    // menguante
-    waningArc = arcFraction * arcRadius;
-    waningSweep = sweep;
-}
-
-const pathD = `
-  M ${cx} ${cy}
-  m 0 ${-arcRadius}
-  a ${waningArc} ${arcRadius} 0 0 ${waningSweep} 0 ${arcDiameter}
-  a ${waxingArc} ${arcRadius} 0 0 ${waxingSweep} 0 ${-arcDiameter}
-  z
-`;
-
-document.getElementById("mask-path").setAttribute("d", pathD);
-*/
 // --- Texto de la fase lunar ---
 const fractionPercent = Math.round(fraction * 100);
 let phaseText = "";

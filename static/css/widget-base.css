@@ -208,6 +208,7 @@
 .modal {
     display: none; /* Oculto por defecto */
     position: fixed;
+    inset: 0;
     z-index: 1000;
     left: 0;
     top: 0;
@@ -215,10 +216,14 @@
     height: 100%;
     overflow: auto;
     background: rgba(var(--black-or-white), 0.6); /* negro en día, blanco en noche */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px); /* Compatibilidad con safary */
+    justify-content: center;
+    align-items: center;
 }
 
 .modal-content {
-    background: var(--bg-color); /* fondo adaptado */
+    background: color-mix(in srgb, var(--bg-color) 60%, transparent); /* fondo adaptado */
     color: var(--font-color); /* texto adaptado */
     margin: 5% auto;
     padding: 20px;
@@ -227,6 +232,7 @@
     max-width: 800px;
     position: relative;
     box-shadow: 0 4px 12px var(--dashboard-widget-box-shadow-color);
+    animation: fadeIn 0.3s ease;
 }
 
 .close {
@@ -238,6 +244,8 @@
     cursor: pointer;
     padding: 5px;
     line-height: 0; /* elimina espacio extra */
+    float: right;
+    font-size: 1.3em;
 }
 
 .close svg {

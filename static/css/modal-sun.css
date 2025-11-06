@@ -1,0 +1,130 @@
+/* === MODAL SOLAR === */
+#solarModal .infografia {
+    max-width: 800px;
+    margin: 40px auto;
+    background-color: var(--bg-color);
+    border-radius: 12px;
+    padding: 20px 30px 30px 30px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    overflow-y: auto;
+    max-height: 90vh; /* ✅ evita desbordamiento */
+}
+
+/* Título principal */
+.solar-modal-title {
+    text-align: center;
+    color: var(--font-color);
+    font-size: 1.8em;
+    font-weight: 600;
+    margin-top: 0;
+    margin-bottom: 25px;
+}
+
+/* Subtítulos de grupo */
+.solar-group-title {
+    font-size: 1.1em;
+    font-weight: 700;
+    color: var(--color-secondary-font);
+    border-bottom: 1px solid var(--dashboard-widget-box-shadow-color, #e0e0e0);
+    padding-bottom: 8px;
+    margin-top: 25px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+/* Primer bloque sin margen superior */
+.infografia h2.solar-group-title:first-of-type {
+    margin-top: 0;
+}
+
+/* Contenedores de tarjetas */
+.solar-bloque {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+/* Tarjetas individuales */
+.solar-card {
+    background: var(--color-box-bg);
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    box-shadow: var(--search-focus-box-shadow);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+
+.solar-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(255, 170, 50, 0.2);
+}
+
+/* Título de la tarjeta */
+.solar-card-title {
+    font-size: 1.1em;
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: var(--color-secondary-font);
+    font-weight: 500;
+    min-height: 2.7em;
+}
+
+/* Valor principal */
+.solar-card-value {
+    font-size: 1.7em;
+    font-weight: 600;
+    margin: 0;
+    color: var(--nav-menu-font-color);
+    line-height: 1.2;
+}
+
+/* Descripción */
+.solar-card-desc {
+    font-size: 0.8em;
+    color: var(--color-secondary-font);
+    margin-top: 4px;
+}
+
+/* Footer del modal */
+.solar-footer {
+    text-align: center;
+    font-size: 0.9em;
+    margin-top: 25px;
+    padding: 10px;
+    background: var(--color-box-bg);
+    border-radius: 8px;
+    color: var(--color-secondary-font);
+}
+
+.solar-footer a {
+    color: var(--color-secondary-font);
+    text-decoration: underline;
+}
+.solar-footer a:hover {
+    color: var(--font-color);
+}
+
+/* === Ajustes generales del modal === */
+.modal-content {
+    max-width: 90%;
+    margin: auto;
+}
+
+.close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--font-color);
+    transition: transform 0.2s;
+}
+
+.close:hover {
+    transform: scale(1.2);
+}

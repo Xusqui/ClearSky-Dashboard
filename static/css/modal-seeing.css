@@ -2,10 +2,10 @@
     max-width: 800px;
     margin: auto;
     /* Respetamos las variables de tu tema para fondo y sombra */
-    background-color: var(--bg-color);
+    background-color: color-mix(in srgb, var(--bg-color) 0%, transparent);
     border-radius: 12px;
     padding: 20px 30px 30px 30px; /* Ajuste de padding */
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    /*box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);*/
 }
 
 /* Título principal del modal */

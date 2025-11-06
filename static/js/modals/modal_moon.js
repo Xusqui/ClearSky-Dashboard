@@ -164,7 +164,7 @@ function updateMoonModal(){
     document.getElementById('terminator-long').textContent = formattedTerminator;
 
     // Filtrar accidentes cercanos al terminador (±10°)
-    const tolerance = 3;
+    const tolerance = 10;
     const featuresNearTerminator = LUNAR_100_FEATURES.filter(f => {
         let delta = Math.abs(f.long - moonData.terminatorVisible90);
         return delta <= tolerance;
