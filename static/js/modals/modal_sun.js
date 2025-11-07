@@ -9,42 +9,6 @@ const params = new URLSearchParams(scriptURL.split('?')[1]);
 const lat = parseFloat(params.get('lat'));
 const lon = parseFloat(params.get('lon'));
 
-// --- Actualiza los datos del widget solar pequeño ---
-function updateSunWidget() {
-    const now = new Date();
-    const times = SunCalc.getTimes(now, lat, lon);
-    const sunrise = times.sunrise;
-    const sunset = times.sunset;
-
-    const sunriseEl = document.getElementById("sunrise-time");
-    const sunsetEl = document.getElementById("sunset-time");
-    if (sunriseEl) sunriseEl.textContent = formatTime(sunrise);
-    if (sunsetEl) sunsetEl.textContent = formatTime(sunset);
-
-    const sunIcon = document.getElementById("sun-icon");
-    if (!sunIcon) return;
-
-    if (now < sunrise || now > sunset) {
-        sunIcon.setAttribute("visibility", "hidden");
-        return;
-    } else {
-        sunIcon.setAttribute("visibility", "visible");
-    }
-
-    const dayProgress = (now - sunrise) / (sunset - sunrise);
-    const radiusX = 40;
-    const radiusY = 35;
-    const centerX = 50;
-    const centerY = 56;
-    const angle = Math.PI * (1 - dayProgress);
-    const x = centerX + radiusX * Math.cos(angle);
-    const y = centerY - radiusY * Math.sin(angle);
-    sunIcon.setAttribute("x", x - 15);
-    sunIcon.setAttribute("y", y - 15);
-}
-updateSunWidget();
-setInterval(updateSunWidget, 60000);
-
 // --- Modal ---
 const modal = document.getElementById("solarModal");
 const closeBtn = document.getElementById("closeSolarModal");

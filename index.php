@@ -61,52 +61,54 @@ function getMoonPhaseValue($timestamp = null) {
 }
 
 $phase = getMoonPhaseValue();
+$moon_scale = 0.4;
 ?>
 
 <html lang="es">
     <head>
         <link rel="icon" type="image/x-icon" href="./favicon.ico"/>
-        <title>Estación Meteorológica <?php echo $observatorio; ?></title>
+        <title>Estación Meteorológica <?= $observatorio ?></title>
         <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
         <link rel="stylesheet" type="text/css" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" />
-        <link rel="stylesheet" type="text/css" href="./static/css/images.css?v=<?php echo time(); ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/global.css?v=<?php echo time(); ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/colors.css?v=<?php echo time(); ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/theme-switcher.css?v=<?php echo time(); ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/dashboard-header.css?v=<?php echo time(); ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/dashboard-body.css?v=<?php echo time(); ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/dashboard-footer.css?v=<?php echo time(); ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/images.css?v=<?= time() ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/global.css?v=<?= time() ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/colors.css?v=<?= time() ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/theme-switcher.css?v=<?= time() ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/dashboard-header.css?v=<?= time() ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/dashboard-body.css?v=<?= time() ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/dashboard-footer.css?v=<?= time() ?>" />
         <!-- Widgets' CSS -->
-        <link rel="stylesheet" type="text/css" href="./static/css/dew-point-widget.css?v=<?php echo time(); ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/humidity-widget.css?v=<?php echo time(); ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/humidity-int-widget.css?v=<?php echo time(); ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/pressure-widget.css?v=<?php echo time(); ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/rain-widget.css?v=<?php echo time(); ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/solar-radiation-widget.css?v=<?php echo time(); ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/temp-widget.css?v=<?php echo time(); ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/uv-widget.css?v=<?php echo time(); ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/widget-base.css?v=<?php echo time(); ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/wind-widget.css?v=<?php echo time(); ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/moon.css?v=<?php echo time(); ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/forecast.css?v=<?php echo time(); ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/widget_seeing.css?v=<?php echo time(); ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/modal-seeing.css?v=<?php echo time(); ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/modal-dates.css?v=<?php echo time(); ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/modal-pws.css?v=<?php echo time(); ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/modal-moon.css?v=<?php echo time(); ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/moon.php?position=<?php echo $phase; ?>&scale=0.4&v=<?php echo time(); ?>">
+        <link rel="stylesheet" type="text/css" href="./static/css/dew-point-widget.css?v=<?= time() ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/humidity-widget.css?v=<?= time() ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/humidity-int-widget.css?v=<?= time() ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/pressure-widget.css?v=<?= time() ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/rain-widget.css?v=<?= time() ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/solar-radiation-widget.css?v=<?= time() ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/temp-widget.css?v=<?= time() ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/uv-widget.css?v=<?= time() ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/widget-base.css?v=<?= time() ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/wind-widget.css?v=<?= time() ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/widget-moon.css?v=<?= time() ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/widget-sun.css?v=<?= time() ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/forecast.css?v=<?= time() ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/widget_seeing.css?v=<?= time() ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/modal-seeing.css?v=<?= time() ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/modal-dates.css?v=<?= time() ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/modal-pws.css?v=<?= time() ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/modal-moon.css?v=<?= time() ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/moon-phase.php?position=<?= $phase ?>&scale=<?= $moon_scale ?>&v=<?= time() ?>">
     </head>
     <body>
         <div class="widgets">
             <content-router-wc>
                 <dashboard-header-view>
                     <div class="max-width">
-                        <div class="elevation-coordinates">Elevación: <strong><?php echo $elev; ?></strong> m, Latitud: <strong><?php echo $latitud; ?></strong> Longitud: <strong><?php echo $longitud; ?></strong> Zona horaria: <strong><?php echo $tz; ?></strong>
+                        <div class="elevation-coordinates">Elevación:&nbsp;<strong><?= $elev ?></strong>m, Latitud:&nbsp;<strong><?= $latitud ?></strong>&nbsp;Longitud:&nbsp;<strong><?= $longitud ?></strong>&nbsp;Zona horaria:&nbsp;<strong><?= $tz ?></strong>
                             <!-- Enlace setup -->
-                            <a href="./static/config/setup.php" class="setup-link"><setup-button></setup-button> Setup</a>
+                            <a href="./static/config/setup.php" class="setup-link"><setup-button></setup-button>&nbsp;Setup</a>
                         </div>
                         <div class="name-actions">
-                            <h1><?php echo $observatorio; ?></h1>
+                            <h1><?= $observatorio ?></h1>
                             <pws-info title="PWS Info" id="PWS_info"></pws-info>
                             <!-- Selector de tema de color -->
                             <div class="theme-buttons">
@@ -123,23 +125,39 @@ $phase = getMoonPhaseValue();
 
                         </div>
                         <div class="location-info">
-                            <span>En <?php echo $city; ?>, a las</span>
-                            <span class="long" id="pws-status-time-long"><?php echo $ts_formatted; ?>.</span>
+                            <span>En <?= $city ?>, a las</span>
+                            <span class="long" id="pws-status-time-long"><?= $ts_formatted ?>.</span>
                             <!-- El script de "actualizado hace x segundos", está dentro del wind_widget.js -->
-                            <span class="ago" id="pws-status-time-ago" data-updated="<?php echo $localTime->getTimestamp(); ?>">Actualizado hace 0 sec</span>
+                            <span class="ago" id="pws-status-time-ago" data-updated="<?= $localTime->getTimestamp() ?>">Actualizado hace 0 sec</span>
                         </div>
                     </div>
                 </dashboard-header-view>
                 <dashboard-body-view>
                     <div class="max-width">
-                        <sun-moon-forecast data-last-updated-long-string="" data-last-updated-short-string="" data-pws-id="<?php echo $observatorio; ?>" data-place-id="" data-iana-time-zone="Europe/Madrid" data-time-zone-abbreviation="CEST" data-status="connected" data-obs-time-utc="" data-time-ago-string="">
+                        <sun-moon-forecast data-last-updated-long-string="" data-last-updated-short-string="" data-pws-id="<?= $observatorio ?>" data-place-id="" data-iana-time-zone="Europe/Madrid" data-time-zone-abbreviation="CEST" data-status="connected" data-obs-time-utc="" data-time-ago-string="">
                             <!-- Contenedor general de tarjetas -->
                             <div class="cards-grid">
                                 <!-- Tarjeta Sol -->
                                 <div class="big-card-sun sun-card">
-                                    <div id="sun-arc-container">
+                                    <div id="sun-arc-container" class="sun-arc-container">
                                         <svg id="sun-arc" width="100" height="100" viewBox="0 0 100 100">
-                                            <path d="M 10 60 A 35 35 0 0 1 90 60" stroke="orange" stroke-width="4" fill="none" stroke-linecap="round"/>
+                                              <defs>
+                                                  <linearGradient id="sunArcGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                                      <stop offset="0%" stop-color="#FFd107" />   <!-- amarillo amanecer -->
+                                                      <stop offset="50%" stop-color="#FFaB3B" />  <!-- naranja mediodía -->
+                                                      <stop offset="100%" stop-color="#FF5722" /> <!-- rojizo atardecer -->
+                                                  </linearGradient>
+                                            </defs>
+                                            <path d="M 10 60 A 35 35 0 0 1 90 60"
+                                                  stroke="url(#sunArcGradient)"
+                                                  stroke-width="4"
+                                                  fill="none"
+                                                  stroke-linecap="round"
+                                                  />
+                                            <!--<path d="M 7 60 A 35 35 0 0 1 93 60" stroke="url(#sunArcGradient)" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.5"/>
+                                            <path d="M 4 60 A 35 35 0 0 1 96 60" stroke="url(#sunArcGradient)" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.3"/>
+                                            <path d="M 1 60 A 35 35 0 0 1 99 60" stroke="url(#sunArcGradient)" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.1"/>-->
+                                            <text id="solar-noontime" x="50" y="13" text-anchor="middle" font-size="7" fill="gray" font-weight="bold">Cénit</text>
                                             <image id="sun-icon" href="./static/images/icons/sun.svg" width="30" height="30" x="0" y="0" visibility="hidden"/>
                                             <image id="sunrise-icon" href="./static/images/icons/sunrise.svg" width="18" height="18" x="3" y="60"/>
                                             <text id="sunrise-time" x="11" y="80" text-anchor="middle" font-size="9" fill="gray">sunrise</text>
@@ -191,17 +209,17 @@ $phase = getMoonPhaseValue();
                                 }
                                 ?>
                                 <div class="title">Temperatura Exterior</div>
-                                <temp-widget-view data-pws-id="<?php echo $observatorio; ?>" data-status="connected" data-unit="m" data-temp="<?php echo $temp; ?>" data-temp-angle="<?php echo $temp_angle; ?>" data-main-value="<?php echo $temp; ?>" aria-valuenow="<?php echo $temp; ?>" class="widget-view loaded">
+                                <temp-widget-view data-pws-id="<?= $observatorio ?>" data-status="connected" data-unit="m" data-temp="<?= $temp ?>" data-temp-angle="<?= $temp_angle ?>" data-main-value="<?= $temp ?>" aria-valuenow="<?= $temp ?>" class="widget-view loaded">
                                     <div class="graphic-container">
                                         <div class="temp-gauge-container">
                                             <div class="temp-gauge-bg"></div>
                                             <div class="temp-gauge-inner"></div>
-                                            <div class="temp-needle" id="temp-widget-needle" style="transform: translate(-50%, -100%) rotate(<?php echo $temp_angle; ?>deg);"></div>
+                                            <div class="temp-needle" id="temp-widget-needle" style="transform: translate(-50%, -100%) rotate(<?= $temp_angle ?>deg);"></div>
                                         </div>
                                     </div>
                                     <div class="value-container">
-                                        <div class="main-value value-unit degrees" id="temp-widget-main-display"><?php echo $temp; ?></div>
-                                        <div class="tertiary-value uppercase Value-unit degrees" id="temp-widget-feel-display">Sensación: <?php echo $feels_like; ?></div>
+                                        <div class="main-value value-unit degrees" id="temp-widget-main-display"><?= $temp ?></div>
+                                        <div class="tertiary-value uppercase Value-unit degrees" id="temp-widget-feel-display">Sensación: <?= $feels_like ?></div>
                                     </div>
                                 </temp-widget-view>
                             </div>
@@ -212,16 +230,18 @@ $phase = getMoonPhaseValue();
                             <div class="widget" id="dew_point">
                                 <div class="title">Punto de Rocío</div>
                                 <!--Calcular porcentaje de la gota, inicialmente 0-->
-                                <?php $dew = 0;
-                                $inner_percent = (100 * $dew) / 49; ?>
-                                <dew-point-widget-view data-pws-id="<?php echo $observatorio; ?>" data-status="connected" data-unit="m" data-temp="<?php echo $temp; ?>" data-dew-point="<?php echo $dew; ?>" data-main-value="<?php echo $dew; ?>" aria-valuenow="<?php echo $dew; ?>" class="widget-view loaded" style="--dewpoint-droplet-width: <?php echo $inner_percent; ?>%;">
+                                <?php
+                                    $dew = 0;
+                                    $inner_percent = (100 * $dew) / 49;
+                                ?>
+                                <dew-point-widget-view data-pws-id="<?= $observatorio ?>" data-status="connected" data-unit="m" data-temp="<?= $temp ?>" data-dew-point="<?= $dew ?>" data-main-value="<?= $dew ?>" aria-valuenow="<?= $dew ?>" class="widget-view loaded" style="--dewpoint-droplet-width: <?= $inner_percent ?>%;">
                                     <div class="graphic-container">
                                         <div class="dew-container">
                                             <div class="droplet"></div>
                                         </div>
                                     </div>
                                     <div class="value-container">
-                                        <div class="main-value value-unit degrees" id="dewpoint-widget-main-display"><?php echo $dew; ?></div>
+                                        <div class="main-value value-unit degrees" id="dewpoint-widget-main-display"><?= $dew ?></div>
                                     </div>
                                 </dew-point-widget-view>
                             </div>
@@ -231,10 +251,10 @@ $phase = getMoonPhaseValue();
                                     ***************************************************** -->
                             <div class="widget" id="hum_widget">
                                 <div class="title">Humedad Exterior</div>
-                                <humidity-widget-view data-pws-id="<?php echo $observatorio; ?>" data-status="connected" data-humidity="<?php echo $humidity; ?>" data-humidity-string="<?php echo $humid_widget; ?>" data-main-value="<?php echo $humidity; ?>" aria-valuenow="<?php echo $humidity; ?>" data-secondary-value="<?php echo $humid_widget; ?>" class="<?php echo $humid_others; ?>">
+                                <humidity-widget-view data-pws-id="<?= $observatorio ?>" data-status="connected" data-humidity="<?= $humidity ?>" data-humidity-string="<?= $humid_widget ?>" data-main-value="<?= $humidity ?>" aria-valuenow="<?= $humidity ?>" data-secondary-value="<?= $humid_widget ?>" class="<?= $humid_others ?>">
                                     <div class="graphic-container">
                                         <div class="humidity-gauge-container">
-                                            <div class="humidity-gauge-bg" id="humidity-gauge-bg" style="--humidity-gauge-bg: conic-gradient(from 270deg, rgba(var(<?php echo $humidity_color; ?>), 0.8) 0deg, rgba(var(<?php echo $humidity_color; ?>), 0.8) <?php echo $angle_humidity; ?>deg, rgba(var(--black-or-white), 0.1) <?php echo $angle_humidity; ?>deg, rgba(var(--black-or-white), 0.1) 360deg);">
+                                            <div class="humidity-gauge-bg" id="humidity-gauge-bg" style="--humidity-gauge-bg: conic-gradient(from 270deg, rgba(var(<?= $humidity_color ?>), 0.8) 0deg, rgba(var(<?= $humidity_color ?>), 0.8) <?= $angle_humidity ?>deg, rgba(var(--black-or-white), 0.1) <?= $angle_humidity ?>deg, rgba(var(--black-or-white), 0.1) 360deg);">
                                             </div>
                                             <div class="humidity-gauge-inner"></div>
                                             <div class="humidity-mist-ring mist-ring-1"></div>
@@ -251,9 +271,9 @@ $phase = getMoonPhaseValue();
                                         </div>
                                     </div>
                                     <div class="value-container">
-                                        <div class="main-value value-unit percent" id="humidity-widget-main-display"><?php echo $humidity; ?></div>
-                                        <div class="secondary-value uppercase" id="humidity-widget-text-display"><?php echo $humid_legend; ?></div>
-                                        <div class="secondary-value uppercase" id="humidity-widget-humidex"><?php echo $humidex; ?></div>
+                                        <div class="main-value value-unit percent" id="humidity-widget-main-display"><?= $humidity ?></div>
+                                        <div class="secondary-value uppercase" id="humidity-widget-text-display"><?= $humid_legend ?></div>
+                                        <div class="secondary-value uppercase" id="humidity-widget-humidex"><?= $humidex ?></div>
                                     </div>
                                 </humidity-widget-view>
                             </div>
@@ -293,13 +313,13 @@ $phase = getMoonPhaseValue();
                                 $wind_dir = 180; // Direccón inicial del viento: 180º
                                 $wind_direction = windDirection($wind_dir);
                                 ?>
-                                <wind-widget-view id="wind-widget-view" data-pws-id="<?php echo $observatorio; ?>" data-status="connected" data-unit="m" data-wind-speed="<?php echo $wind; ?>" data-wind-gust="<?php echo $gust; ?>" data-wind-dir="<?php echo $wind_dir; ?>" data-description="gentle" data-main-value="<?php echo $wind; ?>" aria-valuenow="<?php echo $wind; ?>" data-secondary-value="<?php echo $gust; ?>" class="widget-view loaded show-wind">
+                                <wind-widget-view id="wind-widget-view" data-pws-id="<?= $observatorio ?>" data-status="connected" data-unit="m" data-wind-speed="<?= $wind ?>" data-wind-gust="<?= $gust ?>" data-wind-dir="<?= $wind_dir ?>" data-description="gentle" data-main-value="<?= $wind ?>" aria-valuenow="<?= $wind ?>" data-secondary-value="<?= $gust ?>" class="widget-view loaded show-wind">
                                     <div class="graphic-container">
                                         <div class="wind-compass">
-                                            <div class="wind-arrow-pointer-wrapper" id="wind-arrow-pointer-wrapper" style="transform: rotate(<?php echo $wind_dir; ?>deg);">
+                                            <div class="wind-arrow-pointer-wrapper" id="wind-arrow-pointer-wrapper" style="transform: rotate(<?= $wind_dir ?>deg);">
                                                 <div class="wind-arrow-pointer"></div>
                                             </div>
-                                            <div class="wind-lines" id="wind-widget-lines" style="transform: rotate(<?php echo $wind_dir; ?>deg);">
+                                            <div class="wind-lines" id="wind-widget-lines" style="transform: rotate(<?= $wind_dir ?>deg);">
                                                 <div class="wind-line"></div>
                                                 <div class="wind-line"></div>
                                                 <div class="wind-line"></div>
@@ -314,12 +334,12 @@ $phase = getMoonPhaseValue();
                                         </div>
                                     </div>
                                     <div class="value-container">
-                                        <div class="main-value value-unit speed" id="wind-widget-main-display"><?php echo $wind; ?></div>
+                                        <div class="main-value value-unit speed" id="wind-widget-main-display"><?= $wind ?></div>
                                         <div class="secondary-value">
-                                            <span class="uppercase">Rachas</span> <span id="wind-widget-secondary-display" class="secondary-value value-unit speed uppercase"><?php echo $gust; ?></span>
+                                            <span class="uppercase">Rachas</span> <span id="wind-widget-secondary-display" class="secondary-value value-unit speed uppercase"><?= $gust ?></span>
                                         </div>
-                                        <div class="tertiary-value" id="wind-widget-tertiary-value"><?php echo $wind_dir; ?>° <?php echo $wind_direction; ?></div>
-                                        <div class="tertiary-value value-unit speed" id="wind-widget-cuaternary-value">Máx: <?php echo $gust_max; ?> </div>
+                                        <div class="tertiary-value" id="wind-widget-tertiary-value"><?= $wind_dir ?>° <?= $wind_direction ?></div>
+                                        <div class="tertiary-value value-unit speed" id="wind-widget-cuaternary-value">Máx: <?= $gust_max ?> </div>
                                     </div>
                                 </wind-widget-view>
                             </div>
@@ -350,7 +370,7 @@ $phase = getMoonPhaseValue();
                                 $fill_bucket_bottom = "var(--wu-lightblue20)";
                                 //}
                                 ?>
-                                <rain-widget-view id="widget_de_lluvia" data-pws-id="<?php echo $observatorio; ?>" data-status="connected" data-unit="m" data-precip-rate="0" data-precip-total="0" data-main-value="0" aria-valuenow="0" data-secondary-value="0" class="widget-view loaded">
+                                <rain-widget-view id="widget_de_lluvia" data-pws-id="<?= $observatorio ?>" data-status="connected" data-unit="m" data-precip-rate="0" data-precip-total="0" data-main-value="0" aria-valuenow="0" data-secondary-value="0" class="widget-view loaded">
                                     <div class="graphic-container">
                                         <div class="precip-container">
                                             <div class="mini-droplets">
@@ -361,17 +381,17 @@ $phase = getMoonPhaseValue();
                                             <div class="precip-bucket">
                                                 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" title="precipitation" viewBox="0 0 234 482" height="100%" preserveAspectRatio="xMinYMid">
                                                     <ellipse fill="none" stroke="var(--widget-empty)" stroke-width="10" stroke-miterlimit="10" cx="117" cy="39" rx="107" ry="30"></ellipse><!--Boca del pluviómetro-->
-                                                    <rect id="precip-bucket-fill" fill="var(--wu-lightblue)" x="12" width="208" y="<?php echo $water_start; ?>" height="<?php echo $heigh; ?>" style="transition: y 0.6s, height 0.6s;"></rect> <!-- Columna de agua del pluviómetro -->
-                                                    <ellipse id="precip-bucket-top" stroke="<?php echo $stroke_bucket_top; ?>" stroke-width="5" fill="<?php echo $fill_bucket_top; ?>" cx="117" cy="<?php echo $water_start; ?>" rx="107" ry="30" style="transition: cy 0.6s;"></ellipse> <!-- Parte superior de la columna de agua -->
-                                                    <ellipse id="precip-bucket-bottom" fill="<?php echo $fill_bucket_bottom; ?>" cx="117" cy="440" rx="107" ry="30"></ellipse> <!-- Parte inferior de la columna de agua / pluviómetro -->
+                                                    <rect id="precip-bucket-fill" fill="var(--wu-lightblue)" x="12" width="208" y="<?= $water_start ?>" height="<?= $heigh ?>" style="transition: y 0.6s, height 0.6s;"></rect> <!-- Columna de agua del pluviómetro -->
+                                                    <ellipse id="precip-bucket-top" stroke="<?= $stroke_bucket_top ?>" stroke-width="5" fill="<?= $fill_bucket_top ?>" cx="117" cy="<?= $water_start ?>" rx="107" ry="30" style="transition: cy 0.6s;"></ellipse> <!-- Parte superior de la columna de agua -->
+                                                    <ellipse id="precip-bucket-bottom" fill="<?= $fill_bucket_bottom ?>" cx="117" cy="440" rx="107" ry="30"></ellipse> <!-- Parte inferior de la columna de agua / pluviómetro -->
                                                     <path fill="none" stroke="var(--widget-empty)" stroke-width="10" stroke-miterlimit="10" d="M10,39v394c0,16.6,47.9,40,107,40s107-23.4,107-40V39"></path><!--Cristal exterior del pluviómetro-->
                                                 </svg>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="value-container">
-                                        <div class="main-value value-unit precip-total" id="rain-widget-main-display"><?php echo $daily_rain; ?></div>
-                                        <div class="secondary-value value-unit precip-rate uppercase" id="rain-widget-secondary-display"><?php echo $rain_rate; ?></div>
+                                        <div class="main-value value-unit precip-total" id="rain-widget-main-display"><?= $daily_rain ?></div>
+                                        <div class="secondary-value value-unit precip-rate uppercase" id="rain-widget-secondary-display"><?= $rain_rate ?></div>
                                     </div>
                                 </rain-widget-view>
                             </div>
@@ -381,14 +401,14 @@ $phase = getMoonPhaseValue();
                                     ***************************************************** -->
                             <div class="widget" id="pressure_widget">
                                 <div class="title">Presión Relativa</div>
-                                <pressure-widget-view data-pws-id="<?php echo $observatorio; ?>" data-status="connected" data-unit="m" data-pressure="<?php echo $pressure; ?>" data-pressure-angle="<?php echo $pres_angle; ?>" data-main-value="<?php echo $pressure; ?>" aria-valuenow="<?php echo $pressure; ?>" class="widget-view loaded">
+                                <pressure-widget-view data-pws-id="<?= $observatorio ?>" data-status="connected" data-unit="m" data-pressure="<?= $pressure ?>" data-pressure-angle="<?= $pres_angle ?>" data-main-value="<?= $pressure ?>" aria-valuenow="<?= $pressure ?>" class="widget-view loaded">
                                     <div class="graphic-container">
                                         <div class="pressure-container">
                                             <div class="pressure-needle" id="pressure-widget-needle" style="transform: translate(-50%, -100%) rotate(0deg);"></div>
                                         </div>
                                     </div>
                                     <div class="value-container">
-                                        <div class="main-value value-unit pressure" id="pressure-widget-main-display"><?php echo $pressure; ?></div>
+                                        <div class="main-value value-unit pressure" id="pressure-widget-main-display"><?= $pressure ?></div>
                                     </div>
                                 </pressure-widget-view>
                             </div>
@@ -432,32 +452,32 @@ $phase = getMoonPhaseValue();
                                 }
                                 $categoria = uvIndexToCategory($uv);
                                 ?>
-                                <uv-widget-view data-pws-id="<?php echo $observatorio; ?>" data-status="connected" data-unit="m" data-uv="<?php echo $uv; ?>" data-main-value="<?php echo $uv; ?>" aria-valuenow="<?php echo $uv; ?>" data-secondary-value="<?php echo $uv; ?>" class="widget-view loaded">
+                                <uv-widget-view data-pws-id="<?= $observatorio ?>" data-status="connected" data-unit="m" data-uv="<?= $uv ?>" data-main-value="<?= $uv ?>" aria-valuenow="<?= $uv ?>" data-secondary-value="<?= $uv ?>" class="widget-view loaded">
                                     <div class="graphic-container">
                                         <div class="pyramid-container" id="uv-widget-pyramid-container">
                                             <svg width="100%" height="100%" viewBox="0 0 162 136" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                                                 <title>UV</title>
                                                 <g id="UV-Index-Triangle" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                                    <polygon class="<?php echo $filled[13]; ?>" id="Fill-13" points="81.9537723 2.99975159 77.2979826 10.4602611 86.4956236 10.4362484" fill="var(--wu-purple)"></polygon>
-                                                    <polygon class="<?php echo $filled[12]; ?>" id="Fill-12" points="92.8108692 20.7694268 70.8323051 20.8356688 76.2650231 12.1248408 87.5102538 12.0925478" fill="var(--wu-purple)"></polygon>
-                                                    <polygon class="<?php echo $filled[11]; ?>" id="Fill-11" points="99.1192621 31.0946561 64.3589492 31.2022994 69.7916672 22.4914713 93.8186467 22.4177771" fill="var(--wu-purple)"></polygon>
-                                                    <polygon class="<?php echo $filled[10]; ?>" id="Fill-10" points="105.434921 41.428828 57.8945103 41.5778726 63.3272282 32.8670446 100.134305 32.751121" fill="var(--wu-red)"></polygon>
-                                                    <polygon class="<?php echo $filled[9]; ?>" id="Fill-9" points="111.751405 51.7620892 51.4218149 51.9450828 56.8627892 43.2334268 106.442533 43.0769299" fill="var(--wu-red)"></polygon>
-                                                    <polygon class="<?php echo $filled[8]; ?>" id="Fill-8" points="118.058972 62.0882293 44.9567154 62.3192484 50.3894333 53.6092484 112.758356 53.4105223" fill="var(--wu-red)"></polygon>
-                                                    <polygon class="<?php echo $filled[7]; ?>" id="Fill-7" points="124.367447 72.4134586 38.4834421 72.686707 43.9244164 63.975879 119.066832 63.7440318" fill="var(--wu-orange)"></polygon>
-                                                    <polygon class="<?php echo $filled[6]; ?>" id="Fill-6" points="130.17996 81.9276369 32.5388267 82.2331783 37.4513908 74.3512038 125.38216 74.0696752" fill="var(--wu-orange)"></polygon>
-                                                    <polygon class="<?php echo $filled[5]; ?>" id="Fill-5" points="136.495618 92.2528662 26.0661313 92.6006369 31.4988492 83.8889809 131.195003 83.5759873" fill="var(--wu-yellow)"></polygon>
-                                                    <polygon class="<?php echo $filled[4]; ?>" id="Fill-4" points="142.804011 102.58621 19.6010318 102.96793 25.0337497 94.2562739 137.503396 93.9093312" fill="var(--wu-yellow)"></polygon>
-                                                    <polygon class="<?php echo $filled[3]; ?>" id="Fill-3" points="149.111661 112.912268 13.1285841 113.342841 18.5613021 104.632013 143.819302 104.242013" fill="var(--wu-yellow)"></polygon>
-                                                    <polygon class="<?php echo $filled[2]; ?>" id="Fill-2" points="155.427732 123.23758 6.66373231 123.717834 12.0964503 115.007006 150.127117 114.560701" fill="var(--wu-green)"></polygon>
-                                                    <polygon class="<?php echo $filled[1]; ?>" id="Fill-1" points="5.62342462 125.373554 0.999834872 132.792662 161.264189 132.792662 156.435014 124.893299" fill="var(--wu-green)"></polygon>
+                                                    <polygon class="<?= $filled[13] ?>" id="Fill-13" points="81.9537723 2.99975159 77.2979826 10.4602611 86.4956236 10.4362484" fill="var(--wu-purple)"></polygon>
+                                                    <polygon class="<?= $filled[12] ?>" id="Fill-12" points="92.8108692 20.7694268 70.8323051 20.8356688 76.2650231 12.1248408 87.5102538 12.0925478" fill="var(--wu-purple)"></polygon>
+                                                    <polygon class="<?= $filled[11] ?>" id="Fill-11" points="99.1192621 31.0946561 64.3589492 31.2022994 69.7916672 22.4914713 93.8186467 22.4177771" fill="var(--wu-purple)"></polygon>
+                                                    <polygon class="<?= $filled[10] ?>" id="Fill-10" points="105.434921 41.428828 57.8945103 41.5778726 63.3272282 32.8670446 100.134305 32.751121" fill="var(--wu-red)"></polygon>
+                                                    <polygon class="<?= $filled[9] ?>" id="Fill-9" points="111.751405 51.7620892 51.4218149 51.9450828 56.8627892 43.2334268 106.442533 43.0769299" fill="var(--wu-red)"></polygon>
+                                                    <polygon class="<?= $filled[8] ?>" id="Fill-8" points="118.058972 62.0882293 44.9567154 62.3192484 50.3894333 53.6092484 112.758356 53.4105223" fill="var(--wu-red)"></polygon>
+                                                    <polygon class="<?= $filled[7] ?>" id="Fill-7" points="124.367447 72.4134586 38.4834421 72.686707 43.9244164 63.975879 119.066832 63.7440318" fill="var(--wu-orange)"></polygon>
+                                                    <polygon class="<?= $filled[6] ?>" id="Fill-6" points="130.17996 81.9276369 32.5388267 82.2331783 37.4513908 74.3512038 125.38216 74.0696752" fill="var(--wu-orange)"></polygon>
+                                                    <polygon class="<?= $filled[5] ?>" id="Fill-5" points="136.495618 92.2528662 26.0661313 92.6006369 31.4988492 83.8889809 131.195003 83.5759873" fill="var(--wu-yellow)"></polygon>
+                                                    <polygon class="<?= $filled[4] ?>" id="Fill-4" points="142.804011 102.58621 19.6010318 102.96793 25.0337497 94.2562739 137.503396 93.9093312" fill="var(--wu-yellow)"></polygon>
+                                                    <polygon class="<?= $filled[3] ?>" id="Fill-3" points="149.111661 112.912268 13.1285841 113.342841 18.5613021 104.632013 143.819302 104.242013" fill="var(--wu-yellow)"></polygon>
+                                                    <polygon class="<?= $filled[2] ?>" id="Fill-2" points="155.427732 123.23758 6.66373231 123.717834 12.0964503 115.007006 150.127117 114.560701" fill="var(--wu-green)"></polygon>
+                                                    <polygon class="<?= $filled[1] ?>" id="Fill-1" points="5.62342462 125.373554 0.999834872 132.792662 161.264189 132.792662 156.435014 124.893299" fill="var(--wu-green)"></polygon>
                                                 </g>
                                             </svg>
                                         </div>
                                     </div>
                                     <div class="value-container">
-                                        <div class="main-value value-unit" id="uv-widget-main-display"><?php echo $uv; ?></div>
-                                        <div class="secondary-value uppercase" id="uv-widget-secondary-display"><?php echo $categoria; ?></div>
+                                        <div class="main-value value-unit" id="uv-widget-main-display"><?= $uv ?></div>
+                                        <div class="secondary-value uppercase" id="uv-widget-secondary-display"><?= $categoria ?></div>
                                     </div>
                                 </uv-widget-view>
                             </div>
@@ -467,15 +487,15 @@ $phase = getMoonPhaseValue();
                                     ***************************************************** -->
                             <div class="widget" id="solar_widget">
                                 <div class="title">Radiación Solar</div>
-                                <solar-radiation-widget-view data-pws-id="<?php echo $observatorio; ?>" data-status="connected" data-unit="m" data-solar-radiation="<?php echo $solar; ?>" data-main-value="<?php echo $solar; ?>" aria-valuenow="<?php echo $solar; ?>" data-secondary-value="<?php echo $solar; ?>" class="widget-view loaded">
+                                <solar-radiation-widget-view data-pws-id="<?= $observatorio ?>" data-status="connected" data-unit="m" data-solar-radiation="<?= $solar ?>" data-main-value="<?= $solar ?>" aria-valuenow="<?= $solar ?>" data-secondary-value="<?= $solar ?>" class="widget-view loaded">
                                     <div class="graphic-container">
                                         <div class="circle-container">
-                                            <div class="inner-circle" id="solar-radiation-widget-inner-circle" style="width: <?php echo $percentage; ?>%;"></div>
-                                            <div class="circle-ring ring-1 show" id="solar-radiation-widget-ring" style="width: <?php echo $percentage; ?>%;"></div>
+                                            <div class="inner-circle" id="solar-radiation-widget-inner-circle" style="width: <?= $percentage ?>%;"></div>
+                                            <div class="circle-ring ring-1 show" id="solar-radiation-widget-ring" style="width: <?= $percentage ?>%;"></div>
                                         </div>
                                     </div>
                                     <div class="value-container">
-                                        <div class="main-value value-unit radiation" id="solar-radiation-widget-main-display"><?php echo $solar; ?></div>
+                                        <div class="main-value value-unit radiation" id="solar-radiation-widget-main-display"><?= $solar ?></div>
                                     </div>
                                 </solar-radiation-widget-view>
                             </div>
@@ -499,16 +519,16 @@ $phase = getMoonPhaseValue();
                                 }
                                 ?>
                                 <div class="title">Temperatura Interior</div>
-                                <temp-widget-view data-pws-id="<?php echo $observatorio; ?>" data-status="connected" data-unit="m" data-temp="<?php echo $in_temp; ?>" data-temp-angle="<?php echo $in_temp_angle; ?>" data-main-value="<?php echo $in_temp; ?>" aria-valuenow="<?php echo $in_temp; ?>" class="widget-view loaded">
+                                <temp-widget-view data-pws-id="<?= $observatorio ?>" data-status="connected" data-unit="m" data-temp="<?= $in_temp ?>" data-temp-angle="<?= $in_temp_angle ?>" data-main-value="<?= $in_temp ?>" aria-valuenow="<?= $in_temp ?>" class="widget-view loaded">
                                     <div class="graphic-container">
                                         <div class="temp-gauge-container">
                                             <div class="temp-gauge-bg"></div>
                                             <div class="temp-gauge-inner"></div>
-                                            <div class="temp-needle" id="temp-int-widget-needle" style="transform: translate(-50%, -100%) rotate(<?php echo $in_temp_angle; ?>deg);"></div>
+                                            <div class="temp-needle" id="temp-int-widget-needle" style="transform: translate(-50%, -100%) rotate(<?= $in_temp_angle ?>deg);"></div>
                                         </div>
                                     </div>
                                     <div class="value-container">
-                                        <div class="main-value value-unit degrees" id="temp-int-widget-main-display"><?php echo $in_temp; ?></div>
+                                        <div class="main-value value-unit degrees" id="temp-int-widget-main-display"><?= $in_temp ?></div>
                                     </div>
                                 </temp-widget-view>
                             </div>
@@ -538,10 +558,10 @@ $phase = getMoonPhaseValue();
                                 $in_humid_widget = $in_humid_state;
                                 $in_humid_others = "widget-view {$in_humid_state} loaded";
                                 ?>
-                                <humidity-int-widget-view data-pws-id="<?php echo $observatorio; ?>" data-status="connected" data-humidity="<?php echo $in_humidity; ?>" data-humidity-string="<?php echo $in_humid_widget; ?>" data-main-value="<?php echo $in_humidity; ?>" aria-valuenow="<?php echo $in_humidity; ?>" data-secondary-value="<?php echo $in_humid_widget; ?>" class="<?php echo $in_humid_others; ?>">
+                                <humidity-int-widget-view data-pws-id="<?= $observatorio ?>" data-status="connected" data-humidity="<?= $in_humidity ?>" data-humidity-string="<?= $in_humid_widget ?>" data-main-value="<?= $in_humidity ?>" aria-valuenow="<?= $in_humidity ?>" data-secondary-value="<?= $in_humid_widget ?>" class="<?= $in_humid_others ?>">
                                     <div class="graphic-container">
                                         <div class="humidity-int-gauge-container">
-                                            <div class="humidity-int-gauge-bg" id="humidity-int-gauge-bg" style="--humidity-int-gauge-bg: conic-gradient(from 270deg, rgba(var(<?php echo $in_humidity_color; ?>), 0.8) 0deg, rgba(var(<?php echo $in_humidity_color; ?>), 0.8) <?php echo $in_angle_humidity; ?>deg, rgba(var(--black-or-white), 0.1) <?php echo $in_angle_humidity; ?>deg, rgba(var(--black-or-white), 0.1) 360deg);">
+                                            <div class="humidity-int-gauge-bg" id="humidity-int-gauge-bg" style="--humidity-int-gauge-bg: conic-gradient(from 270deg, rgba(var(<?= $in_humidity_color ?>), 0.8) 0deg, rgba(var(<?= $in_humidity_color ?>), 0.8) <?= $in_angle_humidity ?>deg, rgba(var(--black-or-white), 0.1) <?= $in_angle_humidity ?>deg, rgba(var(--black-or-white), 0.1) 360deg);">
                                             </div>
                                             <div class="humidity-int-gauge-inner"></div>
                                             <div class="humidity-int-mist-ring mist-ring-1"></div>
@@ -558,8 +578,8 @@ $phase = getMoonPhaseValue();
                                         </div>
                                     </div>
                                     <div class="value-container">
-                                        <div class="main-value value-unit percent" id="humidity-int-widget-main-display"><?php echo $in_humidity; ?></div>
-                                        <div class="secondary-value uppercase" id="humidity-int-widget-text-display"><?php echo $in_humid_legend; ?></div>
+                                        <div class="main-value value-unit percent" id="humidity-int-widget-main-display"><?= $in_humidity ?></div>
+                                        <div class="secondary-value uppercase" id="humidity-int-widget-text-display"><?= $in_humid_legend ?></div>
                                     </div>
                                 </humidity-int-widget-view>
                             </div>
@@ -569,7 +589,7 @@ $phase = getMoonPhaseValue();
                                     ***************************************************** -->
                             <div class="widget" id="seeing">
                                 <div class="title">Seeing</div>
-                                <seeing-widget-view id="seeing-widget-view" data-pws-id="<?php echo $observatorio; ?>" data-status="connected" data-unit="" class="widget-view loaded show-wind">
+                                <seeing-widget-view id="seeing-widget-view" data-pws-id="<?= $observatorio ?>" data-status="connected" data-unit="" class="widget-view loaded show-wind">
                                     <div class="graphic-container">
                                         <div class="svg-container">
                                             <svg viewBox="0 0 1190 1706" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto;">
@@ -976,8 +996,8 @@ $phase = getMoonPhaseValue();
                             ************************************************************* -->
                         <!-- Modal oculto por defecto -->
                         <div id="pws-info-dialog" class="modal"
-                             data-lat="<?php echo $lat; ?>"
-                             data-lon="<?php echo $lon; ?>">
+                             data-lat="<?= $lat ?>"
+                             data-lon="<?= $lon ?>">
 
                             <div class="modal-content">
                                 <button class="close" id="pws-info-dialog-close" aria-label="Cerrar">
@@ -988,7 +1008,7 @@ $phase = getMoonPhaseValue();
                                     </svg>
                                 </button>
 
-                                <h2 class="pws-info-title">Estación Meteorológica / Observatorio: <?php echo $observatorio; ?></h2>
+                                <h2 class="pws-info-title">Estación Meteorológica / Observatorio: <?= $observatorio ?></h2>
 
                                 <div class="pws-info-body">
 
@@ -1004,22 +1024,22 @@ $phase = getMoonPhaseValue();
 
                                             <div class="pws-info-card">
                                                 <h4>Latitud</h4>
-                                                <p><?php echo $latitud; ?></p>
+                                                <p><?= $latitud ?></p>
                                             </div>
 
                                             <div class="pws-info-card">
                                                 <h4>Longitud</h4>
-                                                <p><?php echo $longitud; ?></p>
+                                                <p><?= $longitud ?></p>
                                             </div>
 
                                             <div class="pws-info-card">
                                                 <h4>Elevación</h4>
-                                                <p><?php echo $elev; ?> m</p>
+                                                <p><?= $elev ?> m</p>
                                             </div>
 
                                             <div class="pws-info-card">
                                                 <h4>Ciudad / País</h4>
-                                                <p><?php echo $city; ?>, <?php echo $country; ?></p>
+                                                <p><?= $city ?>, <?= $country ?></p>
                                             </div>
 
                                         </div>
@@ -1029,12 +1049,12 @@ $phase = getMoonPhaseValue();
 
                                             <div class="pws-info-card">
                                                 <h4>Hardware</h4>
-                                                <p><?php echo $hardware; ?></p>
+                                                <p><?= $hardware ?></p>
                                             </div>
 
                                             <div class="pws-info-card">
                                                 <h4>Software</h4>
-                                                <p><?php echo $software; ?></p>
+                                                <p><?= $software ?></p>
                                             </div>
 
                                         </div>
@@ -1239,36 +1259,36 @@ $phase = getMoonPhaseValue();
             </content-router-wc>
         </div>
         <script src="./static/config/conf_to_js.php"></script>
-        <script type="module" src="./static/js/widgets/wind_widget.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/js/widgets/dew_widget.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/js/widgets/temp_widget.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/js/widgets/humidity_widget.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/js/widgets/rain_widget.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/js/widgets/pressure_widget.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/js/widgets/uv_widget.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/js/widgets/solar_widget.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/js/widgets/temp_interior_widget.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/js/widgets/humidity_interior_widget.js?v=<?php echo time(); ?>"></script>
-        <script src="./static/js/widgets/seeing_widget.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/js/widgets/forecast.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/js/date-time.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/js/widgets/wind_widget.js?v=<?= time() ?>"></script>
+        <script type="module" src="./static/js/widgets/dew_widget.js?v=<?= time() ?>"></script>
+        <script type="module" src="./static/js/widgets/temp_widget.js?v=<?= time() ?>"></script>
+        <script type="module" src="./static/js/widgets/humidity_widget.js?v=<?= time() ?>"></script>
+        <script type="module" src="./static/js/widgets/rain_widget.js?v=<?= time() ?>"></script>
+        <script type="module" src="./static/js/widgets/pressure_widget.js?v=<?= time() ?>"></script>
+        <script type="module" src="./static/js/widgets/uv_widget.js?v=<?= time() ?>"></script>
+        <script type="module" src="./static/js/widgets/solar_widget.js?v=<?= time() ?>"></script>
+        <script type="module" src="./static/js/widgets/temp_interior_widget.js?v=<?= time() ?>"></script>
+        <script type="module" src="./static/js/widgets/humidity_interior_widget.js?v=<?= time() ?>"></script>
+        <script src="./static/js/widgets/seeing_widget.js?v=<?= time() ?>"></script>
+        <script type="module" src="./static/js/widgets/forecast.js?v=<?= time() ?>"></script>
+        <script type="module" src="./static/js/date-time.js?v=<?= time() ?>"></script>
         <script src="https://unpkg.com/suncalc@1.9.0/suncalc.js"></script>
-        <script src="./static/js/moon.js?v<?php echo time(); ?>"></script>
-        <script src="./static/js/sun.js?lat=<?php echo $lat; ?>&lon=<?php echo $lon; ?>&v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/js/modals/modal_moon.js?v<?php echo time(); ?>"></script>
+        <script src="./static/js/moon.js?v<?= time() ?>"></script>
+        <script src="./static/js/sun.js?lat=<?= $lat ?>&lon=<?= $lon ?>&v=<?= time() ?>"></script>
+        <script type="module" src="./static/js/modals/modal_moon.js?v<?= time() ?>"></script>
         <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
-        <script type="module" src="./static/js/modals/modal_temp.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/js/modals/modal_humidity.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/js/modals/modal_wind.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/js/modals/modal_rain.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/js/modals/modal_pressure.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/js/modals/modal_solar.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/js/modals/modal_tempint.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/js/modals/modal_humidityint.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/js/modals/modal_seeing.js?v=<?php echo time(); ?>"></script>
-        <script src="./static/js/modals/modal_sun.js?lat=<?php echo $lat; ?>&lon=<?php echo $lon; ?>&v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/js/widgets/pws_info.js?v=<?php echo time(); ?>"></script>
-        <script type="module" src="./static/js/theme-switcher.js?v=<?php echo time(); ?>"></script>
+        <script type="module" src="./static/js/modals/modal_temp.js?v=<?= time() ?>"></script>
+        <script type="module" src="./static/js/modals/modal_humidity.js?v=<?= time() ?>"></script>
+        <script type="module" src="./static/js/modals/modal_wind.js?v=<?= time() ?>"></script>
+        <script type="module" src="./static/js/modals/modal_rain.js?v=<?= time() ?>"></script>
+        <script type="module" src="./static/js/modals/modal_pressure.js?v=<?= time() ?>"></script>
+        <script type="module" src="./static/js/modals/modal_solar.js?v=<?= time() ?>"></script>
+        <script type="module" src="./static/js/modals/modal_tempint.js?v=<?= time() ?>"></script>
+        <script type="module" src="./static/js/modals/modal_humidityint.js?v=<?= time() ?>"></script>
+        <script type="module" src="./static/js/modals/modal_seeing.js?v=<?= time() ?>"></script>
+        <script src="./static/js/modals/modal_sun.js?lat=<?= $lat ?>&lon=<?= $lon ?>&v=<?= time() ?>"></script>
+        <script type="module" src="./static/js/widgets/pws_info.js?v=<?= time() ?>"></script>
+        <script type="module" src="./static/js/theme-switcher.js?v=<?= time() ?>"></script>
         <!-- SCRIPT de depuración -->
         <script>
             (function() {

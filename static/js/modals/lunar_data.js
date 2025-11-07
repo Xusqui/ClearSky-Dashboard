@@ -57,7 +57,7 @@ export const LUNAR_100_FEATURES = [
     { name: "Baco", long: 19.1, lat: -51.0, l100: 55, description: "Cráter liso en una llanura circundante" },
     { name: "Mare Australe", long: 84.5, lat: -43.8, l100: 56, description: "Antigua cuenca parcialmente inundada" },
     { name: "Reiner Gamma", long: -59.2, lat: 7.7, l100: 57, description: "Remolino conspicuo con anomalía magnética" },
-    { name: "Vallis Rheita", long: 51.5, lat: -40.5, l100: 58, description: "Valle formado por una cadena de cráteres superpuestos" },
+    { name: "Vallis Rheita", long: 49.5, lat: -40.5, l100: 58, description: "Valle formado por una cadena de cráteres superpuestos" },
     { name: "Cuenca de Schiller-Zucchius", long: -45.0, lat: -56.0, l100: 59, description: "Cuenca muy degradada y poco visible" },
     { name: "Dome Kies Pi", long: -24.2, lat: -26.9, l100: 60, description: "Domo volcánico" },
     { name: "Mösting A", long: -5.2, lat: -3.2, l100: 61, description: "Cráter simple cerca del centro de la cara visible de la Luna" },

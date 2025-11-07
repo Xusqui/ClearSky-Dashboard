@@ -1,0 +1,9 @@
+/* --- Contenedor del arco solar --- */
+#sun-arc-container {
+  text-align: center;
+}
+
+/* --- Estilo de los iconos solares --- */
+#sun-arc image {
+  transition: all 0.3s ease;
+}

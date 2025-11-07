@@ -8,11 +8,13 @@ function updateSunPosition() {
     const times = SunCalc.getTimes(now, lat, lon);
     const sunrise = times.sunrise;
     const sunset = times.sunset;
+    const noontime = times.solarNoon;
     function formatTime(date) {
         return date.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
     }
     document.getElementById("sunrise-time").textContent = formatTime(sunrise);
     document.getElementById("sunset-time").textContent = formatTime(sunset);
+    document.getElementById("solar-noontime").textContent = formatTime(noontime);
     const sunIcon = document.getElementById("sun-icon");
     if (now < sunrise || now > sunset) {
         sunIcon.setAttribute("visibility", "hidden");
