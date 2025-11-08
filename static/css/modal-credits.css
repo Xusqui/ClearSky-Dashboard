@@ -1,0 +1,215 @@
+/* ===================================================================
+Estilos del Modal (Créditos)
+===================================================================
+*/
+
+/* 1. Fondo del Modal (Pantalla completa y oculta por defecto) */
+.credits-modal {
+    display: none; /* Oculto por defecto, se muestra con JS */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    /* Usamos color negro con opacidad para el fondo */
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+/* 2. Contenedor Principal del Contenido del Modal */
+.credits-modal-content {
+    background: color-mix(in srgb, var(--bg-color) 60%, transparent); /* Fondo basado en el tema (claro/oscuro) */
+    color: var(--font-color);
+    margin: 5% auto; /* Centrado vertical y horizontal */
+    padding: 30px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 950px; /* Ancho máximo para desktop */
+    position: relative;
+    /* Sombra basada en la variable de sombra del tema */
+    box-shadow: 0 10px 30px rgba(var(--black-or-white), 0.3);
+}
+
+/* 3. Panel de Información (Contenedor de títulos y grid) */
+.credits-info-panel {
+    max-width: 800px;
+    margin: auto;
+    padding: 10px;
+}
+
+/* 4. Botón de Cerrar */
+.credits-close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+    z-index: 1001;
+}
+
+.credits-close-btn:hover {
+    opacity: 1;
+}
+
+.credits-close-btn svg {
+    /* Color del icono basado en el color de fuente principal */
+    stroke: var(--font-color);
+    transition: stroke 0.2s;
+}
+
+
+/* Títulos */
+
+.credits-main-title {
+    text-align: center;
+    /* Color principal de enlace */
+    color: var(--link-color);
+    font-size: 2.2em;
+    font-weight: 700;
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.credits-section-title {
+    font-size: 1.2em;
+    font-weight: 600;
+    /* Color secundario para títulos de sección */
+    color: var(--color-secondary-font);
+    /* Borde inferior basado en una variable de borde/sombra */
+    border-bottom: 2px solid var(--dashboard-widget-box-shadow-color);
+    padding-bottom: 10px;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* 5. Grid de Tarjetas */
+.credits-grid {
+    display: grid;
+    /* 3 columnas fijas en pantallas grandes, con un mínimo de 250px por columna */
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 15px;
+}
+
+/* 6. Estilo de Tarjeta (Enlace) */
+.credits-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    text-decoration: none; /* Quita el subrayado del enlace */
+
+    /* Fondo de caja (tarjeta) */
+    background: var(--color-box-bg);
+    /* Borde basado en la variable de borde/sombra */
+    border: 1px solid var(--dashboard-widget-box-shadow-color);
+    border-radius: 12px;
+    padding: 20px;
+
+    /* Sombra sutil */
+    box-shadow: 0 2px 8px rgba(var(--black-or-white), 0.05);
+    transition: all 0.25s ease-out;
+    cursor: pointer;
+}
+
+/* Efecto Hover */
+.credits-card:hover {
+    transform: translateY(-5px);
+    /* Sombra y color de borde al hacer hover */
+    box-shadow: 0 10px 20px rgba(var(--black-or-white), 0.1);
+    border-color: var(--link-color);
+}
+
+/* --- AJUSTES PARA ICONOS DE FONDO --- */
+.credits-card-icon {
+    /* Eliminamos font-size y establecemos dimensiones fijas para el SVG */
+    display: inline-block;
+    width: 40px; /* Tamaño del icono */
+    height: 40px; /* Tamaño del icono */
+    margin-bottom: 10px;
+    line-height: 1;
+
+    /* Propiedades necesarias para iconos de fondo */
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+/* Regla especial para el logo WU que puede necesitar un tamaño diferente si es grande */
+.credits-card-icon.wu-logo {
+    width: 50px;
+    height: 50px;
+    /* La URL del icono se debe establecer fuera de este bloque con tu 'images.css' */
+    background-image: var(--icon-wu-logo);
+}
+
+/* Reglas individuales para los iconos utilizados, si no vienen del .icon general */
+/* NOTA: Tu "images.css" ya define las clases .icon.{nombre}, solo necesitamos la dimensión.
+   Aquí se añaden las clases extra que usa el HTML actualizado para tener la URL de fondo.
+   Asumo que el archivo 'images.css' ya tiene las definiciones para .icon.{clase} */
+
+.icon.breezy { background-image: var(--icon-breezy); }
+.icon.cloudy { background-image: var(--icon-cloudy); }
+.icon.sunrise { background-image: var(--icon-sunrise); }
+.icon.info { background-image: var(--icon-info); }
+.icon.clear-night { background-image: var(--icon-clear-night); }
+
+
+/* Título de la tarjeta (el recurso principal) */
+.credits-card-title {
+    font-size: 1.1em;
+    font-weight: 600;
+    margin: 0 0 5px 0;
+    /* Color de fuente de menú de navegación (negro/blanco principal) */
+    color: var(--nav-menu-font-color);
+    min-height: 1.2em;
+}
+
+/* Valor / Descripción principal (en p) */
+.credits-card-value {
+    font-size: 0.9em;
+    /* Color de fuente secundario */
+    color: var(--color-secondary-font);
+    margin: 0 0 10px 0;
+    flex-grow: 1; /* Empuja el origen al final */
+    line-height: 1.4;
+}
+
+/* Fuente/URL */
+.credits-card-source {
+    display: block;
+    font-size: 0.8em;
+    font-weight: 500;
+    /* Color principal de enlace */
+    color: var(--link-color);
+    padding-top: 5px;
+    /* Borde punteado separador */
+    border-top: 1px dashed var(--dashboard-widget-box-shadow-color);
+    width: 100%;
+}
+
+
+/* Media Query para móvil */
+@media (max-width: 768px) {
+    .credits-modal-content {
+        margin: 10% auto;
+        padding: 20px;
+    }
+
+    .credits-grid {
+        /* En pantallas más pequeñas, volvemos a 2 columnas */
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    }
+
+    .credits-main-title {
+        font-size: 1.8em;
+    }
+}
