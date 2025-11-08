@@ -21,7 +21,7 @@ Estilos del Modal (Créditos)
 
 /* 2. Contenedor Principal del Contenido del Modal */
 .credits-modal-content {
-    background: color-mix(in srgb, var(--bg-color) 60%, transparent); /* Fondo basado en el tema (claro/oscuro) */
+    background: var(--bg-color); /* Fondo basado en el tema (claro/oscuro) */
     color: var(--font-color);
     margin: 5% auto; /* Centrado vertical y horizontal */
     padding: 30px;
@@ -147,20 +147,24 @@ Estilos del Modal (Créditos)
 .credits-card-icon.wu-logo {
     width: 50px;
     height: 50px;
-    /* La URL del icono se debe establecer fuera de este bloque con tu 'images.css' */
     background-image: var(--icon-wu-logo);
 }
 
 /* Reglas individuales para los iconos utilizados, si no vienen del .icon general */
 /* NOTA: Tu "images.css" ya define las clases .icon.{nombre}, solo necesitamos la dimensión.
-   Aquí se añaden las clases extra que usa el HTML actualizado para tener la URL de fondo.
-   Asumo que el archivo 'images.css' ya tiene las definiciones para .icon.{clase} */
+   Aquí se añaden las clases extra que usa el HTML actualizado para tener la URL de fondo. */
 
 .icon.breezy { background-image: var(--icon-breezy); }
 .icon.cloudy { background-image: var(--icon-cloudy); }
 .icon.sunrise { background-image: var(--icon-sunrise); }
 .icon.info { background-image: var(--icon-info); }
-.icon.clear-night { background-image: var(--icon-clear-night); }
+.credits-card-icon.clear-night {
+    width: 50px;
+    height: 50px;
+    background-image: var(--icon-clear-night);
+}
+.icon.settings { background-image: var(--icon-settings); } /* Agradecimiento a Gemini */
+.icon.time { background-image: var(--icon-time); }       /* Agradecimiento a ChatGPT */
 
 
 /* Título de la tarjeta (el recurso principal) */
