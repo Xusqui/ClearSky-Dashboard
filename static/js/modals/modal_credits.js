@@ -1,6 +1,6 @@
-const modal = document.getElementById("agradecimientos");
-const openBtn = document.getElementById("link-greetings");
-const closeBtn = document.getElementById("closeAgradecimientosModal");
+const modal = document.getElementById("credits");
+const openBtn = document.getElementById("link-credits");
+const closeBtn = document.getElementById("closeCreditsModal");
 
 // Abrir modal
 openBtn.addEventListener("click", () => {

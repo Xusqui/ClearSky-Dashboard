@@ -69,7 +69,7 @@
         <title>Estación Meteorológica <?= $observatorio ?></title>
         <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
         <link rel="stylesheet" type="text/css" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" />
-        <link rel="stylesheet" type="text/css" href="./static/css/images.css?v=<?= time() ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/images.php?v=<?= time() ?>" />
         <link rel="stylesheet" type="text/css" href="./static/css/global.css?v=<?= time() ?>" />
         <link rel="stylesheet" type="text/css" href="./static/css/colors.css?v=<?= time() ?>" />
         <link rel="stylesheet" type="text/css" href="./static/css/theme-switcher.css?v=<?= time() ?>" />
@@ -1197,65 +1197,107 @@
                         *********************** MODAL AGRADECIMIENTOS *******************
                         ****************************************************************-->
                         <!-- Modal oculto al inicio -->
-                        <div id="agradecimientos" class="credits-modal">
-                            <div class="credits-modal-content">
-                                <button class="close" aria-label="Cerrar" id="closeAgradecimientosModal">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                         stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                                    </svg>
-                                </button>
-                                <div class="credits-info-panel">
-                                    <h1 class="credits-main-title">Agradecimientos y Créditos</h1>
-                                    <h2 class="credits-section-title">Diseño, Datos y Tecnología</h2>
-                                    <div class="credits-grid">
-                                        <!-- 1. Weather Underground (Diseño/Estilo) -->
-                                        <a class="credits-card" href="https://www.wunderground.com/" target="_blank" rel="noopener noreferrer">
-                                            <span class="credits-card-icon">☀️</span>
-                                            <h3 class="credits-card-title">Diseño Infográfico</h3>
-                                            <p class="credits-card-value">Inspiración visual basada en **Weather Underground**.</p>
-                                            <span class="credits-card-source">wunderground.com</span>
-                                        </a>
-                                        <!-- 2. CodePen (Fases Lunares) -->
-                                        <a class="credits-card" href="https://codepen.io/xaelan/pen/bjqOvo" target="_blank" rel="noopener noreferrer">
-                                            <span class="credits-card-icon">🌑</span>
-                                            <h3 class="credits-card-title">Fases Lunares (CSS)</h3>
-                                            <p class="credits-card-value">Código de **Pure CSS Moon Phases**.</p>
-                                            <span class="credits-card-source">codepen.io/xaelan</span>
-                                        </a>
-                                        <!-- 3. Cloudy Nights (Mapa Lunar) -->
-                                        <a class="credits-card" href="https://www.cloudynights.com/forums/topic/908244-high-resolution-map-lunar-100/#comment-13218711" target="_blank" rel="noopener noreferrer">
-                                            <span class="credits-card-icon">🔭</span>
-                                            <h3 class="credits-card-title">Mapa Lunar 100</h3>
-                                            <p class="credits-card-value">Referencia: **High Resolution Lunar 100 Map**.</p>
-                                            <span class="credits-card-source">cloudynights.com</span>
-                                        </a>
-                                        <!-- 4. Open-Meteo (Datos en Altura) -->
-                                        <a class="credits-card" href="https://open-meteo.com" target="_blank" rel="noopener noreferrer">
-                                            <span class="credits-card-icon">🌬️</span>
-                                            <h3 class="credits-card-title">Datos en Altura</h3>
-                                            <p class="credits-card-value">Información de **Open-Meteo** para el cálculo del Seeing.</p>
-                                            <span class="credits-card-source">open-meteo.com</span>
-                                        </a>
-                                        <!-- 5. Open-Meteo (Previsión) -->
-                                        <a class="credits-card" href="https://open-meteo.com" target="_blank" rel="noopener noreferrer">
-                                            <span class="credits-card-icon">☁️</span>
-                                            <h3 class="credits-card-title">Previsión Meteorológica</h3>
-                                            <p class="credits-card-value">Previsión horaria obtenida de **Open-Meteo**.</p>
-                                            <span class="credits-card-source">open-meteo.com</span>
-                                        </a>
-                                        <!-- 6. SunCalc (Cálculos Astronómicos) -->
-                                        <a class="credits-card" href="https://app.unpkg.com/suncalc@1.9.0" target="_blank" rel="noopener noreferrer">
-                                            <span class="credits-card-icon">✨</span>
-                                            <h3 class="credits-card-title">Cálculos Astronómicos</h3>
-                                            <p class="credits-card-value">Librería **SunCalc** para horas solares y lunares.</p>
-                                            <span class="credits-card-source">unpkg.com/suncalc</span>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+<!-- Estructura del Modal -->
+<div id="credits" class="credits-modal">
+    <div class="credits-modal-content">
+        <!-- Botón de Cerrar (se mantiene el SVG original) -->
+        <button class="close" aria-label="Cerrar" id="closeCreditsModal">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                 stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+        <div class="credits-info-panel">
+            <h1 class="credits-main-title">Agradecimientos y Créditos</h1>
+
+            <h2 class="credits-section-title">Diseño, Datos y Tecnología</h2>
+
+            <div class="credits-grid">
+
+                <!-- 1. Weather Underground (Diseño/Estilo) -->
+                <a class="credits-card" href="https://www.wunderground.com/" target="_blank" rel="noopener noreferrer">
+                    <!-- Icono Wu-Logo -->
+                    <span class="credits-card-icon wu-logo"></span>
+                    <h3 class="credits-card-title">Diseño Infográfico</h3>
+                    <p class="credits-card-value">Inspiración visual basada en **Weather Underground**.</p>
+                    <span class="credits-card-source">wunderground.com</span>
+                </a>
+
+                <!-- 2. CodePen (Fases Lunares) -->
+                <a class="credits-card" href="https://codepen.io/xaelan/pen/bjqOvo" target="_blank" rel="noopener noreferrer">
+                    <!-- Usamos un icono de noche despejada como representación lunar genérica -->
+                    <span class="credits-card-icon clear-night"></span>
+                    <h3 class="credits-card-title">Fases Lunares (CSS)</h3>
+                    <p class="credits-card-value">Código de **Pure CSS Moon Phases**.</p>
+                    <span class="credits-card-source">codepen.io/xaelan</span>
+                </a>
+
+                <!-- 3. Cloudy Nights (Mapa Lunar) -->
+                <a class="credits-card" href="https://www.cloudynights.com/forums/topic/908244-high-resolution-map-lunar-100/#comment-13218711" target="_blank" rel="noopener noreferrer">
+                    <!-- Usamos un icono de información para referencia de mapa -->
+                    <span class="credits-card-icon icon info"></span>
+                    <h3 class="credits-card-title">Mapa Lunar 100</h3>
+                    <p class="credits-card-value">Referencia: **High Resolution Lunar 100 Map**.</p>
+                    <span class="credits-card-source">cloudynights.com</span>
+                </a>
+
+                <!-- 4. Open-Meteo (Datos en Altura) -->
+                <a class="credits-card" href="https://open-meteo.com" target="_blank" rel="noopener noreferrer">
+                    <!-- Icono de Viento (para datos en altura) -->
+                    <span class="credits-card-icon icon breezy"></span>
+                    <h3 class="credits-card-title">Datos en Altura</h3>
+                    <p class="credits-card-value">Información de **Open-Meteo** para el cálculo del Seeing.</p>
+                    <span class="credits-card-source">open-meteo.com</span>
+                </a>
+
+                <!-- 5. Open-Meteo (Previsión) -->
+                <a class="credits-card" href="https://open-meteo.com" target="_blank" rel="noopener noreferrer">
+                    <!-- Icono de Nubes/Previsión -->
+                    <span class="credits-card-icon icon cloudy"></span>
+                    <h3 class="credits-card-title">Previsión Meteorológica</h3>
+                    <p class="credits-card-value">Previsión horaria obtenida de **Open-Meteo**.</p>
+                    <span class="credits-card-source">open-meteo.com</span>
+                </a>
+
+                <!-- 6. SunCalc (Cálculos Astronómicos) -->
+                <a class="credits-card" href="https://app.unpkg.com/suncalc@1.9.0" target="_blank" rel="noopener noreferrer">
+                    <!-- Icono de Sol/Amanecer (para cálculos solares y lunares) -->
+                    <span class="credits-card-icon icon sunrise"></span>
+                    <h3 class="credits-card-title">Cálculos Astronómicos</h3>
+                    <p class="credits-card-value">Librería **SunCalc** para horas solares y lunares.</p>
+                    <span class="credits-card-source">unpkg.com/suncalc</span>
+                </a>
+
+            </div>
+
+            <!-- Nuevo Título de Sección -->
+            <h2 class="credits-section-title">Asistencia en la Creación de Código</h2>
+
+            <div class="credits-grid">
+
+                <!-- 7. Agradecimiento a Gemini -->
+                <a class="credits-card" href="#" target="_blank" rel="noopener noreferrer">
+                    <!-- Icono de información o ajustes (settings) -->
+                    <span class="credits-card-icon icon settings"></span>
+                    <h3 class="credits-card-title">Asistencia de Gemini</h3>
+                    <p class="credits-card-value">Generación y optimización de código, HTML y CSS.</p>
+                    <span class="credits-card-source">google.com/gemini</span>
+                </a>
+
+                <!-- 8. Agradecimiento a ChatGPT -->
+                <a class="credits-card" href="#" target="_blank" rel="noopener noreferrer">
+                    <!-- Icono de información o tiempo (time) -->
+                    <span class="credits-card-icon icon time"></span>
+                    <h3 class="credits-card-title">Asistencia de ChatGPT</h3>
+                    <p class="credits-card-value">Revisión de estructura, lógica y mejoras de diseño.</p>
+                    <span class="credits-card-source">openai.com/chatgpt</span>
+                </a>
+
+            </div>
+        </div>
+    </div>
+</div>
                         <!-- ############################################################
                              ############## FIN DE LAS GRÁFICAS MODALES #################
                              ############################################################ -->
@@ -1264,7 +1306,7 @@
                 <dashboard-footer-view>
                     <div class="max-width">
                         <div class="container">
-                            <div id="link-greetings" class="footer-text">Agradecimientos</div>
+                            <div id="link-credits" class="footer-text">Agradecimientos</div>
                         </div>
                     </div>
                 </dashboard-footer-view>
@@ -1301,7 +1343,7 @@
         <script src="./static/js/modals/modal_sun.js?lat=<?= $lat ?>&lon=<?= $lon ?>&v=<?= time() ?>"></script>
         <script type="module" src="./static/js/widgets/pws_info.js?v=<?= time() ?>"></script>
         <script type="module" src="./static/js/theme-switcher.js?v=<?= time() ?>"></script>
-        <script type="module" src="./static/js/modals/modal_greetings.js?v=<?= time() ?>"></script>
+        <script type="module" src="./static/js/modals/modal_credits.js?v=<?= time() ?>"></script>
         <!-- SCRIPT de depuración -->
         <script>
             (function() {
