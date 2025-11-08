@@ -189,28 +189,6 @@ sun-moon-forecast .big-card-moon > * {
     z-index: 1; /* contenido por encima de la imagen */
 }
 
-/* --- Arco solar --- */
-#sun-arc-container {
-    width: 100%;
-    max-width: 200px;
-    height: 80px;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-#sun-arc-container svg {
-    width: 100%;
-    height: auto;
-    transform: translateY(10px);
-}
-
-#sun-arc {
-    position: relative;
-    left: 14px;
-}
-
 /* --- Previsión meteorológica ocupa todo el ancho --- */
 #forecast.forecast-container {
     grid-column: 1 / 3; /* Se extiende a través de las dos columnas */

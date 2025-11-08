@@ -1,9 +1,28 @@
+/* --- Arco solar --- */
 /* --- Contenedor del arco solar --- */
 #sun-arc-container {
-  text-align: center;
+    width: 100%;
+    max-width: 200px;
+    height: 80px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* --- Estilo de los iconos solares --- */
 #sun-arc image {
   transition: all 0.3s ease;
 }
+
+#sun-arc-container svg {
+    width: 100%;
+    height: auto;
+    transform: translateY(10px);
+}
+
+#sun-arc {
+    position: relative;
+    left: 14px;
+}
+

@@ -1,69 +1,68 @@
 <!DOCTYPE html>
 <?php
-//DEBUG:
-//ini_set('display_startup_errors', 1);
-//error_reporting(E_ALL);
-//ini_set('display_errors', 1);
-// CONFIGURACIÓN
-include __DIR__ . '/static/config/config.php';
+    //DEBUG:
+    //ini_set('display_startup_errors', 1);
+    //error_reporting(E_ALL);
+    //ini_set('display_errors', 1);
+    // CONFIGURACIÓN
+    include __DIR__ . "/static/config/config.php";
 
-/*-----------------------------------------
-Vamos a obtener la fecha de actualización.
------------------------------------------*/
+    /*-----------------------------------------
+    Vamos a obtener la fecha de actualización.
+    -----------------------------------------*/
+    $ch = curl_init();
+    $entity = "sensor.ws2900_v2_02_03_wind_direction";
+    curl_setopt($ch, CURLOPT_URL, "$ha_url/api/states/$entity");
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ["Authorization: Bearer $token", "Content-Type: application/json"]);
+    $response = curl_exec($ch);
+    curl_close($ch);
 
-$ch = curl_init();
-$entity = "sensor.ws2900_v2_02_03_wind_direction";
-curl_setopt($ch, CURLOPT_URL, "$ha_url/api/states/$entity");
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_HTTPHEADER, ["Authorization: Bearer $token", "Content-Type: application/json"]);
-$response = curl_exec($ch);
-curl_close($ch);
+    if ($response === false) {
+        die("Error al conectar con Home Assistant");
+    }
+    // Decodificar JSON
+    $data = json_decode($response, true);
+    if (isset($data["last_updated"])) {
+        $utcTime = new DateTime($data["last_updated"], new DateTimeZone("UTC"));
 
-if ($response === false) {
-    die("Error al conectar con Home Assistant");
-}
+        // Convertir a horario de España
+        $localTime = clone $utcTime;
+        $localTime->setTimezone(new DateTimeZone("Europe/Madrid"));
 
-// Decodificar JSON
-$data = json_decode($response, true);
-if (isset($data["last_updated"])) {
-    $utcTime = new DateTime($data["last_updated"], new DateTimeZone("UTC"));
+        // Diferencia en segundos
+        $now = new DateTime("now", new DateTimeZone("Europe/Madrid"));
+        $diffSeconds = $now->getTimestamp() - $localTime->getTimestamp();
 
-    // Convertir a horario de España
-    $localTime = clone $utcTime;
-    $localTime->setTimezone(new DateTimeZone("Europe/Madrid"));
+        // Formato de salida
+        $meses = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+        $horas = $localTime->format("H");
+        $minutos = $localTime->format("i");
+        $dia = $localTime->format("j");
+        $mes = $meses[(int) $localTime->format("n") - 1];
+        $anio = $localTime->format("Y");
+        $ts_formatted = "$horas:$minutos del $dia de $mes de $anio";
+    } else {
+        echo "No se pudo obtener la fecha de actualización";
+    }
 
-    // Diferencia en segundos
-    $now = new DateTime("now", new DateTimeZone("Europe/Madrid"));
-    $diffSeconds = $now->getTimestamp() - $localTime->getTimestamp();
+    // Calcular la fase de la luna:
+    function getMoonPhaseValue($timestamp = null)
+    {
+        $known_new_moon = strtotime("2000-01-06 18:14:00 UTC");
+        $timestamp = $timestamp ?? time();
+        $days_since = ($timestamp - $known_new_moon) / 86400;
+        $lunar_cycle = 29.53058867;
+        $phase = fmod($days_since, $lunar_cycle) / $lunar_cycle;
+        if ($phase < 0) {
+            $phase += 1;
+        }
+        return (int) round($phase * 99);
+    }
 
-    // Formato de salida
-    $meses = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
-    $horas = $localTime->format("H");
-    $minutos = $localTime->format("i");
-    $dia = $localTime->format("j");
-    $mes = $meses[(int) $localTime->format("n") - 1];
-    $anio = $localTime->format("Y");
-
-    $ts_formatted = "$horas:$minutos del $dia de $mes de $anio";
-} else {
-    echo "No se pudo obtener la fecha de actualización";
-}
-
-// Calcular la fase de la luna:
-function getMoonPhaseValue($timestamp = null) {
-    $known_new_moon = strtotime("2000-01-06 18:14:00 UTC");
-    $timestamp = $timestamp ?? time();
-    $days_since = ($timestamp - $known_new_moon) / 86400;
-    $lunar_cycle = 29.53058867;
-    $phase = fmod($days_since, $lunar_cycle) / $lunar_cycle;
-    if ($phase < 0) $phase += 1;
-    return (int) round($phase * 99);
-}
-
-$phase = getMoonPhaseValue();
-$moon_scale = 0.4;
+    $phase = getMoonPhaseValue();
+    $moon_scale = 0.4;
 ?>
-
 <html lang="es">
     <head>
         <link rel="icon" type="image/x-icon" href="./favicon.ico"/>
@@ -93,6 +92,7 @@ $moon_scale = 0.4;
         <link rel="stylesheet" type="text/css" href="./static/css/forecast.css?v=<?= time() ?>" />
         <link rel="stylesheet" type="text/css" href="./static/css/widget_seeing.css?v=<?= time() ?>" />
         <link rel="stylesheet" type="text/css" href="./static/css/modal-seeing.css?v=<?= time() ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/modal-credits.css?v=<?= time() ?>" />
         <link rel="stylesheet" type="text/css" href="./static/css/modal-dates.css?v=<?= time() ?>" />
         <link rel="stylesheet" type="text/css" href="./static/css/modal-pws.css?v=<?= time() ?>" />
         <link rel="stylesheet" type="text/css" href="./static/css/modal-moon.css?v=<?= time() ?>" />
@@ -122,7 +122,6 @@ $moon_scale = 0.4;
                                     <img src="./static/images/icons/auto.svg" alt="Auto" />
                                 </button>
                             </div>
-
                         </div>
                         <div class="location-info">
                             <span>En <?= $city ?>, a las</span>
@@ -140,7 +139,7 @@ $moon_scale = 0.4;
                                 <!-- Tarjeta Sol -->
                                 <div class="big-card-sun sun-card">
                                     <div id="sun-arc-container" class="sun-arc-container">
-                                        <svg id="sun-arc" width="100" height="100" viewBox="0 0 100 100">
+                                        <svg id="sun-arc" width="100%" height="100%" viewBox="0 0 100 100">
                                             <defs>
                                                 <linearGradient id="sunArcGradient" x1="0%" y1="0%" x2="100%" y2="0%">
                                                     <stop offset="0%" stop-color="#FFd107" />   <!-- amarillo amanecer -->
@@ -160,7 +159,8 @@ $moon_scale = 0.4;
                                                                   dx="0"
                                                                   stdDeviation="1.5"
                                                                   flood-color="black"
-                                                                  flood-opacity="0.25" />
+                                                                  flood-opacity="0.25"
+                                                    />
                                                 </filter>
                                             </defs>
                                             <path d="M 10 60 A 35 35 0 0 1 90 60"
@@ -175,11 +175,10 @@ $moon_scale = 0.4;
                                                   stroke-width="4"
                                                   fill="none"
                                                   stroke-linecap="round"
+                                                  opacity="0.9"
                                                   />
-                                            <!--<path d="M 4 60 A 35 35 0 0 1 96 60" stroke="url(#sunArcGradient)" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.3"/>
-                                            <path d="M 1 60 A 35 35 0 0 1 99 60" stroke="url(#sunArcGradient)" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.1"/>-->
                                             <text id="solar-noontime" x="50" y="13" text-anchor="middle" font-size="7" fill="gray" font-weight="bold">Cénit</text>
-                                            <image id="sun-icon" href="./static/images/icons/sun.svg" width="30" height="30" x="0" y="0" filter="url(#dropShadow)" visibility="hidden"/>
+                                            <image id="sun-icon" href="./static/images/icons/sun.svg" width="30" height="30" x="0" y="0" filter="url(#dropShadow)" opacity="1" visibility="hidden"/>
                                             <image id="sunrise-icon" href="./static/images/icons/sunrise.svg" width="18" height="18" x="3" y="60" filter="url(#softShadow)"/>
                                             <text id="sunrise-time" x="11" y="80" text-anchor="middle" font-size="9" fill="gray">sunrise</text>
                                             <image id="sunset-icon" href="./static/images/icons/sunset.svg" width="18" height="18" x="83" y="60" filter="url(#softShadow)"/>
@@ -196,7 +195,6 @@ $moon_scale = 0.4;
                                             <div class="sphere"></div>
                                         </div>
                                         <div class="moon-phase-name">
-                                            <!--<text id="moon-text" text-anchor="middle">Calculando</text>-->
                                             <p id="moon-text"></p>
                                         </div>
                                     </div>
@@ -213,21 +211,19 @@ $moon_scale = 0.4;
                                     ***************************************************** -->
                             <div class="widget" id="temp_widget">
                                 <?php
-    // Calcular la posición de la aguja de la temperatura
-    $minTemp = -20;
-            $maxTemp = 50;
-            $minAngle = -145;
-            $maxAngle = 145;
-            $temp_angle = 0; // ángulo inicial
-            //(($temp - $minTemp) * ($maxAngle - $minAngle)) / ($maxTemp - $minTemp) + $minAngle;
-
-            // Limitamos a los extremos
-            if ($temp_angle < $minAngle) {
-                $temp_angle = $minAngle;
-            }
-            if ($temp_angle > $maxAngle) {
-                $temp_angle = $maxAngle;
-            }
+                                    // Calcular la posición de la aguja de la temperatura
+                                    $minTemp = -20;
+                                    $maxTemp = 50;
+                                    $minAngle = -145;
+                                    $maxAngle = 145;
+                                    $temp_angle = 0; // ángulo inicial
+                                    // Limitamos a los extremos
+                                    if ($temp_angle < $minAngle) {
+                                        $temp_angle = $minAngle;
+                                    }
+                                    if ($temp_angle > $maxAngle) {
+                                        $temp_angle = $maxAngle;
+                                    }
                                 ?>
                                 <div class="title">Temperatura Exterior</div>
                                 <temp-widget-view data-pws-id="<?= $observatorio ?>" data-status="connected" data-unit="m" data-temp="<?= $temp ?>" data-temp-angle="<?= $temp_angle ?>" data-main-value="<?= $temp ?>" aria-valuenow="<?= $temp ?>" class="widget-view loaded">
@@ -244,7 +240,6 @@ $moon_scale = 0.4;
                                     </div>
                                 </temp-widget-view>
                             </div>
-
                             <!--    ****************************************************+
                                     ************** WIDGET DE PUNTO DE ROCÍO *************
                                     ***************************************************** -->
@@ -252,8 +247,8 @@ $moon_scale = 0.4;
                                 <div class="title">Punto de Rocío</div>
                                 <!--Calcular porcentaje de la gota, inicialmente 0-->
                                 <?php
-    $dew = 0;
-                                                  $inner_percent = (100 * $dew) / 49;
+                                    $dew = 0;
+                                    $inner_percent = (100 * $dew) / 49;
                                 ?>
                                 <dew-point-widget-view data-pws-id="<?= $observatorio ?>" data-status="connected" data-unit="m" data-temp="<?= $temp ?>" data-dew-point="<?= $dew ?>" data-main-value="<?= $dew ?>" aria-valuenow="<?= $dew ?>" class="widget-view loaded" style="--dewpoint-droplet-width: <?= $inner_percent ?>%;">
                                     <div class="graphic-container">
@@ -266,7 +261,6 @@ $moon_scale = 0.4;
                                     </div>
                                 </dew-point-widget-view>
                             </div>
-
                             <!--    ****************************************************+
                                     ************* WIDGET DE HUMEDAD EXTERIOR ************
                                     ***************************************************** -->
@@ -298,41 +292,39 @@ $moon_scale = 0.4;
                                     </div>
                                 </humidity-widget-view>
                             </div>
-
-
                             <!--    ****************************************************+
                                     ***************** WIDGET DEL VIENTO *****************
                                     ***************************************************** -->
                             <div class="widget" id="wind_widget">
                                 <div class="title">Viento</div>
                                 <?php
-    function windDirection($degrees)
-{
-    // Definimos los 16 rumbos de la rosa de los vientos
-    $dirs = [
-        "N",
-        "NNE",
-        "NE",
-        "ENE",
-        "E",
-        "ESE",
-        "SE",
-        "SSE",
-        "S",
-        "SSO",
-        "SO",
-        "OSO",
-        "O",
-        "ONO",
-        "NO",
-        "NNO",
-    ];
-    // Cada dirección ocupa 22.5º (360 / 16)
-    $index = round($degrees / 22.5) % 16;
-    return $dirs[$index];
-}
-                                                       $wind_dir = 180; // Direccón inicial del viento: 180º
-                                                       $wind_direction = windDirection($wind_dir);
+                                    function windDirection($degrees)
+                                    {
+                                        // Definimos los 16 rumbos de la rosa de los vientos
+                                        $dirs = [
+                                            "N",
+                                            "NNE",
+                                            "NE",
+                                            "ENE",
+                                            "E",
+                                            "ESE",
+                                            "SE",
+                                            "SSE",
+                                            "S",
+                                            "SSO",
+                                            "SO",
+                                            "OSO",
+                                            "O",
+                                            "ONO",
+                                            "NO",
+                                            "NNO",
+                                        ];
+                                        // Cada dirección ocupa 22.5º (360 / 16)
+                                        $index = round($degrees / 22.5) % 16;
+                                        return $dirs[$index];
+                                    }
+                                    $wind_dir = 180; // Direccón inicial del viento: 180º
+                                    $wind_direction = windDirection($wind_dir);
                                 ?>
                                 <wind-widget-view id="wind-widget-view" data-pws-id="<?= $observatorio ?>" data-status="connected" data-unit="m" data-wind-speed="<?= $wind ?>" data-wind-gust="<?= $gust ?>" data-wind-dir="<?= $wind_dir ?>" data-description="gentle" data-main-value="<?= $wind ?>" aria-valuenow="<?= $wind ?>" data-secondary-value="<?= $gust ?>" class="widget-view loaded show-wind">
                                     <div class="graphic-container">
@@ -364,32 +356,29 @@ $moon_scale = 0.4;
                                     </div>
                                 </wind-widget-view>
                             </div>
-
                             <!--    ****************************************************+
                                     ************** WIDGET DE PRECIPITACIÓN **************
                                     ***************************************************** -->
                             <div class="widget" id="rain-widget">
                                 <div class="title">Precipitación</div>
                                 <?php
-    $stroke_bucket_top = "transparent";
-                                                  $fill_bucket_top = "transparent";
-                                                  $fill_bucket_bottom = "var(--widget-empty)";
-                                                  $water_start = 440;
-                                                  $daily_rain = 0; //Inicialmente 0mm
-                                                  //if ($daily_rain != 0) {
-                                                  $max_rain = 200; //Máxima cantidad de lluvia que se puede registar en un día.
-                                                  $h_min = 40;
-                                                  $h_max = 440; //Altura máxima en píxeles del pluviómetro
-                                                  // Vamos a calcular la altura del pluviómetro
-                                                  $heigh = ($daily_rain / $max_rain) * ($h_max - $h_min);
-                                                  if ($heigh > 400) {
-                                                      $heigh = 400;
-                                                  }
-                                                  $water_start = $h_max - $heigh;
-                                                  $stroke_bucket_top = "var(--wu-lightblue20)";
-                                                  $fill_bucket_top = "var(--wu-lightblue)";
-                                                  $fill_bucket_bottom = "var(--wu-lightblue20)";
-                                                  //}
+                                    $stroke_bucket_top = "transparent";
+                                    $fill_bucket_top = "transparent";
+                                    $fill_bucket_bottom = "var(--widget-empty)";
+                                    $water_start = 440;
+                                    $daily_rain = 0; //Inicialmente 0mm
+                                    $max_rain = 200; //Máxima cantidad de lluvia que se puede registar en un día.
+                                    $h_min = 40;
+                                    $h_max = 440; //Altura máxima en píxeles del pluviómetro
+                                    // Vamos a calcular la altura del pluviómetro
+                                    $heigh = ($daily_rain / $max_rain) * ($h_max - $h_min);
+                                    if ($heigh > 400) {
+                                        $heigh = 400;
+                                    }
+                                    $water_start = $h_max - $heigh;
+                                    $stroke_bucket_top = "var(--wu-lightblue20)";
+                                    $fill_bucket_top = "var(--wu-lightblue)";
+                                    $fill_bucket_bottom = "var(--wu-lightblue20)";
                                 ?>
                                 <rain-widget-view id="widget_de_lluvia" data-pws-id="<?= $observatorio ?>" data-status="connected" data-unit="m" data-precip-rate="0" data-precip-total="0" data-main-value="0" aria-valuenow="0" data-secondary-value="0" class="widget-view loaded">
                                     <div class="graphic-container">
@@ -416,7 +405,6 @@ $moon_scale = 0.4;
                                     </div>
                                 </rain-widget-view>
                             </div>
-
                             <!--    ****************************************************+
                                     ***************** WIDGET DE PRESIÓN *****************
                                     ***************************************************** -->
@@ -433,45 +421,44 @@ $moon_scale = 0.4;
                                     </div>
                                 </pressure-widget-view>
                             </div>
-
                             <!--    ****************************************************+
                                     **************** WIDGET DE ÍNDICE UV ****************
                                     ***************************************************** -->
                             <div class="widget" id="uvi_widget">
                                 <div class="title">Índice UV</div>
                                 <?php
-    // Vamos a calcular cuántas barras se colorean
-    // Creamos un array con 13 posiciones, todas inicialmente "empty"
-    $filled = array_fill(1, 13, "empty");
-                                                  // valor que marca hasta dónde se llenan: $uv;
-                                                  $uv = 0; //Inicialmente índice = 0
-                                                  $nivel = $uv;
-                                                  // Recorremos el array
-                                                  for ($i = 1; $i <= 13; $i++) {
-                                                      if ($i <= $nivel) {
-                                                          $filled[$i] = "";
-                                                      } else {
-                                                          $filled[$i] = "empty";
-                                                      }
-                                                  }
-                                                  // Vamos calcular el valor de la radiación UV
-                                                  function uvIndexToCategory($uv)
-                                                  {
-                                                      if ($uv >= 0 && $uv <= 2) {
-                                                          return "Muy bajo";
-                                                      } elseif ($uv >= 3 && $uv <= 5) {
-                                                          return "Moderado";
-                                                      } elseif ($uv >= 6 && $uv <= 7) {
-                                                          return "Alto";
-                                                      } elseif ($uv >= 8 && $uv <= 10) {
-                                                          return "Muy alto";
-                                                      } elseif ($uv >= 11) {
-                                                          return "Extremo";
-                                                      } else {
-                                                          return "Valor inválido";
-                                                      }
-                                                  }
-                                                  $categoria = uvIndexToCategory($uv);
+                                    // Vamos a calcular cuántas barras se colorean
+                                    // Creamos un array con 13 posiciones, todas inicialmente "empty"
+                                    $filled = array_fill(1, 13, "empty");
+                                    // valor que marca hasta dónde se llenan: $uv;
+                                    $uv = 0; //Inicialmente índice = 0
+                                    $nivel = $uv;
+                                    // Recorremos el array
+                                    for ($i = 1; $i <= 13; $i++) {
+                                        if ($i <= $nivel) {
+                                            $filled[$i] = "";
+                                        } else {
+                                            $filled[$i] = "empty";
+                                        }
+                                    }
+                                    // Vamos calcular el valor de la radiación UV
+                                    function uvIndexToCategory($uv)
+                                    {
+                                        if ($uv >= 0 && $uv <= 2) {
+                                            return "Muy bajo";
+                                        } elseif ($uv >= 3 && $uv <= 5) {
+                                            return "Moderado";
+                                        } elseif ($uv >= 6 && $uv <= 7) {
+                                            return "Alto";
+                                        } elseif ($uv >= 8 && $uv <= 10) {
+                                            return "Muy alto";
+                                        } elseif ($uv >= 11) {
+                                            return "Extremo";
+                                        } else {
+                                            return "Valor inválido";
+                                        }
+                                    }
+                                    $categoria = uvIndexToCategory($uv);
                                 ?>
                                 <uv-widget-view data-pws-id="<?= $observatorio ?>" data-status="connected" data-unit="m" data-uv="<?= $uv ?>" data-main-value="<?= $uv ?>" aria-valuenow="<?= $uv ?>" data-secondary-value="<?= $uv ?>" class="widget-view loaded">
                                     <div class="graphic-container">
@@ -502,7 +489,6 @@ $moon_scale = 0.4;
                                     </div>
                                 </uv-widget-view>
                             </div>
-
                             <!--    ****************************************************+
                                     ************* WIDGET DE RADIACIÓN SOLAR *************
                                     ***************************************************** -->
@@ -520,24 +506,24 @@ $moon_scale = 0.4;
                                     </div>
                                 </solar-radiation-widget-view>
                             </div>
-
                             <!--    ****************************************************+
                                     ********** WIDGET DE TEMPERATURA INTERIOR ***********
                                     ***************************************************** -->
                             <div class="widget" id="tempint_widget">
                                 <?php
-    // Calcular la posición de la aguja de la temperatura interior
-    // Usamos los mismos valores de máximos y mínimos que para calcular la posición de la aguja de la temperatura exterior.
-    $in_temp = 0; // Inicialmente 0º
-                                                $in_temp_angle =
-                                                    (($in_temp - $minTemp) * ($maxAngle - $minAngle)) / ($maxTemp - $minTemp) + $minAngle;
-                                                // Limitamos a los extremos
-                                                if ($temp_angle < $minAngle) {
-                                                    $temp_angle = $minAngle;
-                                                }
-                                                if ($temp_angle > $maxAngle) {
-                                                    $temp_angle = $maxAngle;
-                                                }
+                                    // Calcular la posición de la aguja de la temperatura interior
+                                    // Usamos los mismos valores de máximos y mínimos que para calcular la posición de la aguja de la temperatura exterior.
+                                    $in_temp = 0; // Inicialmente 0º
+                                    $in_temp_angle =
+                                        (($in_temp - $minTemp) * ($maxAngle - $minAngle)) / ($maxTemp - $minTemp) +
+                                        $minAngle;
+                                    // Limitamos a los extremos
+                                    if ($temp_angle < $minAngle) {
+                                        $temp_angle = $minAngle;
+                                    }
+                                    if ($temp_angle > $maxAngle) {
+                                        $temp_angle = $maxAngle;
+                                    }
                                 ?>
                                 <div class="title">Temperatura Interior</div>
                                 <temp-widget-view data-pws-id="<?= $observatorio ?>" data-status="connected" data-unit="m" data-temp="<?= $in_temp ?>" data-temp-angle="<?= $in_temp_angle ?>" data-main-value="<?= $in_temp ?>" aria-valuenow="<?= $in_temp ?>" class="widget-view loaded">
@@ -553,37 +539,35 @@ $moon_scale = 0.4;
                                     </div>
                                 </temp-widget-view>
                             </div>
-
                             <!--    ****************************************************+
                                     ************ WIDGET DE HUMEDAD INTERIOR *************
                                     ***************************************************** -->
                             <div class="widget" id="humint_widget">
                                 <div class="title">Humedad Interior</div>
                                 <?php
-    // Calcular el ángulo del sector rellenado
-    $in_humidity = 0; //Inicialmente 0%
-                                                  $in_angle_humidity = 360 * ($in_humidity / 100);
-                                                  // Determinar estado (colores) en base a la humedad
-                                                  if ($in_humidity < 35) {
-                                                      $in_humid_state = "dry";
-                                                      $in_humid_legend = "Seco";
-                                                  } elseif ($in_humidity >= 60) {
-                                                      $in_humid_state = "humid";
-                                                      $in_humid_legend = "Húmedo";
-                                                  } else {
-                                                      $in_humid_state = "comfortable";
-                                                      $in_humid_legend = "Confortable";
-                                                  }
-                                                  // Variables dependientes del estado
-                                                  $in_humidity_color = "--humidity-{$in_humid_state}-color";
-                                                  $in_humid_widget = $in_humid_state;
-                                                  $in_humid_others = "widget-view {$in_humid_state} loaded";
+                                    // Calcular el ángulo del sector rellenado
+                                    $in_humidity = 0; //Inicialmente 0%
+                                    $in_angle_humidity = 360 * ($in_humidity / 100);
+                                    // Determinar estado (colores) en base a la humedad
+                                    if ($in_humidity < 35) {
+                                        $in_humid_state = "dry";
+                                        $in_humid_legend = "Seco";
+                                    } elseif ($in_humidity >= 60) {
+                                        $in_humid_state = "humid";
+                                        $in_humid_legend = "Húmedo";
+                                    } else {
+                                        $in_humid_state = "comfortable";
+                                        $in_humid_legend = "Confortable";
+                                    }
+                                    // Variables dependientes del estado
+                                    $in_humidity_color = "--humidity-{$in_humid_state}-color";
+                                    $in_humid_widget = $in_humid_state;
+                                    $in_humid_others = "widget-view {$in_humid_state} loaded";
                                 ?>
                                 <humidity-int-widget-view data-pws-id="<?= $observatorio ?>" data-status="connected" data-humidity="<?= $in_humidity ?>" data-humidity-string="<?= $in_humid_widget ?>" data-main-value="<?= $in_humidity ?>" aria-valuenow="<?= $in_humidity ?>" data-secondary-value="<?= $in_humid_widget ?>" class="<?= $in_humid_others ?>">
                                     <div class="graphic-container">
                                         <div class="humidity-int-gauge-container">
-                                            <div class="humidity-int-gauge-bg" id="humidity-int-gauge-bg" style="--humidity-int-gauge-bg: conic-gradient(from 270deg, rgba(var(<?= $in_humidity_color ?>), 0.8) 0deg, rgba(var(<?= $in_humidity_color ?>), 0.8) <?= $in_angle_humidity ?>deg, rgba(var(--black-or-white), 0.1) <?= $in_angle_humidity ?>deg, rgba(var(--black-or-white), 0.1) 360deg);">
-                                            </div>
+                                            <div class="humidity-int-gauge-bg" id="humidity-int-gauge-bg" style="--humidity-int-gauge-bg: conic-gradient(from 270deg, rgba(var(<?= $in_humidity_color ?>), 0.8) 0deg, rgba(var(<?= $in_humidity_color ?>), 0.8) <?= $in_angle_humidity ?>deg, rgba(var(--black-or-white), 0.1) <?= $in_angle_humidity ?>deg, rgba(var(--black-or-white), 0.1) 360deg);"></div>
                                             <div class="humidity-int-gauge-inner"></div>
                                             <div class="humidity-int-mist-ring mist-ring-1"></div>
                                             <div class="humidity-int-mist-ring mist-ring-2"></div>
@@ -604,7 +588,6 @@ $moon_scale = 0.4;
                                     </div>
                                 </humidity-int-widget-view>
                             </div>
-
                             <!--    ****************************************************+
                                     **************** WIDGET DE SEEING ******************
                                     ***************************************************** -->
@@ -615,10 +598,8 @@ $moon_scale = 0.4;
                                         <div class="svg-container">
                                             <svg viewBox="0 0 1190 1706" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto;">
                                                 <g id="stars"></g>
-                                                <?php
-    // Incluye la imagen del telescopio.
-    include './static/images/telescope.svg';
-                                                ?>
+                                                <?php // Incluye la imagen del telescopio.
+                                                include "./static/images/telescope.svg"; ?>
                                             </svg>
                                         </div>
                                     </div>
@@ -628,12 +609,11 @@ $moon_scale = 0.4;
                                 </seeing-widget-view>
                             </div>
                         </div>
+                        <!--############################################################
+                            ################### GRÁFICAS MODALES #######################
+                            ############################################################
 
-                        <!-- ############################################################
-                             ################### GRÁFICAS MODALES #######################
-                             ############################################################ -->
-
-                        <!--*************************************************************
+                            ************************************************************
                             ***************** GRÁFICA DE TEMPERATURA *******************
                             *********************** M O D A L **************************
                             ************************************************************ -->
@@ -661,7 +641,6 @@ $moon_scale = 0.4;
                                 <div id="tempChart" style="height:400px;"></div>
                             </div>
                         </div>
-
                         <!--*************************************************************
                             ******************* GRÁFICA DE HUMEDAD **********************
                             *********************** M O D A L **************************
@@ -690,7 +669,6 @@ $moon_scale = 0.4;
                                 <div id="humChart" style="height:400px;"></div>
                             </div>
                         </div>
-
                         <!--*************************************************************
                             ****************** GRÁFICAS DEl VIENTO *********************
                             *********************** M O D A L **************************
@@ -720,7 +698,6 @@ $moon_scale = 0.4;
                                 <div id="windDirectionChart" style="height: 250px;"></div>
                             </div>
                         </div>
-
                         <!--*************************************************************
                             ********************* DATOS DE LLUVIA ***********************
                             *********************** M O D A L ***************************
@@ -735,7 +712,6 @@ $moon_scale = 0.4;
                                     </svg>
                                 </button>
                                 <h2>Desglose de Precipitación</h2>
-
                                 <div class="rain-stats-grid">
                                     <div class="stat-card">
                                         <span class="stat-label">Estado</span>
@@ -776,7 +752,6 @@ $moon_scale = 0.4;
                                 <div id="rain-month-chart" style="height:300px; margin-top:20px;"></div>
                             </div>
                         </div>
-
                         <!--*************************************************************
                             ******************* GRÁFICA DE PRESIÓN *********************
                             *********************** M O D A L ***************************
@@ -790,7 +765,6 @@ $moon_scale = 0.4;
                                         <line x1="6" y1="6" x2="18" y2="18"></line>
                                     </svg>
                                 </button>
-
                                 <div class="date-range-picker">
                                     <div class="date-input">
                                         <label for="pressure_startDate">Desde:</label>
@@ -806,7 +780,6 @@ $moon_scale = 0.4;
                                 <div id="pressureChart" style="height:400px;"></div>
                             </div>
                         </div>
-
                         <!--*************************************************************
                             ******** GRÁFICA DE RADIACIÓN SOLAR E INDICE UV**************
                             *********************** M O D A L ***************************
@@ -820,7 +793,6 @@ $moon_scale = 0.4;
                                         <line x1="6" y1="6" x2="18" y2="18"></line>
                                     </svg>
                                 </button>
-
                                 <div class="date-range-picker">
                                     <div class="date-input">
                                         <label for="uv_startDate">Desde:</label>
@@ -837,7 +809,6 @@ $moon_scale = 0.4;
                                 <div id="solarChart" style="height: 250px;"></div>
                             </div>
                         </div>
-
                         <!--************************************************************
                             ************ GRÁFICA DE TEMPERATURA INTERIOR ***************
                             *********************** M O D A L **************************
@@ -866,7 +837,6 @@ $moon_scale = 0.4;
                                 <div id="tempIntChart" style="height:400px;"></div>
                             </div>
                         </div>
-
                         <!--************************************************************
                             ************** GRÁFICA DE HUMEDAD INTERIOR *****************
                             *********************** M O D A L **************************
@@ -880,7 +850,6 @@ $moon_scale = 0.4;
                                         <line x1="6" y1="6" x2="18" y2="18"/>
                                     </svg>
                                 </button>
-
                                 <div class="date-range-picker">
                                     <div class="date-input">
                                         <label for="humInt_startDate">Desde:</label>
@@ -896,7 +865,6 @@ $moon_scale = 0.4;
                                 <div id="humIntChart" style="height:400px;"></div>
                             </div>
                         </div>
-
                         <!--************************************************************
                             ******************** DATOS DEL SEEING **********************
                             *********************** M O D A L **************************
@@ -976,7 +944,6 @@ $moon_scale = 0.4;
                                             <span class="seeing-card-desc">(Turbulencia)</span>
                                         </div>
                                     </div>
-
                                     <h2 class="seeing-group-title">Cobertura de Nubes</h2>
                                     <div class="bloque"> <div class="card">
                                         <h3 class="seeing-card-title">☁️ Nubes bajas</h3>
@@ -994,23 +961,17 @@ $moon_scale = 0.4;
                                             <span class="seeing-card-desc">% Cobertura</span>
                                         </div>
                                     </div>
-
                                     <div class="footer">
                                         <p class="seeing-result">
                                             👁️ Seeing: <strong><span id="seeingtext">-</span></strong>
                                         </p>
-
                                         <p class="seeing-attribution">
-                                            Datos en altura y nubes de
-                                            <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">
-                                                Open-Meteo
-                                            </a>
+                                            Datos en altura y nubes de <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a>
                                         </p>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
                         <!--*************************************************************
                             ************ DATOS DE LA ESTACIÓN METEOROLÓGICA *************
                             *********************** M O D A L ***************************
@@ -1019,7 +980,6 @@ $moon_scale = 0.4;
                         <div id="pws-info-dialog" class="modal"
                              data-lat="<?= $lat ?>"
                              data-lon="<?= $lon ?>">
-
                             <div class="modal-content">
                                 <button class="close" id="pws-info-dialog-close" aria-label="Cerrar">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -1028,63 +988,47 @@ $moon_scale = 0.4;
                                         <line x1="6" y1="6" x2="18" y2="18"></line>
                                     </svg>
                                 </button>
-
                                 <h2 class="pws-info-title">Estación Meteorológica / Observatorio: <?= $observatorio ?></h2>
-
                                 <div class="pws-info-body">
-
                                     <div class="pws-info-map-wrapper">
                                         <div id="pws-map-container">
                                         </div>
                                     </div>
-
                                     <div class="pws-info-details-wrapper">
-
                                         <h3>📍 Ubicación</h3>
                                         <div class="pws-info-card-grid">
-
                                             <div class="pws-info-card">
                                                 <h4>Latitud</h4>
                                                 <p><?= $latitud ?></p>
                                             </div>
-
                                             <div class="pws-info-card">
                                                 <h4>Longitud</h4>
                                                 <p><?= $longitud ?></p>
                                             </div>
-
                                             <div class="pws-info-card">
                                                 <h4>Elevación</h4>
                                                 <p><?= $elev ?> m</p>
                                             </div>
-
                                             <div class="pws-info-card">
                                                 <h4>Ciudad / País</h4>
                                                 <p><?= $city ?>, <?= $country ?></p>
                                             </div>
-
                                         </div>
-
                                         <h3>💻 Equipo</h3>
                                         <div class="pws-info-card-stack">
-
                                             <div class="pws-info-card">
                                                 <h4>Hardware</h4>
                                                 <p><?= $hardware ?></p>
                                             </div>
-
                                             <div class="pws-info-card">
                                                 <h4>Software</h4>
                                                 <p><?= $software ?></p>
                                             </div>
-
                                         </div>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
-
                         <!--*************************************************************
                             ************* DATOS DE LA OBSERVACIÓN LUNAR *****************
                             *********************** M O D A L ***************************
@@ -1099,10 +1043,8 @@ $moon_scale = 0.4;
                                         <line x1="6" y1="6" x2="18" y2="18" />
                                     </svg>
                                 </button>
-
                                 <div class="infografia moon-infografia">
                                     <h1 class="seeing-modal-title">🌙 Información de la Fase Lunar</h1>
-
                                     <h2 class="seeing-group-title">Datos de la Luna</h2>
                                     <div id="moon-info" class="bloque bloque-fixed-3">
                                         <div class="card">
@@ -1117,16 +1059,13 @@ $moon_scale = 0.4;
                                             <h3 class="seeing-card-title">Longitud Terminador</h3>
                                             <p class="seeing-card-value"><span id="terminator-long">–</span></p>
                                         </div>
-
                                     </div>
-
                                     <h2 class="seeing-group-title">Catálogo Lunar 100 visibles en el terminador</h2>
                                     <div id="moon-features-list" class="bloque"></div>
                                     <div class="footer" id="moon-footer"></div>
                                 </div>
                             </div>
                         </div>
-
                         <!--*************************************************************
                         ***** LOCALIZAR ACCIDENTE GEOGRÁFICO EN LA SUPERFICIE LUNAR *****
                         ************************* M O D A L *****************************
@@ -1141,13 +1080,11 @@ $moon_scale = 0.4;
                                         <line x1="6" y1="6" x2="18" y2="18" />
                                     </svg>
                                 </button>
-
                                 <canvas id="moonFeatureCanvas" width="400" height="400" style="display:block;margin:2rem auto;border-radius:50%;background:#000;"></canvas>
                                 <p id="moonFeatureInfo" style="text-align:center;margin-top:0.5rem;font-size:0.9rem;color: var(--font-secondary-color);"></p>
                                 <p id="moonFeatureDescription" style="text-align:center;margin-top:0.5rem;font-size:0.9rem;color: var(--font-secondary-color);"></p>
                             </div>
                         </div>
-
                         <!--*************************************************************
                         ************ MODAL ZOOM LUNAR A TAMAÑO COMPLETO *****************
                         ****************************************************************-->
@@ -1161,7 +1098,6 @@ $moon_scale = 0.4;
                                 </div>
                             </div>
                         </div>
-
                         <!--*************************************************************
                         *************************** MODAL SOLAR *************************
                         ****************************************************************-->
@@ -1177,7 +1113,6 @@ $moon_scale = 0.4;
                                 </button>
                                 <div class="infografia">
                                     <h1 class="seeing-modal-title">☀️ Datos Solares de Hoy</h1>
-
                                     <h2 class="seeing-group-title">Amanecer, Cénit y Ocaso</h2>
                                     <div class="bloque bloque-fixed-3">
                                         <div class="card">
@@ -1196,7 +1131,6 @@ $moon_scale = 0.4;
                                             <span class="seeing-card-desc">Hora local</span>
                                         </div>
                                     </div>
-
                                     <h2 class="seeing-group-title">Crepúsculo Matutino</h2>
                                     <div class="bloque bloque-fixed-3">
                                         <div class="card">
@@ -1215,7 +1149,6 @@ $moon_scale = 0.4;
                                             <span class="seeing-card-desc">Inicio del crepúsculo civil</span>
                                         </div>
                                     </div>
-
                                     <h2 class="seeing-group-title">Crepúsculo Vespertino</h2>
                                     <div class="bloque bloque-fixed-3">
                                         <div class="card">
@@ -1234,7 +1167,6 @@ $moon_scale = 0.4;
                                             <span class="seeing-card-desc">Inicio del crepúsculo civil</span>
                                         </div>
                                     </div>
-
                                     <h2 class="seeing-group-title">Otros Datos</h2>
                                     <div class="bloque bloque-fixed-4">
                                         <div class="card">
@@ -1261,19 +1193,78 @@ $moon_scale = 0.4;
                                 </div>
                             </div>
                         </div>
-
+                        <!--*************************************************************
+                        *********************** MODAL AGRADECIMIENTOS *******************
+                        ****************************************************************-->
+                        <!-- Modal oculto al inicio -->
+                        <div id="agradecimientos" class="credits-modal">
+                            <div class="credits-modal-content">
+                                <button class="close" aria-label="Cerrar" id="closeAgradecimientosModal">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                         stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                                    </svg>
+                                </button>
+                                <div class="credits-info-panel">
+                                    <h1 class="credits-main-title">Agradecimientos y Créditos</h1>
+                                    <h2 class="credits-section-title">Diseño, Datos y Tecnología</h2>
+                                    <div class="credits-grid">
+                                        <!-- 1. Weather Underground (Diseño/Estilo) -->
+                                        <a class="credits-card" href="https://www.wunderground.com/" target="_blank" rel="noopener noreferrer">
+                                            <span class="credits-card-icon">☀️</span>
+                                            <h3 class="credits-card-title">Diseño Infográfico</h3>
+                                            <p class="credits-card-value">Inspiración visual basada en **Weather Underground**.</p>
+                                            <span class="credits-card-source">wunderground.com</span>
+                                        </a>
+                                        <!-- 2. CodePen (Fases Lunares) -->
+                                        <a class="credits-card" href="https://codepen.io/xaelan/pen/bjqOvo" target="_blank" rel="noopener noreferrer">
+                                            <span class="credits-card-icon">🌑</span>
+                                            <h3 class="credits-card-title">Fases Lunares (CSS)</h3>
+                                            <p class="credits-card-value">Código de **Pure CSS Moon Phases**.</p>
+                                            <span class="credits-card-source">codepen.io/xaelan</span>
+                                        </a>
+                                        <!-- 3. Cloudy Nights (Mapa Lunar) -->
+                                        <a class="credits-card" href="https://www.cloudynights.com/forums/topic/908244-high-resolution-map-lunar-100/#comment-13218711" target="_blank" rel="noopener noreferrer">
+                                            <span class="credits-card-icon">🔭</span>
+                                            <h3 class="credits-card-title">Mapa Lunar 100</h3>
+                                            <p class="credits-card-value">Referencia: **High Resolution Lunar 100 Map**.</p>
+                                            <span class="credits-card-source">cloudynights.com</span>
+                                        </a>
+                                        <!-- 4. Open-Meteo (Datos en Altura) -->
+                                        <a class="credits-card" href="https://open-meteo.com" target="_blank" rel="noopener noreferrer">
+                                            <span class="credits-card-icon">🌬️</span>
+                                            <h3 class="credits-card-title">Datos en Altura</h3>
+                                            <p class="credits-card-value">Información de **Open-Meteo** para el cálculo del Seeing.</p>
+                                            <span class="credits-card-source">open-meteo.com</span>
+                                        </a>
+                                        <!-- 5. Open-Meteo (Previsión) -->
+                                        <a class="credits-card" href="https://open-meteo.com" target="_blank" rel="noopener noreferrer">
+                                            <span class="credits-card-icon">☁️</span>
+                                            <h3 class="credits-card-title">Previsión Meteorológica</h3>
+                                            <p class="credits-card-value">Previsión horaria obtenida de **Open-Meteo**.</p>
+                                            <span class="credits-card-source">open-meteo.com</span>
+                                        </a>
+                                        <!-- 6. SunCalc (Cálculos Astronómicos) -->
+                                        <a class="credits-card" href="https://app.unpkg.com/suncalc@1.9.0" target="_blank" rel="noopener noreferrer">
+                                            <span class="credits-card-icon">✨</span>
+                                            <h3 class="credits-card-title">Cálculos Astronómicos</h3>
+                                            <p class="credits-card-value">Librería **SunCalc** para horas solares y lunares.</p>
+                                            <span class="credits-card-source">unpkg.com/suncalc</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <!-- ############################################################
                              ############## FIN DE LAS GRÁFICAS MODALES #################
                              ############################################################ -->
-
                     </div>
                 </dashboard-body-view>
                 <dashboard-footer-view>
                     <div class="max-width">
                         <div class="container">
-                            <div class="footer-text">Inspired by </div>
-                            <a href="https://www.wunderground.com/dashboard/pws/IFUENG27"><wu-logo title="WU Logo" id="wu-logo"></wu-logo></a>
-                            <div class="footer-text"> Software</div>
+                            <div id="link-greetings" class="footer-text">Agradecimientos</div>
                         </div>
                     </div>
                 </dashboard-footer-view>
@@ -1310,6 +1301,7 @@ $moon_scale = 0.4;
         <script src="./static/js/modals/modal_sun.js?lat=<?= $lat ?>&lon=<?= $lon ?>&v=<?= time() ?>"></script>
         <script type="module" src="./static/js/widgets/pws_info.js?v=<?= time() ?>"></script>
         <script type="module" src="./static/js/theme-switcher.js?v=<?= time() ?>"></script>
+        <script type="module" src="./static/js/modals/modal_greetings.js?v=<?= time() ?>"></script>
         <!-- SCRIPT de depuración -->
         <script>
             (function() {

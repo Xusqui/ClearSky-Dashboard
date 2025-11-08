@@ -215,9 +215,9 @@
     width: 100%;
     height: 100%;
     overflow: auto;
-    background: rgba(var(--black-or-white), 0.6); /* negro en día, blanco en noche */
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px); /* Compatibilidad con safary */
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px); /* Compatibilidad con safary */
     justify-content: center;
     align-items: center;
 }
@@ -233,6 +233,8 @@
     position: relative;
     box-shadow: 0 4px 12px var(--dashboard-widget-box-shadow-color);
     animation: fadeIn 0.3s ease;
+    /* Sombra basada en la variable de sombra del tema */
+    box-shadow: 0 10px 30px rgba(var(--black-or-white), 0.3);
 }
 
 .close {

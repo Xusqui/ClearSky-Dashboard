@@ -13,13 +13,15 @@ dashboard-footer-view .max-width {
 dashboard-footer-view .container {
     display: flex;
     align-items: baseline;
+    justify-content: center;
     margin: 0 0 0 0;
     gap: 6px;
 }
 
 dashboard-footer-view .footer-text {
-    color: var(--color-secondary-font);
-    font-size: 0.75rem;
+    color: var(--link-color);
+    font-size: 1rem;
+    cursor: pointer;
 }
 
 dashboard-footer-view wu-logo {
