@@ -101,6 +101,7 @@ MODO DÍA
     --theme-toggle-active-color: var(--wu-white);
     --icon-settings: url(../../static/images/icons/settings.svg);
     --icon-city: url(../../static/images/icons/location_city.svg);
+    --icon-github: url(../../static/images/icons/github.svg);
     --icon-rain-drop: url(../../static/images/icons/rain-drop.svg);
     --icon-rain-drop-empty: url(../../static/images/icons/rain-drop-empty.svg);
     --icon-pws: url(../../static/images/icons/pws.svg);
@@ -173,6 +174,7 @@ MODO DÍA
     --image-temp-arrow-tip: url(../../static/images/widgets/temp-arrow-tip.svg);
     --image-pressure-bg: url(../../static/images/widgets/pressure-bg.svg);
     --icon-wu-logo: url(../../static/images/icons/wu-logo.svg);
+    --icon-copyright: url(../../static/images/icons/copyright-light.svg);
 }
 
 /* ======================================================
@@ -221,6 +223,7 @@ MODO NOCHE
     --theme-toggle-active-color: var(--wu-black);
     --icon-settings: url(../../static/images/icons/settings-dark.svg);
     --icon-city: url(../../static/images/icons/city-dark.svg);
+    --icon-github: url(../../static/images/icons/github-dark.svg);
     --icon-pws: url(../../static/images/icons/pws-dark.svg);
     --icon-time: url(../../static/images/icons/time-dark.svg);
     --icon-arrow-back: url(../../static/images/icons/arrow-back-dark.svg);
@@ -232,6 +235,7 @@ MODO NOCHE
     --icon-minus: url(../../static/images/icons/minus-dark.svg);
     --image-wind-bg: url(../../static/images/widgets/wind-bg-dark.svg);
     --image-wind-arrow-tip: url(../../static/images/widgets/wind-arrow-tip-dark.svg);
+    --icon-copyright: url(../../static/images/icons/copyright-dark.svg);
     --image-pressure-bg: url(../../static/images/widgets/pressure-bg-dark.svg);
 
 }

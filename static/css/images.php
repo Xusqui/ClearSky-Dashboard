@@ -400,7 +400,7 @@ $root = '/' . trim($root, '/');
 
 .icon.sunset {
     background-repeat: no-repeat;
-    background-image: var(--icon-sunset)
+    background-image:var(--icon-sunset)
 }
 .icon.github {
     background-repeat: no-repeat;
