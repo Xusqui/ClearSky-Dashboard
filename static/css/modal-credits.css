@@ -21,7 +21,7 @@ Estilos del Modal (Créditos)
 
 /* 2. Contenedor Principal del Contenido del Modal */
 .credits-modal-content {
-    background: var(--bg-color); /* Fondo basado en el tema (claro/oscuro) */
+    background: color-mix(in srgb, var(--bg-color) 60%, transparent); /* Fondo basado en el tema (claro/oscuro) */
     color: var(--font-color);
     margin: 5% auto; /* Centrado vertical y horizontal */
     padding: 30px;
@@ -158,13 +158,10 @@ Estilos del Modal (Créditos)
 .icon.cloudy { background-image: var(--icon-cloudy); }
 .icon.sunrise { background-image: var(--icon-sunrise); }
 .icon.info { background-image: var(--icon-info); }
-.credits-card-icon.clear-night {
-    width: 50px;
-    height: 50px;
-    background-image: var(--icon-clear-night);
-}
-.icon.settings { background-image: var(--icon-settings); } /* Agradecimiento a Gemini */
-.icon.time { background-image: var(--icon-time); }       /* Agradecimiento a ChatGPT */
+.icon.clear-night { background-image: var(--icon-clear-night); }
+.icon.settings { background-image: var(--icon-settings); }
+.icon.time { background-image: var(--icon-time); }
+.icon.city { background-image: var(--icon-city); }
 
 
 /* Título de la tarjeta (el recurso principal) */

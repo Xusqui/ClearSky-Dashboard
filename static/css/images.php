@@ -88,6 +88,7 @@ $root = '/' . trim($root, '/');
     --image-temp-arrow-tip: url('<?= $root ?>/static/images/widgets/temp-arrow-tip.svg');
     --image-pressure-bg: url('<?= $root ?>/static/images/widgets/pressure-bg.svg');
     --icon-wu-logo: url('<?= $root ?>/static/images/icons/wu-logo.svg');
+    --icon-copyright: url('<?= $root ?>/static/images/icons/copyright-light.svg');
     --image-background-moon-card: url('<?= $root ?>/static/images/backgrounds/stars1.png');
 }
 
@@ -106,6 +107,7 @@ $root = '/' . trim($root, '/');
         --icon-minus: url('<?= $root ?>/static/images/icons/minus-dark.svg');
         --image-wind-bg: url('<?= $root ?>/static/images/widgets/wind-bg-dark.svg');
         --image-wind-arrow-tip: url('<?= $root ?>/static/images/widgets/wind-arrow-tip-dark.svg');
+        --icon-copyright: url('<?= $root ?>/static/images/icons/copyright-dark.svg');
         --image-pressure-bg: url('<?= $root ?>/static/images/widgets/pressure-bg-dark.svg');
     }
     /* 🔆 Ajuste visual de iconos meteorológicos en modo oscuro */
