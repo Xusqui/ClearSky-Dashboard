@@ -1,6 +1,11 @@
 // moon_modal.js
 // --- Importar el Catálogo oficial Lunar 100 desde el nuevo archivo ---
+// Asumimos que './lunar_data.js' exporta LUNAR_100_FEATURES
 import { LUNAR_100_FEATURES } from './lunar_data.js';
+
+// --- Variables de estado ---
+let selectedFeatureForZoom = null;
+let visibleFeatures = []; // Almacenará la lista de features visibles en el terminador
 
 // --- Funciones auxiliares ---
 function wrap180(x){
@@ -29,9 +34,9 @@ function parseUTCInput(val){
 // --- Cálculo principal ---
 function computeMoonData(date){
     const ill = SunCalc.getMoonIllumination(date);
-    const phase = ill.phase;      // 0..1
+    const phase = ill.phase;      // 0..1
     const fraction = ill.fraction;
-    const angle = ill.angle;      // rad
+    const angle = ill.angle;      // rad
 
     const isWaxing = angle < 0;
     const terminatorName = isWaxing ? "Amanecer lunar" : "Anochecer lunar";
@@ -62,17 +67,34 @@ function computeMoonData(date){
     };
 }
 
-function openMoonFeatureModalCanvas(lonDeg, latDeg, name, description, l100) {
+// ==========================================================
+// === LÓGICA DEL SEGUNDO MODAL (INTERACTIVO) ================
+// ==========================================================
+
+// **MODIFICACIÓN CLAVE**: Añadido `initialFeature` como parámetro
+function openInteractiveMoonFeatureModal(features, initialFeature = null) {
     const modal = document.getElementById('moonFeatureModal');
     const canvas = document.getElementById('moonFeatureCanvas');
     const ctx = canvas.getContext('2d');
     const info = document.getElementById('moonFeatureInfo');
     const desc = document.getElementById('moonFeatureDescription');
 
-    // Almacenamiento de datos en el canvas (Atributos de datos)
-    canvas.dataset.featureDescription = description;
-    canvas.dataset.featureName = name;
-    canvas.dataset.featureL100 = `L${l100}`;
+    // **NUEVA LÓGICA**: Si se proporciona un initialFeature, lo mostramos.
+    if (initialFeature) {
+        const formattedLong = `${Math.abs(initialFeature.long).toFixed(1)}° ${initialFeature.long < 0 ? 'O' : 'E'}`;
+        const formattedLat = `${Math.abs(initialFeature.lat).toFixed(1)}° ${initialFeature.lat > 0 ? 'N' : 'S'}`;
+
+        info.innerHTML = `
+            <strong>L${initialFeature.l100} - ${initialFeature.name}</strong>
+            <small>[${formattedLat}, ${formattedLong}]</small>
+        `;
+        desc.textContent = initialFeature.description;
+    } else {
+        info.textContent = 'Haz clic en un punto para hacer zoom.';
+        desc.textContent = '';
+    }
+
+    modal.style.display = 'block';
 
     const width = canvas.width;
     const height = canvas.height;
@@ -80,70 +102,179 @@ function openMoonFeatureModalCanvas(lonDeg, latDeg, name, description, l100) {
     const cy = height / 2;
     const R = Math.min(cx, cy);
 
-    // Limpiar canvas
-    ctx.clearRect(0, 0, width, height);
-
-    // Imagen de la luna
     const img = new Image();
     img.crossOrigin = 'anonymous';
     img.src = './static/images/full_moon_big.png';
 
     img.onload = () => {
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(cx, cy, R, 0, 2 * Math.PI);
-        ctx.clip();
+        // --- Función de Dibujo ---
+        const drawFeatures = (hoveredFeature = null) => {
+            ctx.save();
+            ctx.clearRect(0, 0, width, height);
 
-        ctx.drawImage(img, 0, 0, width, height);
-
-        // Terminador simple: degradado de luz
-        const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, R);
-        grad.addColorStop(0, 'rgba(0,0,0,0)');
-        grad.addColorStop(0.5, 'rgba(0,0,0,0.2)');
-        grad.addColorStop(1, 'rgba(0,0,0,0.5)');
-        ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, width, height);
-
-        // Punto rojo
-        const deg2rad = d => d * Math.PI / 180;
-        const lon = deg2rad(lonDeg);
-        const lat = deg2rad(latDeg);
-
-        const visible = (Math.cos(lat) * Math.cos(lon)) > 0;
-
-        if (visible) {
-            const x_proj = R * Math.cos(lat) * Math.sin(lon);
-            const y_proj = R * Math.sin(lat);
-            const xPixel = cx + x_proj;
-            const yPixel = cy - y_proj;
-
+            // 1. Dibujar la luna
             ctx.beginPath();
-            ctx.arc(xPixel, yPixel, Math.max(5, Math.round(R*0.015)), 0, 2*Math.PI);
-            ctx.fillStyle = 'red';
-            ctx.fill();
-            ctx.lineWidth = 1;
-            ctx.strokeStyle = 'white';
-            ctx.stroke();
+            ctx.arc(cx, cy, R, 0, 2 * Math.PI);
+            ctx.clip();
+            ctx.drawImage(img, 0, 0, width, height);
 
-            info.textContent = `${name}: lon=${lonDeg.toFixed(1)}°, lat=${latDeg.toFixed(1)}°`;
-        } else {
-            info.textContent = `${name}: lon=${lonDeg.toFixed(1)}°, lat=${latDeg.toFixed(1)}° (cara oculta)`;
-        }
-        desc.textContent = `${description}`;
+            // 2. Dibujar el terminador simple
+            const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, R);
+            grad.addColorStop(0, 'rgba(0,0,0,0)');
+            grad.addColorStop(0.5, 'rgba(0,0,0,0.2)');
+            grad.addColorStop(1, 'rgba(0,0,0,0.5)');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, width, height);
 
-        ctx.restore();
+            // 3. Dibujar todos los puntos interactivos
+            features.forEach(f => {
+                const deg2rad = d => d * Math.PI / 180;
+                const lon = deg2rad(f.long);
+                const lat = deg2rad(f.lat);
+
+                // Proyección Ortográfica
+                const x_proj = R * Math.cos(lat) * Math.sin(lon);
+                const y_proj = R * Math.sin(lat);
+                const xPixel = cx + x_proj;
+                const yPixel = cy - y_proj;
+
+                // Si el punto no es visible (cara oculta), no lo dibujamos
+                if ((Math.cos(lat) * Math.cos(lon)) < 0) return;
+
+                // Determinar el color: hover, inicial (resaltado), o por defecto (rojo)
+                const isHovered = (hoveredFeature && hoveredFeature.name === f.name);
+                const isInitial = (initialFeature && initialFeature.name === f.name);
+
+                const pointRadius = (isHovered || isInitial) ? Math.max(7, Math.round(R * 0.02)) : Math.max(5, Math.round(R * 0.015));
+                const pointColor = (isHovered || isInitial) ? '#00FF00' : 'red'; // Verde para hover O inicial
+
+                ctx.beginPath();
+                ctx.arc(xPixel, yPixel, pointRadius, 0, 2 * Math.PI);
+
+                ctx.fillStyle = pointColor;
+                ctx.fill();
+
+                ctx.lineWidth = (isHovered || isInitial) ? 2 : 1;
+                ctx.strokeStyle = 'white';
+                ctx.stroke();
+
+                // Añadir coordenadas para detección de clics/hover
+                f._pixelX = xPixel;
+                f._pixelY = yPixel;
+                f._radius = pointRadius;
+            });
+
+            ctx.restore();
+        };
+
+        // DIBUJO INICIAL: Pasa el initialFeature para que se dibuje en verde
+        drawFeatures(initialFeature);
+
+        // 4. Implementar Hover (Mousemove)
+        canvas.onmousemove = (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            let hoveredFeature = null;
+            let cursorChanged = false;
+
+            for (const f of features) {
+                if (f._pixelX) {
+                    const dist = Math.hypot(mouseX - f._pixelX, mouseY - f._pixelY);
+
+                    if (dist < f._radius + 5) {
+                        hoveredFeature = f;
+                        cursorChanged = true;
+                        break;
+                    }
+                }
+            }
+
+            // Redibujar con el punto en hover (si lo hay)
+            drawFeatures(hoveredFeature);
+
+            // Actualizar la información de texto
+            if (hoveredFeature) {
+                const formattedLong = `${Math.abs(hoveredFeature.long).toFixed(1)}° ${hoveredFeature.long < 0 ? 'O' : 'E'}`;
+                const formattedLat = `${Math.abs(hoveredFeature.lat).toFixed(1)}° ${hoveredFeature.lat > 0 ? 'N' : 'S'}`;
+
+                info.innerHTML = `
+                    <strong>L${hoveredFeature.l100} - ${hoveredFeature.name}</strong>
+                    <small>[${formattedLat}, ${formattedLong}]</small>
+                `;
+                desc.textContent = hoveredFeature.description;
+            } else {
+                info.textContent = 'Haz clic en un punto para hacer zoom.';
+                desc.textContent = '';
+            }
+
+            // Cambiar cursor si está sobre un punto
+            canvas.style.cursor = cursorChanged ? 'pointer' : 'default';
+        };
+
+        // 5. Implementar Click (para el Zoom)
+        canvas.onclick = (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            let clickedFeature = null;
+
+            for (const f of features) {
+                if (f._pixelX) {
+                    const dist = Math.hypot(mouseX - f._pixelX, mouseY - f._pixelY);
+                    if (dist < f._radius + 5) {
+                        clickedFeature = f;
+                        break;
+                    }
+                }
+            }
+
+            if (clickedFeature) {
+                // Disparar la apertura del 3er modal (Zoom)
+                openMoonZoomModalFromClick(clickedFeature);
+            }
+        };
+
     };
 
     img.onerror = () => {
         info.textContent = 'Error cargando la imagen de la luna.';
     };
-
-    modal.style.display = 'block';
 }
 
 
-// --- Función para mostrar datos en el modal --
+// --- NUEVA FUNCIÓN PARA ABRIR EL MODAL DE ZOOM DESDE EL CLIC EN EL CANVAS (3er Modal) ---
+function openMoonZoomModalFromClick(feature) {
+    const lon = feature.long;
+    const lat = feature.lat;
 
+    const zoomDescriptionElement = document.getElementById("zoomDescription");
+
+    // Construcción del texto de la descripción para el modal de zoom (LXX - Nombre: Descripción)
+    if (feature.l100 && feature.name && feature.description) {
+        zoomDescriptionElement.innerHTML = `
+            <strong>L${feature.l100} - ${feature.name}</strong>: ${feature.description}
+        `;
+    } else {
+        zoomDescriptionElement.textContent = "Descripción no disponible.";
+    }
+
+    // Abrir el modal de zoom
+    moonZoomModal.classList.add("show");
+    document.body.style.overflow = "hidden";
+
+    const img = document.getElementById("zoomMoonImage");
+    if (img.complete) {
+        centerZoomOn(lon, lat);
+    } else {
+        img.onload = () => centerZoomOn(lon, lat);
+    }
+}
+
+
+// --- Función para mostrar datos en el modal (1er Modal) --
 function updateMoonModal(){
     const date = new Date();//Date("2025-11-05T14:00:00");
     const moonData = computeMoonData(date);
@@ -157,7 +288,6 @@ function updateMoonModal(){
 
     if (rawTerminatorLong < 0) {
         // Es negativo: Oeste lunar (W)
-        // Usamos Math.abs para obtener el valor absoluto (sin el signo negativo)
         formattedTerminator = `${Math.abs(terminatorLong)}º O`;
     } else {
         // Es positivo o cero: Este lunar (E)
@@ -174,6 +304,9 @@ function updateMoonModal(){
         let delta = Math.abs(f.long - moonData.terminatorVisible90);
         return delta <= tolerance;
     });
+
+    // Almacenamos la lista visible para usarla en el Modal 2
+    visibleFeatures = featuresNearTerminator;
 
     // Mostrar Accidentes geográficos lunares
     const container = document.getElementById('moon-features-list');
@@ -197,23 +330,15 @@ function updateMoonModal(){
         title.classList.add('feature-card-title');
         title.textContent = f.name;
 
-        // 4. UBICACIÓN (Coordenadas pequeñas, justo debajo del nombre)
+        // 4. UBICACIÓN (Coordenadas pequeñas)
         const locationInfo = document.createElement('small');
-        // AÑADIMOS CLASE ESPECÍFICA
         locationInfo.classList.add('feature-coords-info');
-
-        // Eliminamos todos los estilos inline (como display, opacity, margins)
-        locationInfo.textContent = `[${formattedLat}, ${formattedLong}]`;
-
-        // Ajusta el margen inferior para la separación, si es necesaria.
-        //locationInfo.style.marginBottom = '10px';
         locationInfo.style.opacity = '0.5';
         locationInfo.textContent = `[${formattedLat}, ${formattedLong}]`;
 
         // 5. NÚMERO DE CATÁLOGO (#Nº en grande)
         const value = document.createElement('p');
         value.classList.add('seeing-card-value');
-        // Añadimos el '#' al texto del número
         value.textContent = `#${f.l100}`;
 
         // 6. COMENTARIO (Descripción)
@@ -224,14 +349,15 @@ function updateMoonModal(){
 
         // 7. ENSAMBLAR LA TARJETA
         card.appendChild(title);
-        card.appendChild(locationInfo); // Posición 2: Coordenadas
-        card.appendChild(value);        // Posición 3: #Nº (Grande)
-        card.appendChild(desc);         // Posición 4: Comentario
+        card.appendChild(locationInfo);
+        card.appendChild(value);
+        card.appendChild(desc);
         container.appendChild(card);
 
         // 8. Añadir eventListener a cada tarjeta:
         card.addEventListener('click', () => {
-            openMoonFeatureModalCanvas(f.long, f.lat, f.name, f.description, f.l100);
+            // **MODIFICACIÓN CLAVE**: Pasa el objeto completo del feature (f) para el resalte inicial
+            openInteractiveMoonFeatureModal(visibleFeatures, f);
         });
     });
 }
@@ -239,7 +365,7 @@ function updateMoonModal(){
 // Escribir el pie de página.
 const moonFooter = document.getElementById('moon-footer');
 
-// Obtener la fecha y hora actuales. La hora de referencia (CET) se basa en la hora actual del servidor.
+// Obtener la fecha y hora actuales.
 const now = new Date();
 const formattedDate = now.toLocaleDateString('es-ES', {
     day: '2-digit', month: 'long', year: 'numeric'
@@ -264,23 +390,20 @@ moonFooter.innerHTML = `
     </p>
 `;
 
-// --- Abrir modal al hacer click en la luna ---
+// --- Abrir modal al hacer click en la luna (1er Modal) ---
 document.querySelector('.moon-card').addEventListener('click', () => {
     document.getElementById('moonModal').style.display = 'block';
     updateMoonModal();
 });
 
-// --- Cerrar modal ---
+// --- Cerrar modal (1er Modal) ---
 document.getElementById('closeMoonModal').addEventListener('click', () => {
     document.getElementById('moonModal').style.display = 'none';
 });
 
-// --- Cerrar modal al hacer clic fuera del contenido ---
+// --- Cerrar modal al hacer clic fuera del contenido (1er Modal) ---
 window.addEventListener('click', (event) => {
     const moonModal = document.getElementById('moonModal');
-
-    // Comprueba si el objetivo del clic es el modal en sí mismo (el fondo oscuro)
-    // y no un elemento dentro del 'modal-content'.
     if (event.target === moonModal) {
         moonModal.style.display = 'none';
     }
@@ -289,16 +412,22 @@ window.addEventListener('click', (event) => {
 // --- Cerrar modal secundario (moonFeatureModal) ---
 document.getElementById('closeMoonFeatureModal').addEventListener('click', () => {
     document.getElementById('moonFeatureModal').style.display = 'none';
+    // Limpiar handlers para evitar fugas de memoria o interacciones no deseadas
+    document.getElementById('moonFeatureCanvas').onmousemove = null;
+    document.getElementById('moonFeatureCanvas').onclick = null;
 });
 
 window.addEventListener('click', (event) => {
     const modal = document.getElementById('moonFeatureModal');
     if (event.target === modal) {
         modal.style.display = 'none';
+        document.getElementById('moonFeatureCanvas').onmousemove = null;
+        document.getElementById('moonFeatureCanvas').onclick = null;
     }
 });
+
 // ==========================================================
-// === MODAL DE ZOOM LUNAR A TAMAÑO COMPLETO ================
+// === MODAL DE ZOOM LUNAR A TAMAÑO COMPLETO (3er Modal) ====
 // ==========================================================
 
 const moonFeatureCanvas = document.getElementById("moonFeatureCanvas");
@@ -306,51 +435,13 @@ const moonZoomModal = document.getElementById("moonZoomModal");
 const closeMoonZoomModal = document.getElementById("closeMoonZoomModal");
 const moonFeatureInfo = document.getElementById("moonFeatureInfo");
 
-// --- Abrir modal de zoom al hacer clic en el canvas ---
-moonFeatureCanvas.addEventListener("click", () => {
-    const text = moonFeatureInfo.textContent.trim();
-    const featureDescription = moonFeatureCanvas.dataset.featureDescription;
-    const featureName = moonFeatureCanvas.dataset.featureName;
-    const featureL100 = moonFeatureCanvas.dataset.featureL100; // Ej: "L12"
-    const zoomDescriptionElement = document.getElementById("zoomDescription");
-
-    const match = text.match(/lon\s*=\s*([-+]?\d+(?:\.\d+)?)°?[,;\s]*lat\s*=\s*([-+]?\d+(?:\.\d+)?)°?/i);
-    if (!match) {
-        alert("⚠️ No se pudieron extraer las coordenadas del texto:\n" + text);
-        return;
-    }
-
-    const lon = parseFloat(match[1]);
-    const lat = parseFloat(match[2]);
-
-    // 🌟🌟 CONSTRUCCIÓN DEL TEXTO DE LA DESCRIPCIÓN 🌟🌟
-    if (featureL100 && featureName && featureDescription) {
-        // Formato: "L12 - Proclus: Descripción completa del accidente geográfico."
-        zoomDescriptionElement.innerHTML = `
-            <strong>${featureL100} - ${featureName}</strong>: ${featureDescription}
-        `;
-    } else {
-        zoomDescriptionElement.textContent = "Descripción no disponible.";
-    }
-
-    moonZoomModal.classList.add("show");
-    document.body.style.overflow = "hidden";
-
-    const img = document.getElementById("zoomMoonImage");
-    if (img.complete) {
-        centerZoomOn(lon, lat);
-    } else {
-        img.onload = () => centerZoomOn(lon, lat);
-    }
-});
-
-// --- Cerrar modal ---
+// --- Cerrar modal (3er Modal) ---
 closeMoonZoomModal.addEventListener("click", () => {
     moonZoomModal.classList.remove("show");
     document.body.style.overflow = "";
 });
 
-// Cerrar al hacer clic fuera
+// Cerrar al hacer clic fuera (3er Modal)
 moonZoomModal.addEventListener("click", (e) => {
     if (e.target === moonZoomModal) {
         moonZoomModal.classList.remove("show");
@@ -399,7 +490,6 @@ function centerZoomOn(lonDeg, latDeg) {
     marker.style.left = (vw / 2 - 10) + "px";
     marker.style.top = (vh / 2 - 10) + "px";
 }
-// HASTA AQUÍ EL MODAL DE LA LUNA CON ZOOM
 
 // --- Cálculo inicial si quieres autoactualizar ---
 updateMoonModal();

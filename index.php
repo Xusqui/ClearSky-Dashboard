@@ -1096,6 +1096,7 @@
                                     <img id="zoomMoonImage" src="./static/images/hires/lunar-100-2.jpg" alt="Luna" />
                                     <div id="zoomMarker"></div>
                                 </div>
+                                <div id="zoomDescription" class="zoom-description"></div>
                             </div>
                         </div>
                         <!--*************************************************************
@@ -1341,7 +1342,7 @@
         <script src="https://unpkg.com/suncalc@1.9.0/suncalc.js"></script>
         <script src="./static/js/moon.js?v<?= time() ?>"></script>
         <script src="./static/js/sun.js?lat=<?= $lat ?>&lon=<?= $lon ?>&v=<?= time() ?>"></script>
-        <script type="module" src="./static/js/modals/modal_moon.js?v<?= time() ?>"></script>
+        <script type="module" src="./static/js/modals/modal_moon_2.js?v<?= time() ?>"></script>
         <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
         <script type="module" src="./static/js/modals/modal_temp.js?v=<?= time() ?>"></script>
         <script type="module" src="./static/js/modals/modal_humidity.js?v=<?= time() ?>"></script>

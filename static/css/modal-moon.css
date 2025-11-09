@@ -1,6 +1,6 @@
-/* ======================================================= */
-/* === REGLAS DE CORRECCIÓN EXCLUSIVAS PARA MODAL LUNAR === */
-/* ======================================================= */
+/* ====================================================================== */
+/* === REGLAS DE CORRECCIÓN EXCLUSIVAS PARA MODAL LUNAR modal-moon.css=== */
+/* ====================================================================== */
 
 /*
 |-----------------------------------------------------------
@@ -217,4 +217,33 @@
 .moon-infografia .feature-coords-info {
     /* Si esta clase se usa en otros lugares, esta será la regla general.
     Las reglas específicas de #moon-features-list la sobreescriben. */
+}
+
+/* ========================================================== */
+/* === ESTILO DE LA DESCRIPCIÓN EN EL MODAL DE ZOOM (NUEVO) === */
+/* ========================================================== */
+.zoom-description {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    z-index: 50; /* Mayor que la imagen y el visor, menor que el botón de cerrar */
+
+    /* Estilos de texto */
+    color: white;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 8px 15px;
+    border-radius: 8px;
+
+    /* Apariencia */
+    max-width: 400px;
+    font-size: 2em;
+    font-weight: 300;
+    text-align: right;
+
+    /* Sombra para que destaque sobre fondos claros de la imagen */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+
+    /* Asegúrate de que el texto no se seleccione al arrastrar o hacer clic */
+    user-select: none;
+    pointer-events: none; /* Permite hacer clic "a través" de él */
 }
