@@ -16,6 +16,7 @@ $root = '/' . trim($root, '/');
 :root {
     --icon-settings: url('<?= $root ?>/static/images/icons/settings.svg');
     --icon-city: url('<?= $root ?>/static/images/icons/location_city.svg');
+    --icon-github: url('<?= $root ?>/static/images/icons/github.svg');
     --icon-rain-drop: url('<?= $root ?>/static/images/icons/rain-drop.svg');
     --icon-rain-drop-empty: url('<?= $root ?>/static/images/icons/rain-drop-empty.svg');
     --icon-pws: url('<?= $root ?>/static/images/icons/pws.svg');
@@ -96,6 +97,7 @@ $root = '/' . trim($root, '/');
     :root {
         --icon-settings: url('<?= $root ?>/static/images/icons/settings-dark.svg');
         --icon-city: url('<?= $root ?>/ther/static/images/icons/city-dark.svg');
+        --icon-github: url('<?= $root ?>/static/images/icons/github-dark.svg');
         --icon-pws: url('<?= $root ?>/static/images/icons/pws-dark.svg');
         --icon-time: url('<?= $root ?>/static/images/icons/time-dark.svg');
         --icon-arrow-back: url('<?= $root ?>/static/images/icons/arrow-back-dark.svg');
@@ -399,4 +401,8 @@ $root = '/' . trim($root, '/');
 .icon.sunset {
     background-repeat: no-repeat;
     background-image: var(--icon-sunset)
+}
+.icon.github {
+    background-repeat: no-repeat;
+    background-image:var(--icon-github)
 }

@@ -1,3 +1,4 @@
+// modal_credits.js
 const modal = document.getElementById("credits");
 const openBtn = document.getElementById("link-credits");
 const closeBtn = document.getElementById("closeCreditsModal");

@@ -1,5 +1,5 @@
 /* ===================================================================
-Estilos del Modal (Créditos)
+Estilos del Modal (Créditos) modal-credits.css
 ===================================================================
 */
 
@@ -120,6 +120,17 @@ Estilos del Modal (Créditos)
     cursor: pointer;
 }
 
+/* 7. Regla especial para la tarjeta que ocupa el 100% del ancho */
+.credits-card-full {
+    /* Ocupa todo el ancho del contenedor principal (credits-info-panel) */
+    width: 100%;
+    /* Desactivamos el "grid-gap" que afecta a este elemento
+       al sacarlo del grid principal y colocarlo justo antes. */
+    margin-bottom: 20px; /* Separación manual del grid que viene después */
+    /* Aseguramos que se muestre como un bloque que ocupa todo el ancho */
+    display: flex;
+}
+
 /* Efecto Hover */
 .credits-card:hover {
     transform: translateY(-5px);
@@ -162,7 +173,7 @@ Estilos del Modal (Créditos)
 .icon.settings { background-image: var(--icon-settings); }
 .icon.time { background-image: var(--icon-time); }
 .icon.city { background-image: var(--icon-city); }
-
+.icon.github {background-image: var(--icon-github); }
 
 /* Título de la tarjeta (el recurso principal) */
 .credits-card-title {
