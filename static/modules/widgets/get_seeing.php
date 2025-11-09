@@ -1,4 +1,5 @@
 <?php
+// get_seeing.php
 header("Content-Type: application/json");
 include '../../config/config.php';
 

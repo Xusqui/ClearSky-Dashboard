@@ -1,3 +1,4 @@
+/* pws_info.js */
 document.addEventListener("DOMContentLoaded", function () {
     const pwsInfo = document.getElementById("PWS_info");
     const dialog = document.getElementById("pws-info-dialog");

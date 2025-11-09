@@ -1,3 +1,4 @@
+/* date-time.js */
 var myVar = setInterval(function() {
     myTimer();
 }, 1000);

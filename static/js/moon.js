@@ -1,3 +1,4 @@
+// moon.js
 // Para probar la fase problemática, puedes usar esta fecha:
 // const now = new Date("2025-09-08T12:00:00"); // Debería ser Cuarto Menguante
 const now = new Date();

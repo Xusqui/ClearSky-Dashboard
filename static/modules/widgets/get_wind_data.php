@@ -1,4 +1,5 @@
 <?php
+// get_wind_data.php
 include '../../config/config.php';
 
 // Entidades del viento en Home Assistant

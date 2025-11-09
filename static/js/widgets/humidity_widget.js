@@ -1,3 +1,4 @@
+/* humidity_widget.js */
 function updateHumidityWidget() {
     fetch('./static/modules/widgets/get_humidity_data.php')
         .then(response => response.json())

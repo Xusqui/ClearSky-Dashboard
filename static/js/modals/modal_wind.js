@@ -1,3 +1,4 @@
+/* modal_wind.js */
 // --- NUEVA FUNCIÓN UTILITARIA ---
 // Formatea un objeto Date al formato 'YYYY-MM-DDTHH:MM' que usa datetime-local
 function formatLocalDateTime(date) {

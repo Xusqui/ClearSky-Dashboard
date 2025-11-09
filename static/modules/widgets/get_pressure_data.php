@@ -1,4 +1,5 @@
 <?php
+// get_pressure_data.php
 include '../../config/config.php';
 
 // Entidad de presión en Home Assistant

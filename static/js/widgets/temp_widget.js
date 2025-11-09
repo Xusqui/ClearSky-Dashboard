@@ -1,3 +1,4 @@
+/* temp_widget.js */
 function updateTempWidget() {
     fetch('./static/modules/widgets/get_temp_data.php')
         .then(response => response.json())

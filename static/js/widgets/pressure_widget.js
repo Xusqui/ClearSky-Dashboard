@@ -1,3 +1,4 @@
+/* pressure_widget.js */
 function fetchPressureData() {
     fetch("./static/modules/widgets/get_pressure_data.php")
         .then(response => response.json())

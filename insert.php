@@ -1,4 +1,5 @@
 <?php
+// insert.php
 // Habilitar reporte de errores para logs internos
 error_reporting(E_ALL);
 ini_set("display_errors", 0); // No mostrar errores al usuario

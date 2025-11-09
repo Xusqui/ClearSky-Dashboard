@@ -1,4 +1,5 @@
 <?php
+// get_humidity_interior_data.php
 include '../../config/config.php';
 
 // Entidad de humedad en Home Assistant
@@ -99,3 +100,4 @@ echo json_encode([
     "color" => $humidity_color,
     "state" => $humid_state
 ]);
+?>

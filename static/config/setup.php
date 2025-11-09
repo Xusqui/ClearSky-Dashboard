@@ -1,4 +1,5 @@
 <?php
+// setup.php
 session_start();
 // === CONEXIÓN A LA BASE DE DATOS ===
 include './config_db.php';

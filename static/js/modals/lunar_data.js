@@ -1,3 +1,4 @@
+/* lunar_data.js */
 // --- DATA: Catálogo oficial Lunar 100 (nombres y número de catálogo) ---
 export const LUNAR_100_FEATURES = [
     //    { name: "Luna", long: 0, lat: 0, l100: 1, description: "La Luna llena" },

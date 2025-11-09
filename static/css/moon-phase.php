@@ -1,4 +1,5 @@
 <?php
+/* moon-phase.php */
 header("Content-Type: text/css");
 
 /* Lee los parámetros */

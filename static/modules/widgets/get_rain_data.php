@@ -1,4 +1,5 @@
 <?php
+// get_rain_data.php
 include '../../config/config.php';
 
 // Entidades de lluvia en Home Assistant
@@ -85,3 +86,4 @@ echo json_encode([
     "fill_bucket_top"   => $fill_bucket_top,
     "fill_bucket_bottom"=> $fill_bucket_bottom
 ]);
+?>

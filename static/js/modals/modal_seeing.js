@@ -1,3 +1,4 @@
+/* modal_seeing.js */
 document.addEventListener("DOMContentLoaded", function () {
   const widgetSeeing = document.getElementById("seeing");
   const modal = document.getElementById("seeingModal");

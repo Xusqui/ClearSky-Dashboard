@@ -1,3 +1,4 @@
+// sun.js
 // --- Sol ---
 function updateSunPosition() {
     const scriptURL = document.currentScript.src;

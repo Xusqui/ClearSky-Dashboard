@@ -1,4 +1,4 @@
-// --- widget_sun.js ---
+// --- modal_sun.js ---
 function formatTime(date) {
     return date.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
 }

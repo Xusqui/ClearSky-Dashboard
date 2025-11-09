@@ -1,4 +1,5 @@
 <?php
+// get_rain_monthly.php
 header("Content-Type: application/json");
 // Ruta a tu config de BASE DE DATOS
 require_once __DIR__ . "/../../config/config.php";

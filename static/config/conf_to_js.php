@@ -1,4 +1,5 @@
 <?php
+// conf_to_js.php
 // Trae las variables de php a un archivo que pueda ser incluido en javascript
 require_once './config.php';
 header('Content-Type: application/javascript');

@@ -1,4 +1,5 @@
 <?php
+// get_humint_historic.php
 header("Content-Type: application/json");
 require_once __DIR__ . "/../../config/config.php"; // Ajusta la ruta si hace falta
 

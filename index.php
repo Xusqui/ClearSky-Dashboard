@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <?php
+    // index.php
     //DEBUG:
     //ini_set('display_startup_errors', 1);
     //error_reporting(E_ALL);
@@ -86,11 +87,11 @@
         <link rel="stylesheet" type="text/css" href="./static/css/temp-widget.css?v=<?= time() ?>" />
         <link rel="stylesheet" type="text/css" href="./static/css/uv-widget.css?v=<?= time() ?>" />
         <link rel="stylesheet" type="text/css" href="./static/css/widget-base.css?v=<?= time() ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/wind-widget.css?v=<?= time() ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/widget-wind.css?v=<?= time() ?>" />
         <link rel="stylesheet" type="text/css" href="./static/css/widget-moon.css?v=<?= time() ?>" />
         <link rel="stylesheet" type="text/css" href="./static/css/widget-sun.css?v=<?= time() ?>" />
         <link rel="stylesheet" type="text/css" href="./static/css/forecast.css?v=<?= time() ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/widget_seeing.css?v=<?= time() ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/widget-seeing.css?v=<?= time() ?>" />
         <link rel="stylesheet" type="text/css" href="./static/css/modal-seeing.css?v=<?= time() ?>" />
         <link rel="stylesheet" type="text/css" href="./static/css/modal-credits.css?v=<?= time() ?>" />
         <link rel="stylesheet" type="text/css" href="./static/css/modal-dates.css?v=<?= time() ?>" />

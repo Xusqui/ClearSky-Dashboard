@@ -1,3 +1,4 @@
+/* last_updated.js */
 let lastTimestamp = 0;
 let lastDiff = 0;
 

@@ -1,4 +1,4 @@
-// moon_modal.js
+// modal_moon.js
 // --- Importar el Catálogo oficial Lunar 100 desde el nuevo archivo ---
 // Asumimos que './lunar_data.js' exporta LUNAR_100_FEATURES
 import { LUNAR_100_FEATURES } from './lunar_data.js';

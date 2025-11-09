@@ -1,3 +1,4 @@
+/* seeing_widget.js */
 document.addEventListener("DOMContentLoaded", function () {
   function actualizarSeeing() {
     fetch('./static/modules/widgets/get_seeing.php')

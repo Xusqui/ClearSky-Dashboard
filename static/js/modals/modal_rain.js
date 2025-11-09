@@ -1,3 +1,4 @@
+/* modal_rain.js */
 // --- NUEVA FUNCIÓN UTILITARIA ---
 // Formatea un objeto Date al formato 'YYYY-MM' que usa input type="month"
 function formatLocalMonth(date) {

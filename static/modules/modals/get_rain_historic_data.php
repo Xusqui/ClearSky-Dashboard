@@ -1,4 +1,5 @@
 <?php
+// get_rain_historic_data.php
 header('Content-Type: application/json');
 
 // Cargar configuración de Home Assistant
@@ -38,3 +39,4 @@ foreach ($sensors as $key => $entity_id) {
 }
 
 echo json_encode($data);
+?>

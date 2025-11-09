@@ -1,4 +1,5 @@
 <?php
+// get_temp_data.php
 include '../../config/config.php';
 
 // Entidades Home Assistant para temperatura
@@ -69,3 +70,4 @@ echo json_encode([
     "feels_like" => $feels_like,
     "angle" => $temp_angle
 ]);
+?>

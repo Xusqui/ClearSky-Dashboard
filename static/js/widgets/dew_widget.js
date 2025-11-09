@@ -1,3 +1,4 @@
+/* dew_widget.js */
 function updateDewWidget() {
     fetch('./static/modules/widgets/get_dew_data.php')
         .then(response => response.json())

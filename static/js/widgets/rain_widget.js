@@ -1,3 +1,4 @@
+/* rain_widget.js */
 let rainInterval = null;
 
 function updateRainWidget() {

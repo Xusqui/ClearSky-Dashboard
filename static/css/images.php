@@ -1,4 +1,5 @@
 <?php
+/* images.php */
 header("Content-Type: text/css");
 
 // Ruta absoluta del directorio donde está este script

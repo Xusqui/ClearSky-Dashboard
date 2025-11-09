@@ -1,4 +1,5 @@
 <?php
+// get_last_update.php
 header('Content-Type: application/json');
 header('Cache-Control: no-cache, no-store, must-revalidate');
 header('Pragma: no-cache');
@@ -38,3 +39,4 @@ if ($data && isset($data['last_updated'])) {
     http_response_code(500);
     echo json_encode(['error' => true]);
 }
+?>

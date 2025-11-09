@@ -1,4 +1,5 @@
 <?php
+// get_dew_data.php
 include '../../config/config.php';
 
 // Entidad de punto de rocío en Home Assistant
@@ -57,3 +58,4 @@ echo json_encode([
     "dew" => $dew,
     "percent" => $inner_percent
 ]);
+?>

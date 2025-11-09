@@ -60,3 +60,4 @@ echo json_encode([
     "temp"       => $in_temp,
     "angle"      => $in_temp_angle
 ]);
+?>
