@@ -1,4 +1,4 @@
-/* modal_solar.js */
+// modal_solar.js
 // --- NUEVA FUNCIÓN UTILITARIA ---
 // Formatea un objeto Date al formato 'YYYY-MM-DDTHH:MM' que usa datetime-local
 function formatLocalDateTime(date) {
@@ -79,8 +79,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 // 6. Procesar datos
                 const labels = data.map(row => row.hora);
-                const uvValues = data.map(row => parseFloat(row.indice_uv));
-                const solarValues = data.map(row => parseFloat(row.radiacion_solar));
+                //const uvValues = data.map(row => parseFloat(row.indice_uv));
+                //const solarValues = data.map(row => parseFloat(row.radiacion_solar));
+                const uvValues = data.map(row => parseFloat(row.indice_uv))
+                    .filter(val => Number.isFinite(val));
+                const solarValues = data.map(row => parseFloat(row.radiacion_solar))
+                    .filter(val => Number.isFinite(val));
 
                 // 7. Obtener más colores
                 const bgColor = rootStyle.getPropertyValue('--bg-color').trim();

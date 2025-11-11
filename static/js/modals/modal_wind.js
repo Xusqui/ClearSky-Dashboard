@@ -76,7 +76,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 // 6. Procesar datos
                 const labels = data.map(r => r.hora);
-                const velocidad = data.map(r => parseFloat(r.viento_velocidad));
+                //const velocidad = data.map(r => parseFloat(r.viento_velocidad));
+                const velocidad = data.map(r => parseFloat(r.viento_velocidad))
+                      .filter(val => Number.isFinite(val));
                 const rachas = data.map(r => parseFloat(r.viento_racha));
                 const direccion = data.map(r => parseFloat(r.viento_direccion));
 
@@ -180,17 +182,18 @@ document.addEventListener("DOMContentLoaded", function () {
                         axisLabel: { show: false },
                         splitLine: { show: true, lineStyle: { color: fontColor, type: 'dotted', width: 1 } }
                     },
-                    polar: { center: ['50%', '50%'], radius: '84%' },
+                    polar: { center: ['50%', '50%'], radius: '80%' },
                     series: [{
                         type: 'bar',
                         coordinateSystem: 'polar',
                         data: direccion.map((dir, i) => {
                             // Color gradiente proporcional entre verde y rojo
                             const t = (velocidad[i] - minVel) / (maxVel - minVel || 1);
-                            const color = `rgb(${Math.round(255*t)},${Math.round(255*(1-t))},0)`; // verde->rojo
+                            const color =`rgb(${Math.round(255*t)},${Math.round(255*(1-t))},0)`; // verde->rojo
+
                             return { value: velocidad[i],
                                     hora: labels[i],
-                                    itemStyle: { color },
+                                    itemStyle: {color},
                                     barGap: '20%',
                                     barCategoryGap: '30%'
                                     };
