@@ -32,7 +32,13 @@
                     <p class="seeing-card-value"><span id="terminator-long">–</span></p>
                 </div>
             </div>
-            <h2 class="seeing-group-title">Catálogo Lunar 100 visibles en el terminador</h2>
+<h2 class="seeing-group-title">Rango de Proximidad al Terminador (Tolerancia)</h2>
+<div class="bloque bloque-fixed-1">
+    <div class="card">
+        <h3 class="seeing-card-title">Tolerancia: <span id="tolerance-display">3º</span></h3>
+        <input type="range" min="0" max="180" value="3" step="1" id="tolerance-slider" style="width: 100%;">
+    </div>
+</div>            <h2 class="seeing-group-title">Catálogo Lunar 100 visibles en el terminador</h2>
             <div id="moon-features-list" class="bloque"></div>
             <div class="footer" id="moon-footer"></div>
         </div>

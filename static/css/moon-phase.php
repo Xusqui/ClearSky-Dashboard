@@ -40,7 +40,7 @@ function rem($value, $scale) {
   height: <?= rem(19, $scale) ?>;
   border-radius: 50%;
   overflow: hidden;
-  margin: 0 <?= rem(0.25, $scale) ?>;
+  margin: 0 <?= rem(5.25, $scale) ?>;
 
 }
 
@@ -108,6 +108,100 @@ function rem($value, $scale) {
   cursor: zoom-in;
 }
 
+/* Estilos para la Salida y Puesta de la Luna */
+/* NUEVO: Contenedor para la fila principal (Horizontal Flexbox) */
+.moon-main-row {
+    display: flex;
+    align-items: center; /* Centra verticalmente los elementos (texto y luna) */
+    justify-content: center;
+    width: 100%;
+}
+
+/* NUEVO: Estilos base para la información de Salida y Puesta */
+.moon-rise-info,
+.moon-set-info {
+    /* Ajustamos el tamaño de fuente como discutimos antes */
+    width: <?= rem(10, $scale) ?>; /* Define un espacio fijo */
+    font-size: <?= rem(2, $scale) ?>;
+    color: var(--color-secondary-font);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    height: <?= rem(19, $scale) ?>; /* Altura igual a la luna para centrar verticalmente */
+}
+
+/* Estilo para el párrafo que contiene el icono, etiqueta y hora */
+.moon-rise-info p,
+.moon-set-info p {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    white-space: nowrap; /* Evita saltos de línea */
+    font-size: 0.9rem;
+    font-weight: 400;
+    text-transform: uppercase;
+}
+
+.time-group {
+    display: flex;
+    flex-direction: column; /* ¡Esto apila la hora y la etiqueta! */
+    line-height: 1.1; /* Controla el espacio entre las líneas */
+    width: 100%; /* Ocupa el espacio disponible en su contenedor */
+}
+
+/* ---------------------------------
+   IZQUIERDA: Salida (Moon Rise Info)
+   Objetivo: Alinear el texto hacia la derecha (cerca de la luna)
+   Formato: [Hora] Salida: [Icono]
+   --------------------------------- */
+.moon-rise-info {
+    justify-content: flex-end;
+}
+
+.moon-rise-info p {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  white-space: nowrap;
+}
+
+/* Estilos para la hora (span), para que sea más grande y destaque */
+.moon-rise-info span,
+.moon-set-info span {
+    font-weight: 800;
+    letter-spacing: -0.05rem;
+    font-size: 1.7rem;
+    color: var(--font-color);
+    margin-bottom: 0.1rem;
+}
+.moon-rise-info i,
+.moon-set-info i {
+    color: var(--accent-color, #FFD700); /* Color de acento para los iconos */
+    font-size: 0.9em; /* Ligeramente más pequeños que el texto circundante */
+}
+
+/* IZQUIERDA: Salida (Alinear texto a la derecha, cerca de la luna) */
+.moon-rise-info .time-group {
+    align-items: flex-end; /* Alinea los elementos (Hora y Salida) a la derecha */
+}
+/* ---------------------------------
+   DERECHA: Puesta (Moon Set Info)
+   Objetivo: Alinear el texto hacia la izquierda (cerca de la luna)
+   Formato: [Icono] Puesta: [Hora]
+   --------------------------------- */
+.moon-set-info {
+    justify-content: flex-start;
+}
+
+/* DERECHA: Puesta (Alinear texto a la izquierda, cerca de la luna) */
+.moon-set-info .time-group {
+    align-items: flex-start; /* Alinea los elementos (Hora y Puesta) a la izquierda */
+}
+/* El orden por defecto (row) ya es el deseado */
+
+/* ... Código @keyframes cycle ... */
 /* Animación de las fases */
 @keyframes cycle {
   0% {

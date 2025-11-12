@@ -293,13 +293,28 @@ function updateMoonModal(){
         // Es positivo o cero: Este lunar (E)
         formattedTerminator = `${terminatorLong}º E`;
     }
+
+    // 1. OBTENER VALOR DEL SLIDER
+    const slider = document.getElementById('tolerance-slider');
+    let tolerance;
+    if (slider) {
+        tolerance = parseFloat(slider.value);
+        // Actualizar el valor mostrado en el HTML
+        document.getElementById('tolerance-display').textContent = `${tolerance}º`;
+    } else {
+        // Valor por defecto si el slider no está cargado (p. ej., en la primera carga)
+        tolerance = 3;
+    }
+
     // Fase y colongitud
     document.getElementById('moon-phase-text').textContent = moonData.waxing ? 'Creciente' : 'Menguante';
     document.getElementById('terminator-visible').textContent = moonData.terminatorName;
     document.getElementById('terminator-long').textContent = formattedTerminator;
 
     // Filtrar accidentes cercanos al terminador (±10°)
-    const tolerance = 10;
+    //const tolerance = 3;
+    // 2. USAR EL VALOR DE TOLERANCIA DINÁMICO
+    // Filtrar accidentes cercanos al terminador (±tolerancia)
     const featuresNearTerminator = LUNAR_100_FEATURES.filter(f => {
         let delta = Math.abs(f.long - moonData.terminatorVisible90);
         return delta <= tolerance;
@@ -395,7 +410,27 @@ document.querySelector('.moon-card').addEventListener('click', () => {
     document.getElementById('moonModal').style.display = 'block';
     updateMoonModal();
 });
+// --- Event Listener para el Slider de Tolerancia ---
+document.addEventListener('DOMContentLoaded', () => {
+    const slider = document.getElementById('tolerance-slider');
+    if (slider) {
+        // Añadir listener para cuando el valor del slider cambia
+        slider.addEventListener('input', updateMoonModal);
+    }
 
+    // --- Abrir modal al hacer click en la luna (1er Modal) ---
+    document.querySelector('.moon-card').addEventListener('click', () => {
+        document.getElementById('moonModal').style.display = 'block';
+        updateMoonModal(); // Llamar para cargar los datos iniciales y la tolerancia
+    });
+});
+
+// Nota: He movido los event listeners de apertura del modal al DOMContentLoaded
+// para asegurar que el slider esté disponible antes de intentar añadir el listener.
+
+// --- Abrir modal al hacer click en la luna (1er Modal) ---
+// ANTERIOR: document.querySelector('.moon-card').addEventListener('click', () => { ... });
+// AHORA ESTÁ DENTRO DEL DOMContentLoaded
 // --- Cerrar modal (1er Modal) ---
 document.getElementById('closeMoonModal').addEventListener('click', () => {
     document.getElementById('moonModal').style.display = 'none';

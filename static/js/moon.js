@@ -1,10 +1,34 @@
 // moon.js
+// Asume que conf_to_js.php ha definido: const LAT = '...'; const LON = '...';
+
 // Para probar la fase problemática, puedes usar esta fecha:
 // const now = new Date("2025-09-08T12:00:00"); // Debería ser Cuarto Menguante
 const now = new Date();
+
+// --- Obtener coordenadas del observador (usando las constantes de conf_to_js.php) ---
+// Convertir las constantes string a números de punto flotante
+const latitude = parseFloat(LAT);
+const longitude = parseFloat(LON);
+
 window.moon = SunCalc.getMoonIllumination(now);
 window.fraction = window.moon.fraction;
 window.phase = window.moon.phase;
+
+// --- Calcular la salida y puesta de la Luna ---
+const moonTimes = SunCalc.getMoonTimes(now, latitude, longitude);
+window.moonTimes = moonTimes;
+
+// Función auxiliar para formatear la hora (HH:MM)
+function formatTime(date) {
+    // Si la hora es nula (ej. la luna no sale/se pone hoy) retorna un guion
+    if (!date) return '—';
+    // Opciones para asegurar formato de 24h
+    const options = { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' };
+    return date.toLocaleTimeString(navigator.language, options);
+}
+
+const moonRiseTime = formatTime(moonTimes.rise);
+const moonSetTime = formatTime(moonTimes.set);
 
 // --- Texto de la fase lunar ---
 const fractionPercent = Math.round(fraction * 100);
@@ -33,4 +57,11 @@ phaseText += ` (${fractionPercent}%)`;
 
 window.phaseText = phaseText;
 
+// Asignar el texto de la fase y porcentaje
 document.getElementById("moon-text").textContent = phaseText;
+
+// **********************************************
+// NUEVO: Asignar las horas de salida y puesta
+// **********************************************
+document.getElementById("moon-rise-time").textContent = moonRiseTime;
+document.getElementById("moon-set-time").textContent = moonSetTime;

@@ -13,3 +13,7 @@
 *.DS_Store
 /.phcode.json
 /error.log
+/weather_data.log
+/debug.log
+/api_data.php
+/api_data_87493479023.php
