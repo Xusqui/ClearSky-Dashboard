@@ -15,6 +15,41 @@
     /* .bloque-fixed-3 debe manejar la distribución de estas 3 tarjetas */
 }
 
+.moon-infografia .bloque-fixed-1 {
+    /* Si tienes un margen inferior o superior que quieras ajustar */
+    margin: 10px 0 15px 0;
+}
+
+/* Tarjeta individual del Slider */
+.moon-infografia .bloque-fixed-1 .card {
+    /* 1. Reducir la altura mínima considerablemente */
+    min-height: 50px; /* CLAVE: Mucho menor que los 100px de las otras tarjetas */
+
+    /* 2. Reducir el padding interno (si lo deseas) */
+    padding: 10px 15px; /* Ajusta el padding para que el contenido esté más cerca del borde */
+
+    /* 3. Asegurar que el contenido sigue alineado (generalmente es bueno) */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Título de la tarjeta del Slider */
+.moon-infografia .bloque-fixed-1 .seeing-card-title {
+    /* Asegurar un margen inferior mínimo entre el título y el slider */
+    margin-bottom: 5px;
+    font-size: 1em; /* Puede ser ligeramente más grande que el 0.9em de las otras tarjetas */
+    font-weight: 500;
+}
+
+/* Estilo del Slider (input[type=range]) */
+.moon-infografia #tolerance-slider {
+    /* Asegurar que el slider no tenga márgenes que añadan altura extra */
+    margin: 0;
+    width: 100%;
+}
+
 /* Tarjetas individuales de datos (Fase, Terminador, Longitud) */
 .moon-infografia #moon-info .card {
     min-height: 100px;
