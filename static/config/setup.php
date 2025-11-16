@@ -362,33 +362,72 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 
 		$setup_warning .= "Falta o el formato es incorrecto para el campo **$missing_field** o el token está vacío. ";
 	} else {
-		// --- Obtener ciudad y país automáticamente ---
-		$city = 'Desconocida';
-		$country = 'Desconocido';
+		// --- Lógica de Geocodificación Condicional ---
 
-		if (is_numeric($latitud) && is_numeric($longitud)) {
-			$url = "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat={$latitud}&lon={$longitud}&zoom=10&addressdetails=1";
-			$ch = curl_init();
-			curl_setopt($ch, CURLOPT_URL, $url);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt($ch, CURLOPT_USERAGENT, 'EstacionMeteorologica/1.0 (tu-email@example.com)');
-			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
-			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-			$response = curl_exec($ch);
+		// 1. Obtener valores originales de la DB (están en $config)
+		$original_lat = $config['latitud'] ?? '';
+		$original_lon = $config['longitud'] ?? '';
 
-			if (curl_errno($ch)) {
-				$setup_warning .= "Error cURL: " . curl_error($ch) . ". ";
-			}
-			curl_close($ch);
+		// 2. Inicializar los valores de ciudad/país con los valores actuales de la DB
+		$city_to_save = $city;
+		$country_to_save = $country;
 
-			if ($response) {
-				$data = json_decode($response, true);
-				if (!empty($data['address'])) {
-					$address = $data['address'];
-					$city = $address['city'] ?? $address['town'] ?? $address['village'] ?? $address['hamlet'] ?? 'Desconocida';
-					$country = $address['country'] ?? $address['country_code'] ?? 'Desconocido';
-					$city = trim($city);
-					$country = mb_strtoupper(trim($country), 'UTF-8');
+		// 3. Comprobar si las coordenadas POST son diferentes a las de la DB
+		// Renombramos las variables saneadas del POST para mayor claridad en el bloque de geocodificación
+		$latitud_post_saneada = $latitud;
+		$longitud_post_saneada = $longitud;
+
+		// Definir un pequeño margen de error (epsilon) para comparar flotantes
+		$epsilon = 0.0000001;
+
+		// Aseguramos que los valores originales sean numéricos para la comparación
+		$original_lat_num = is_numeric($original_lat) ? (float)$original_lat : null;
+		$original_lon_num = is_numeric($original_lon) ? (float)$original_lon : null;
+
+		// La comparación se hace forzando a string para manejar la precisión de los flotantes.
+		//$coords_changed = (string)$latitud_post_saneada !== (string)$original_lat || (string)$longitud_post_saneada !== (string)$original_lon;
+
+		$coords_changed =
+			$original_lat_num === null ||
+			$original_lon_num === null ||
+			abs($latitud_post_saneada - $original_lat_num) > $epsilon ||
+			abs($longitud_post_saneada - $original_lon_num) > $epsilon;
+
+		if ($coords_changed) {
+		    // Reiniciar valores si las coordenadas cambiaron
+		    $city_to_save = 'Desconocida';
+		    $country_to_save = 'Desconocido';
+
+			if (is_numeric($latitud_post_saneada) && is_numeric($longitud_post_saneada)) {
+				// 4. Ejecutar cURL solo si las coordenadas cambiaron
+				$url = "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat={$latitud_post_saneada}&lon={$longitud_post_saneada}&zoom=10&addressdetails=1";
+				$ch = curl_init();
+				curl_setopt($ch, CURLOPT_URL, $url);
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+				curl_setopt($ch, CURLOPT_USERAGENT, 'EstacionMeteorologica/1.0 (xusqui@gmail.com)');
+				curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+				curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+
+				// Añadimos timeouts para evitar cuelgues de red
+				curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+				curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+
+				$response = curl_exec($ch);
+
+				if (curl_errno($ch)) {
+					$setup_warning .= "Error cURL: " . curl_error($ch) . ". ";
+				}
+				curl_close($ch);
+
+				if ($response) {
+					$data = json_decode($response, true);
+					if (!empty($data['address'])) {
+						$address = $data['address'];
+						$city_to_save = $address['city'] ?? $address['town'] ?? $address['village'] ?? $address['hamlet'] ?? 'Desconocida';
+						$country_to_save = $address['country'] ?? $address['country_code'] ?? 'Desconocido';
+						$city_to_save = trim($city_to_save);
+						$country_to_save = mb_strtoupper(trim($country_to_save), 'UTF-8');
+					}
 				}
 			}
 		}
@@ -398,27 +437,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 
 		// --- PREPARACIÓN DE LA CONSULTA SQL (17 parámetros) ---
 		$sql = "
-            INSERT INTO config (id, observatorio, latitud, longitud, elevacion, hardware, software, city, country, tz, password, send_local, local_token, send_ha, ha_token, send_meteoclimatic, meteoclimatic_code, meteoclimatic_token)
-            VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ON DUPLICATE KEY UPDATE
-                observatorio = VALUES(observatorio),
-                latitud = VALUES(latitud),
-                longitud = VALUES(longitud),
-                elevacion = VALUES(elevacion),
-                hardware = VALUES(hardware),
-                software = VALUES(software),
-                city = VALUES(city),
-                country = VALUES(country),
-                tz = VALUES(tz),
-                password = VALUES(password),
-                send_local = VALUES(send_local),
-                local_token = VALUES(local_token),
-                send_ha = VALUES(send_ha),
-                ha_token = VALUES(ha_token),
-                send_meteoclimatic = VALUES(send_meteoclimatic),
-                meteoclimatic_code = VALUES(meteoclimatic_code),
-                meteoclimatic_token = VALUES(meteoclimatic_token)
-        ";
+			INSERT INTO config (id, observatorio, latitud, longitud, elevacion, hardware, software, city, country, tz, password, send_local, local_token, send_ha, ha_token, send_meteoclimatic, meteoclimatic_code, meteoclimatic_token)
+			VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+			ON DUPLICATE KEY UPDATE
+				observatorio = VALUES(observatorio),
+				latitud = VALUES(latitud),
+				longitud = VALUES(longitud),
+				elevacion = VALUES(elevacion),
+				hardware = VALUES(hardware),
+				software = VALUES(software),
+				city = VALUES(city),
+				country = VALUES(country),
+				tz = VALUES(tz),
+				password = VALUES(password),
+				send_local = VALUES(send_local),
+				local_token = VALUES(local_token),
+				send_ha = VALUES(send_ha),
+				ha_token = VALUES(ha_token),
+				send_meteoclimatic = VALUES(send_meteoclimatic),
+				meteoclimatic_code = VALUES(meteoclimatic_code),
+				meteoclimatic_token = VALUES(meteoclimatic_token)
+		";
 
 		$stmt = $conn->prepare($sql);
 		if (!$stmt) {
@@ -426,28 +465,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 		} else {
 			// Tipos: s d d i s s s s s s i s i s i s s (17 parámetros)
 			$stmt->bind_param("sddissssssisssiss",
-							  $observatorio,
-							  $latitud,
-							  $longitud,
-							  $elevacion,
-							  $hardware,
-							  $software,
-							  $city,
-							  $country,
-							  $tz,
-							  $password_final,
-							  $send_local_post,
-							  $local_token_post, // Valor del token local
-							  $send_ha_post,
-							  $ha_token_post,
-							  $send_meteoclimatic_post,
-							  $meteoclimatic_code_post,
-							  $meteoclimatic_token_post
+							 $observatorio,
+							 $latitud_post_saneada,
+							 $longitud_post_saneada,
+							 $elevacion,
+							 $hardware,
+							 $software,
+							 $city_to_save,
+							 $country_to_save,
+							 $tz,
+							 $password_final,
+							 $send_local_post,
+							 $local_token_post,
+							 $send_ha_post,
+							 $ha_token_post,
+							 $send_meteoclimatic_post,
+							 $meteoclimatic_code_post,
+							 $meteoclimatic_token_post
 							 );
 
 			if (!$stmt->execute()) {
 				$setup_warning .= "Error al guardar la configuración en base de datos: " . $stmt->error;
 			} else {
+				// El guardado fue exitoso, redirigimos
 				header("Location: ../../index.php");
 				exit;
 			}
