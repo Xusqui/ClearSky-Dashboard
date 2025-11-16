@@ -20,7 +20,7 @@
 </p>
 
 <p align="center">
-    <img width="800" alt="Captura de pantalla de la web" src="https://github.com/user-attachments/assets/50994aba-f6c7-4ff5-9baf-ca1f2c293047" />
+    <img width="1291" height="1256" alt="Captura de pantalla 2025-11-16 a las 19 46 20" src="https://github.com/user-attachments/assets/d71cc70b-d55d-4dac-8a00-0c6f09c7fcec" />
 </p>
 
 ## 📖 Índice
