@@ -53,7 +53,7 @@ function rem($value, $scale) {
   border-radius: 50%;
   animation: cycle 100s linear paused reverse;
   animation-delay: <?= $phase ?>s;
-  filter: blur(<?= rem(0.4, $scale) ?>);
+  filter: blur(<?= rem(0.3, $scale) ?>);
 }
 
 /* Textura de la superficie */
@@ -69,6 +69,7 @@ function rem($value, $scale) {
   background-repeat: no-repeat;
   mix-blend-mode: multiply;
   transform: translateY(52%);
+  filter: brightness(1.4);
 }
 
 /* Capa de sombreado interior */
