@@ -25,7 +25,6 @@ function die_with_error($message) {
  */
 function humidex ($temp, $dew){
     // Cálculo de la presión de vapor real a partir de Td (Magnus-Tetens, hPa)
-    // $e = 6.112 * exp ((17.62 * $dew) / (243.12 + $dew));
     $e = 6.112 * exp ((17.62 * $dew) / (243.12 + $dew));
 
     // Humidex
@@ -37,6 +36,8 @@ function humidex ($temp, $dew){
 // ----------------------------------------------------
 // 1. Conexión a la base de datos y obtención de datos
 // ----------------------------------------------------
+
+// ... (El código de conexión a la BD y obtención de datos se mantiene igual)
 
 // Verificar si las variables de conexión están definidas después de la inclusión
 if (!isset($db_url, $db_user, $db_pass, $db_database)) {
@@ -75,7 +76,7 @@ if ($result->num_rows === 0) {
 // 2. Obtener los valores y sanitizarlos
 $row = $result->fetch_assoc();
 
-// Aseguramos que los valores sean flotantes o 0 si son nulos/inválidos, manteniendo la lógica original.
+// Aseguramos que los valores sean flotantes o 0 si son nulos/inválidos.
 $humidity = isset($row['humedad']) && is_numeric($row['humedad']) ? floatval($row['humedad']) : 0;
 $temp = isset($row['temperatura']) && is_numeric($row['temperatura']) ? floatval($row['temperatura']) : 0;
 $dew = isset($row['punto_rocio']) && is_numeric($row['punto_rocio']) ? floatval($row['punto_rocio']) : 0;
@@ -85,27 +86,49 @@ $mysqli->close();
 
 
 // ----------------------------------------------------
-// 3. Cálculos y Lógica de Estado
+// 3. Cálculos y Lógica de Estado (Lógica de Weather Underground)
 // ----------------------------------------------------
 
 // Calcular Humidex
 $hdex = round(humidex ($temp, $dew), 2);
 
 // Calcular ángulo del gráfico (El 100 es el valor máximo de humedad)
-$angle_humidity = 360 * ($humidity / 100);
+// Se asegura que la humedad esté entre 0 y 100 para el ángulo
+$angle_humidity = 360 * (min(max($humidity, 0), 100) / 100);
 
-// Determinar estado (El punto de rocío de 15ºC marca el umbral de confort)
-if ($dew < 15) {
-    $humid_state  = "dry";
-    $humid_legend = "Seco";
-// La condición original para 'humid' era $humidity >= 20.
-// Asumiendo que esta es la lógica que quiere mantener:
-} elseif ($humidity >= 20) {
+// --- LÓGICA DE ESTADO (Weather Underground) ---
+
+// Definición de Umbrales en Celsius (basados en 50°F y 65°F)
+const DEW_POINT_HUMID_THRESHOLD = 18.3; // Aproximadamente 65°F
+const DEW_POINT_DRY_THRESHOLD   = 10.0; // Aproximadamente 50°F
+const TEMP_HUMID_THRESHOLD      = 18.3; // Aproximadamente 65°F
+const TEMP_DRY_THRESHOLD        = 4.4;  // Aproximadamente 40°F
+const HUMIDITY_HIGH_THRESHOLD   = 70;   // 70%
+const HUMIDITY_LOW_THRESHOLD    = 30;   // 30%
+
+if ($dew >= DEW_POINT_HUMID_THRESHOLD) {
+    // Condición 1: Punto de rocío alto (muy húmedo)
     $humid_state  = "humid";
     $humid_legend = "Húmedo";
+} elseif ($dew <= DEW_POINT_DRY_THRESHOLD) {
+    // Condición 2: Punto de rocío bajo (muy seco)
+    $humid_state  = "dry";
+    $humid_legend = "Seco";
 } else {
-    $humid_state  = "comfortable";
-    $humid_legend = "Confortable";
+    // Condición 3: Chequeos basados en Humedad Relativa y Temperatura
+    if ($humidity >= HUMIDITY_HIGH_THRESHOLD && $temp >= TEMP_HUMID_THRESHOLD) {
+        // Húmedo secundario (HR alta y Temp. moderada/alta)
+        $humid_state  = "humid";
+        $humid_legend = "Húmedo";
+    } elseif ($humidity <= HUMIDITY_LOW_THRESHOLD && $temp >= TEMP_DRY_THRESHOLD) {
+        // Seco secundario (HR baja y Temp. moderada/baja)
+        $humid_state  = "dry";
+        $humid_legend = "Seco";
+    } else {
+        // Ninguno de los anteriores: Confortable
+        $humid_state  = "comfortable";
+        $humid_legend = "Confortable";
+    }
 }
 
 // Variable color (CSS)
@@ -117,11 +140,10 @@ $humidity_color = "--humidity-{$humid_state}-color";
 // ----------------------------------------------------
 header('Content-Type: application/json');
 echo json_encode([
-    "humidity" => $humidity,
-    //"temp" => $temp, // La temperatura se devuelve comentada en su script original, así que la mantengo fuera
-    "dew" => $dew,
+    "humidity" => round($humidity, 1), // Redondea la humedad
+    "dew" => round($dew, 1),
     "humidex" => $hdex,
-    "angle" => $angle_humidity,
+    "angle" => round($angle_humidity, 1), // Redondea el ángulo
     "legend" => $humid_legend,
     "color" => $humidity_color,
     "state" => $humid_state
