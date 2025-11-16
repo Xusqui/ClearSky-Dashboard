@@ -7,7 +7,6 @@
 
 # Archivos de Configuración
 /static/config/config_db.php
-/static/config/config.php
 
 # Archivos de Sistema Operativo
 *.DS_Store
@@ -17,3 +16,8 @@
 /debug.log
 /api_data.php
 /api_data_87493479023.php
+/api_data_2.php
+/import_meteo_4752905479849785.php
+/wunderground_history.py
+/import_meteo_4752905479849785(copy 1).php
+/wu_data_to_my_db.php

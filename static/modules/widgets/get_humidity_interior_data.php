@@ -1,81 +1,99 @@
 <?php
 // get_humidity_interior_data.php
+
+// Incluir el archivo de configuración que debe contener las variables de conexión a MariaDB:
+// $db_user, $db_pass, $db_url, $db_database
 include '../../config/config.php';
 
-// Entidad de humedad en Home Assistant
-$entity = "sensor.ws2900_v2_02_03_indoor_humidity";
-$entity_temp_int = "sensor.ws2900_v2_02_03_indoor_temperature";
-
-function get_sensor($entity) {
-    global $ha_url, $token;
-
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, "$ha_url/api/states/$entity");
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        "Authorization: Bearer $token",
-        "Content-Type: application/json"
-    ]);
-    $response = curl_exec($ch);
-
-    if ($response === false) {
-        die(json_encode([
-            "error" => true,
-            "message" => "Error cURL: " . curl_error($ch)
-        ]));
-    }
-
-    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-
-    if ($http_code != 200) {
-        die(json_encode([
-            "error" => true,
-            "message" => "Error HTTP: código $http_code al consultar $entity"
-        ]));
-    }
-
-    $data = json_decode($response, true);
-    if (json_last_error() !== JSON_ERROR_NONE) {
-        die(json_encode([
-            "error" => true,
-            "message" => "Error JSON: " . json_last_error_msg(),
-            "raw" => $response
-        ]));
-    }
-
-    return $data['state'] ?? null;
-}
 /**
- * Calcula el índice Humidex a partir de la temperatura del aire y la humedad relativa.
+ * Función para devolver un error en formato JSON y terminar el script.
+ * @param string $message Mensaje de error a devolver.
+ */
+function die_with_error($message) {
+    header('Content-Type: application/json');
+    die(json_encode([
+        "error" => true,
+        "message" => $message
+    ]));
+}
+
+/**
+ * Calcula una aproximación del punto de rocío a partir de la temperatura del aire y la humedad relativa.
+ * NOTA: Esta función utiliza una fórmula simplificada para determinar la sensación de confort.
  *
  * @param float $temperatura La temperatura del aire en grados Celsius.
  * @param float $humedadRelativa La humedad relativa en porcentaje (de 0 a 100).
- * @return float El valor del Humidex calculado.
+ * @return float El valor del Punto de Rocío calculado.
  */
 function obtenerSensacionAmbiente(float $temperatura, float $humedad)
 {
-    // Paso 1: Calcular el punto de rocío (una medida más precisa de la humedad real).
-    // Usamos una fórmula de aproximación simple pero efectiva.
+    // Punto de rocío (fórmula de aproximación simple: Td = T - ((100 - RH)/5))
     $puntoRocio = $temperatura - ((100 - $humedad) / 5);
 
-    // Devolvemos una cadena de texto formateada con el resultado.
-    return $puntoRocio;
+    // Redondeamos para mayor limpieza en el resultado, aunque no es estrictamente necesario para la lógica de estado.
+    return round($puntoRocio, 2);
 }
 
-// Obtener valor de humedad
-$humidity = get_sensor($entity);
-$humidity = $humidity !== null ? floatval($humidity) : 0;
+// ----------------------------------------------------
+// 1. Conexión a la base de datos y obtención de datos
+// ----------------------------------------------------
 
-$temp_int = get_sensor($entity_temp_int);
-$temp_int = $temp_int !== null ? floatval($temp_int) : 0;
+// Verificar si las variables de conexión están definidas después de la inclusión
+if (!isset($db_url, $db_user, $db_pass, $db_database)) {
+    die_with_error("Error: Las credenciales de la base de datos no están definidas en config.php.");
+}
 
-$sensacion = obtenerSensacionAmbiente($temp_int, $humidity);
+$mysqli = new mysqli($db_url, $db_user, $db_pass, $db_database);
 
-// Calcular ángulo del gráfico
+if ($mysqli->connect_error) {
+    // Error de conexión
+    error_log("Error de conexión a la BD: " . $mysqli->connect_error);
+    die_with_error("Error al conectar con la base de datos.");
+}
+
+// Consulta SQL para obtener la última humedad y temperatura interior
+$sql = "SELECT humedad_interior, temperatura_interior
+        FROM meteo
+        ORDER BY timestamp DESC
+        LIMIT 1";
+
+$result = $mysqli->query($sql);
+
+if ($result === false) {
+    // Error en la consulta
+    error_log("Error en la consulta SQL: " . $mysqli->error);
+    $mysqli->close();
+    die_with_error("Error al ejecutar la consulta de datos de humedad interior.");
+}
+
+if ($result->num_rows === 0) {
+    // No hay datos
+    $mysqli->close();
+    die_with_error("No se encontraron datos de humedad interior en la tabla 'meteo'.");
+}
+
+// 2. Obtener los valores y sanitizarlos
+$row = $result->fetch_assoc();
+
+// Humedad interior
+$humidity = isset($row['humedad_interior']) && is_numeric($row['humedad_interior']) ? floatval($row['humedad_interior']) : 0.0;
+// Temperatura interior
+$temp_int = isset($row['temperatura_interior']) && is_numeric($row['temperatura_interior']) ? floatval($row['temperatura_interior']) : 0.0;
+
+$result->free();
+$mysqli->close();
+
+
+// ----------------------------------------------------
+// 3. Cálculos y Lógica de Estado
+// ----------------------------------------------------
+
+$sensacion = obtenerSensacionAmbiente($temp_int, $humidity); // Esto es el Punto de Rocío Interior
+
+// Calcular ángulo del gráfico (El 100% de humedad es 360 grados)
 $angle_humidity = 360 * ($humidity / 100);
 
-// Determinar estado
+// Determinar estado basado en el Punto de Rocío interior ($sensacion)
 if ($sensacion < 10) {
     $humid_state  = "dry";
     $humid_legend = "Seco";
@@ -90,7 +108,9 @@ if ($sensacion < 10) {
 // Variable color (CSS)
 $humidity_color = "--humidity-{$humid_state}-color";
 
-// Devolver JSON
+// ----------------------------------------------------
+// 4. Devolver JSON
+// ----------------------------------------------------
 header('Content-Type: application/json');
 echo json_encode([
     "humidity" => $humidity,

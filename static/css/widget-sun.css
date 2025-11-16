@@ -9,21 +9,27 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    margin: 0 5rem;
+    overflow: visible;
 }
 
 /* --- Estilo de los iconos solares --- */
 #sun-arc image {
-  transition: all 0.3s ease;
+    transition: all 0.3s ease;
+    overflow:  visible;
+
 }
 
 #sun-arc-container svg {
     width: 100%;
     height: auto;
     transform: translateY(10px);
+    overflow: visible;
 }
 
 #sun-arc {
     position: relative;
     left: 14px;
+    overflow: visible;
 }
 

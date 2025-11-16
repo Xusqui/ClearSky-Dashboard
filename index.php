@@ -1,68 +1,128 @@
 <!DOCTYPE html>
 <?php
-    // index.php
-    //DEBUG:
-    //ini_set('display_startup_errors', 1);
-    //error_reporting(E_ALL);
-    //ini_set('display_errors', 1);
-    // CONFIGURACIÓN
-    include __DIR__ . "/static/config/config.php";
+// index.php
+//DEBUG:
+//ini_set('display_startup_errors', 1);
+//error_reporting(E_ALL);
+//ini_set('display_errors', 1);
+// CONFIGURACIÓN
+include __DIR__ . "/static/config/config.php";
 
-    /*-----------------------------------------
-    Vamos a obtener la fecha de actualización.
-    -----------------------------------------*/
-    $ch = curl_init();
-    $entity = "sensor.ws2900_v2_02_03_wind_direction";
-    curl_setopt($ch, CURLOPT_URL, "$ha_url/api/states/$entity");
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, ["Authorization: Bearer $token", "Content-Type: application/json"]);
-    $response = curl_exec($ch);
-    curl_close($ch);
+/*-----------------------------------------
+Vamos a obtener la fecha de actualización y convertirla a la zona horaria local.
+-----------------------------------------*/
+// Inicializar la variable de salida con un valor por defecto en caso de error
+$ts_formatted = "No se pudo obtener la fecha de actualización";
 
-    if ($response === false) {
-        die("Error al conectar con Home Assistant");
-    }
-    // Decodificar JSON
-    $data = json_decode($response, true);
-    if (isset($data["last_updated"])) {
-        $utcTime = new DateTime($data["last_updated"], new DateTimeZone("UTC"));
+// Inicializar la variable de la zona horaria local a un valor seguro por defecto
+$local_timezone_str = "UTC";
 
-        // Convertir a horario de España
-        $localTime = clone $utcTime;
-        $localTime->setTimezone(new DateTimeZone("Europe/Madrid"));
+/*-----------------------------------------
+Obtener la fecha de actualización directamente de la base de datos MariaDB.
+-----------------------------------------*/
 
-        // Diferencia en segundos
-        $now = new DateTime("now", new DateTimeZone("Europe/Madrid"));
-        $diffSeconds = $now->getTimestamp() - $localTime->getTimestamp();
+// 1. Conectar a la base de datos
+$mysqli = new mysqli($db_url, $db_user, $db_pass, $db_database);
 
-        // Formato de salida
-        $meses = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
-        $horas = $localTime->format("H");
-        $minutos = $localTime->format("i");
-        $dia = $localTime->format("j");
-        $mes = $meses[(int) $localTime->format("n") - 1];
-        $anio = $localTime->format("Y");
-        $ts_formatted = "$horas:$minutos del $dia de $mes de $anio";
-    } else {
-        echo "No se pudo obtener la fecha de actualización";
-    }
-
-    // Calcular la fase de la luna:
-    function getMoonPhaseValue($timestamp = null)
-    {
-        $known_new_moon = strtotime("2000-01-06 18:14:00 UTC");
-        $timestamp = $timestamp ?? time();
-        $days_since = ($timestamp - $known_new_moon) / 86400;
-        $lunar_cycle = 29.53058867;
-        $phase = fmod($days_since, $lunar_cycle) / $lunar_cycle;
-        if ($phase < 0) {
-            $phase += 1;
+// Verificar si la conexión falló
+if ($mysqli->connect_error) {
+    error_log("Error de conexión a la BD: " . $mysqli->connect_error);
+    $ts_formatted = "Error de conexión a la base de datos";
+} else {
+    // ########################################################
+    // PASO A: OBTENER LA ZONA HORARIA LOCAL (tz)
+    // ########################################################
+    $sql_tz = "SELECT tz FROM config LIMIT 1";
+    if ($result_tz = $mysqli->query($sql_tz)) {
+        if ($result_tz->num_rows > 0) {
+            $row_tz = $result_tz->fetch_assoc();
+            // Asignar la zona horaria obtenida de la BD (ej: "Europe/Madrid")
+            $local_timezone_str = $row_tz["tz"];
         }
-        return (int) round($phase * 99);
+        $result_tz->free();
+    } else {
+        error_log("Error en la consulta SQL para obtener TZ: " . $mysqli->error);
+        // Si falla, se mantiene el valor por defecto "Europe/Madrid"
     }
 
-    $phase = getMoonPhaseValue();
-    $moon_scale = 0.4;
+    // ########################################################
+    // PASO B: OBTENER EL ÚLTIMO TIMESTAMP Y CONVERTIR A LOCAL
+    // ########################################################
+
+    // Consulta SQL para obtener la última marca de tiempo
+    $sql_ts = "SELECT timestamp FROM meteo ORDER BY timestamp DESC LIMIT 1";
+
+    if ($result_ts = $mysqli->query($sql_ts)) {
+        if ($result_ts->num_rows > 0) {
+            // 3. Obtener el resultado
+            $row = $result_ts->fetch_assoc();
+            // El timestamp ahora está en UTC (ej: "2025-11-15 11:01:33")
+            $last_timestamp_str = $row["timestamp"];
+
+            // 4. Procesar y formatear la fecha
+            try {
+                // 4.1. Crear un objeto DateTime asumiendo que el valor de la BD ES UTC
+                // Se usa el objeto DateTimeZone("UTC") para indicar el origen del dato.
+                $utcTime = new DateTime($last_timestamp_str, new DateTimeZone("UTC"));
+
+                // 4.2. Cambiar la zona horaria al valor local obtenido de la tabla 'config'
+                $localTimeZone = new DateTimeZone($local_timezone_str);
+                $utcTime->setTimezone($localTimeZone);
+
+                // La variable $localTime ahora contiene la hora correcta en la zona local
+                $localTime = $utcTime;
+
+                // Opcional: Calcule la diferencia de tiempo
+                $now = new DateTime("now", $localTimeZone);
+                $diffSeconds = $now->getTimestamp() - $localTime->getTimestamp();
+
+                // Formato de salida en español
+                $meses = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+                $horas = $localTime->format("H");
+                $minutos = $localTime->format("i");
+                $dia = $localTime->format("j");
+                // Obtenemos el mes con índice 0-11
+                $mes = $meses[(int) $localTime->format("n") - 1];
+                $anio = $localTime->format("Y");
+
+                // Asignar el resultado final a la variable de formato
+                $ts_formatted = "$horas:$minutos del $dia de $mes de $anio";
+
+            } catch (Exception $e) {
+                error_log("Error al procesar la fecha de la BD: " . $e->getMessage());
+                $ts_formatted = "Error al procesar el formato de la fecha";
+            }
+            $result_ts->free();
+        } else {
+            // No hay filas en la tabla
+            $ts_formatted = "No hay datos en la tabla 'meteo'";
+        }
+    } else {
+        // Error en la ejecución de la consulta
+        error_log("Error en la consulta SQL (meteo): " . $mysqli->error);
+        $ts_formatted = "Error al ejecutar la consulta a la base de datos";
+    }
+
+    // 5. Cerrar conexión
+    $mysqli->close();
+}
+
+// Calcular la fase de la luna:
+function getMoonPhaseValue()
+{
+    $known_new_moon = strtotime("2000-01-06 18:14:00 UTC");
+    $timestamp = time();
+    $days_since = ($timestamp - $known_new_moon) / 86400;
+    $lunar_cycle = 29.53058867;
+    $phase = fmod($days_since, $lunar_cycle) / $lunar_cycle;
+    if ($phase < 0) {
+        $phase += 1;
+    }
+    return (int) round($phase * 99);
+}
+
+$phase = getMoonPhaseValue();
+$moon_scale = 0.4;
 ?>
 <html lang="es">
     <head>
@@ -138,8 +198,8 @@
                             <!-- Contenedor general de tarjetas -->
                             <div class="cards-grid">
                                 <?php
-                                require_once './widget_sun.php';
-                                require_once './widget_moon.php';
+    require_once './widget_sun.php';
+            require_once './widget_moon.php';
                                 ?>
                                 <!-- Tarjeta Previsión -->
                                 <div id="forecast" class="forecast-container">
@@ -173,21 +233,21 @@
                             ################### GRÁFICAS MODALES #######################
                             ############################################################-->
                         <?php
-                            include_once './modal_temp_ext.php';
-                            include_once './modal_hum_ext.php';
-                            include_once './modal_wind.php';
-                            include_once './modal_rain.php';
-                            include_once './modal_press.php';
-                            include_once './modal_uv.php';
-                            include_once './modal_temp_int.php';
-                            include_once './modal_hum_int.php';
-                            include_once './modal_seeing.php';
-                            include_once './modal_info.php';
-                            include_once './modal_moon.php';
-                            include_once './modal_moon_l100.php';
-                            include_once './modal_moon_zoom.php';
-                            include_once './modal_sun.php';
-                            include_once './modal_credits.php';
+                        include_once './modal_temp_ext.php';
+                        include_once './modal_hum_ext.php';
+                        include_once './modal_wind.php';
+                        include_once './modal_rain.php';
+                        include_once './modal_press.php';
+                        include_once './modal_uv.php';
+                        include_once './modal_temp_int.php';
+                        include_once './modal_hum_int.php';
+                        include_once './modal_seeing.php';
+                        include_once './modal_info.php';
+                        include_once './modal_moon.php';
+                        include_once './modal_moon_l100.php';
+                        include_once './modal_moon_zoom.php';
+                        include_once './modal_sun.php';
+                        include_once './modal_credits.php';
                         ?>
                         <!-- ############################################################
                              ############## FIN DE LAS GRÁFICAS MODALES #################

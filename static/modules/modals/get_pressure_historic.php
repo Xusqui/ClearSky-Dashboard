@@ -12,6 +12,21 @@ if ($mysqli->connect_errno) {
 
 $mysqli->set_charset("utf8mb4");
 
+// --- 1. Obtener y Limpiar la Zona Horaria (tz) de la tabla config ---
+$tz_query = "SELECT `tz` FROM `config` LIMIT 1";
+$tz_result = $mysqli->query($tz_query);
+$target_timezone = "UTC"; // Zona horaria por defecto
+$date_format_php = 'H:i'; // Formato de fecha por defecto
+
+if ($tz_result && $tz_result->num_rows > 0) {
+    $tz_row = $tz_result->fetch_assoc();
+    // Limpieza: Aseguramos el formato IANA correcto (eliminando '\' si existe)
+    $target_timezone = str_replace('\\', '', $tz_row['tz']);
+    $tz_result->free();
+}
+
+// --------------------------------------------------------------------
+
 // Comprobar si se reciben parámetros de fecha
 if (isset($_GET['start']) && isset($_GET['end'])) {
     $start_date = $_GET['start'];
@@ -22,23 +37,26 @@ if (isset($_GET['start']) && isset($_GET['end'])) {
     $end_dt = DateTime::createFromFormat('Y-m-d\TH:i', $end_date);
 
     if ($start_dt && $end_dt) {
-        // Formato de fecha dinámico para el eje X
-        $date_format = ($start_dt->diff($end_dt)->d > 0) ? '%Y-%m-%d %H:%i' : '%H:%i';
+        // Formato de fecha dinámico para el eje X (formato PHP)
+        $date_format_php = ($start_dt->diff($end_dt)->d > 0) ? 'Y-m-d H:i' : 'H:i';
 
+        // Consulta SQL: Seleccionamos el timestamp crudo
         $query = "
-            SELECT DATE_FORMAT(`timestamp`, ?) AS hora, presion_relativa
+            SELECT `timestamp` AS hora, presion_relativa
             FROM meteo
             WHERE `timestamp` BETWEEN ? AND ?
             ORDER BY `timestamp` ASC
         ";
 
         $stmt = $mysqli->prepare($query);
-        $stmt->bind_param("sss", $date_format, $start_date, $end_date);
+        $stmt->bind_param("ss", $start_date, $end_date);
 
     } else {
         // Formato inválido, usar por defecto 24h
+        $date_format_php = 'H:i';
+
         $query = "
-            SELECT DATE_FORMAT(`timestamp`, '%H:%i') AS hora, presion_relativa
+            SELECT `timestamp` AS hora, presion_relativa
             FROM meteo
             WHERE `timestamp` >= NOW() - INTERVAL 24 HOUR
             ORDER BY `timestamp` ASC
@@ -48,8 +66,10 @@ if (isset($_GET['start']) && isset($_GET['end'])) {
 
 } else {
     // Comportamiento por defecto: últimas 24 horas
+    $date_format_php = 'H:i';
+
     $query = "
-        SELECT DATE_FORMAT(`timestamp`, '%H:%i') AS hora, presion_relativa
+        SELECT `timestamp` AS hora, presion_relativa
         FROM meteo
         WHERE `timestamp` >= NOW() - INTERVAL 24 HOUR
         ORDER BY `timestamp` ASC
@@ -62,8 +82,30 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 $data = [];
+$tz_destination = new DateTimeZone($target_timezone); // Objeto TZ para la conversión
+
 if ($result) {
     while ($row = $result->fetch_assoc()) {
+
+        // --- CONVERSIÓN DE HORA EN PHP ---
+        try {
+            // 1. Crear objeto DateTime asumiendo que el dato es UTC
+            $dt = new DateTime($row['hora'], new DateTimeZone('UTC'));
+
+            // 2. Aplicar la zona horaria de destino
+            $dt->setTimezone($tz_destination);
+
+            // 3. Formatear la hora usando el formato PHP previamente determinado
+            $row["hora"] = $dt->format($date_format_php);
+
+        } catch (Exception $e) {
+            // En caso de error de zona horaria, mantenemos la hora UTC
+        }
+        // ----------------------------------------------
+
+        // No es necesario forzar float si el campo de presión no tiene decimales en la BD,
+        // pero lo mantendremos como estaba si fuese el caso. Aquí no lo requiere.
+        // $row["presion_relativa"] = (float) $row["presion_relativa"];
         $data[] = $row;
     }
 }
