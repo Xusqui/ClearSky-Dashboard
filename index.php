@@ -165,8 +165,6 @@ $moon_scale = 0.4;
                 <dashboard-header-view>
                     <div class="max-width">
                         <div class="elevation-coordinates">Elevación:&nbsp;<strong><?= $elev ?></strong>m, Latitud:&nbsp;<strong><?= $latitud ?></strong>&nbsp;Longitud:&nbsp;<strong><?= $longitud ?></strong>&nbsp;Zona horaria:&nbsp;<strong><?= $tz ?></strong>
-                            <!-- Enlace setup -->
-                            <a href="./static/config/setup.php" class="setup-link"><setup-button></setup-button></a>
                         </div>
                         <div class="name-actions">
                             <h1><?= $observatorio ?></h1>
@@ -176,6 +174,8 @@ $moon_scale = 0.4;
                                 <button id="theme-toggle" title="Alternar Tema Automático/Día/Noche" data-theme="auto">
                                     <img id="theme-icon" src="./static/images/icons/auto.svg" alt="Modo Automático" />
                                 </button>
+                                <!-- Enlace setup -->
+                                <a href="./static/config/setup.php" class="setup-link"><setup-button></setup-button>&nbsp;Setup</a>
                             </div>
                         </div>
                         <div class="location-info">
