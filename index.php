@@ -166,21 +166,15 @@ $moon_scale = 0.4;
                     <div class="max-width">
                         <div class="elevation-coordinates">Elevación:&nbsp;<strong><?= $elev ?></strong>m, Latitud:&nbsp;<strong><?= $latitud ?></strong>&nbsp;Longitud:&nbsp;<strong><?= $longitud ?></strong>&nbsp;Zona horaria:&nbsp;<strong><?= $tz ?></strong>
                             <!-- Enlace setup -->
-                            <a href="./static/config/setup.php" class="setup-link"><setup-button></setup-button>&nbsp;Setup</a>
+                            <a href="./static/config/setup.php" class="setup-link"><setup-button></setup-button></a>
                         </div>
                         <div class="name-actions">
                             <h1><?= $observatorio ?></h1>
                             <pws-info title="PWS Info" id="PWS_info"></pws-info>
                             <!-- Selector de tema de color -->
                             <div class="theme-buttons">
-                                <button data-theme="light" title="Modo Día">
-                                    <img src="./static/images/icons/day.svg" alt="Día" />
-                                </button>
-                                <button data-theme="dark" title="Modo Noche">
-                                    <img src="./static/images/icons/night.svg" alt="Noche" />
-                                </button>
-                                <button data-theme="auto" title="Modo Automático">
-                                    <img src="./static/images/icons/auto.svg" alt="Auto" />
+                                <button id="theme-toggle" title="Alternar Tema Automático/Día/Noche" data-theme="auto">
+                                    <img id="theme-icon" src="./static/images/icons/auto.svg" alt="Modo Automático" />
                                 </button>
                             </div>
                         </div>
