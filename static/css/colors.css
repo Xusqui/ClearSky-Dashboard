@@ -105,9 +105,9 @@
     --theme-toggle-padding: 6px;
     --theme-toggle-gap: 6px;
     --theme-toggle-icon-size: 18px;
-    --moon_sunlight: rgb(255, 255, 255);
-    --moon_shadow: rgb(64, 64, 64);
-    --moon-surround: rgb(230,230,230);
+    --moon_sunlight: rgb(255, 255, 220);
+    --moon_shadow: rgb(24,24,24);
+    --moon_surround: rgb(230,230,230);
 }
 
 @media (prefers-color-scheme: dark) {

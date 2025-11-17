@@ -106,23 +106,6 @@ if ($mysqli->connect_error) {
     // 5. Cerrar conexión
     $mysqli->close();
 }
-
-// Calcular la fase de la luna:
-function getMoonPhaseValue()
-{
-    $known_new_moon = strtotime("2000-01-06 18:14:00 UTC");
-    $timestamp = time();
-    $days_since = ($timestamp - $known_new_moon) / 86400;
-    $lunar_cycle = 29.53058867;
-    $phase = fmod($days_since, $lunar_cycle) / $lunar_cycle;
-    if ($phase < 0) {
-        $phase += 1;
-    }
-    return (int) round($phase * 99);
-}
-
-$phase = getMoonPhaseValue();
-$moon_scale = 0.4;
 ?>
 <html lang="es">
     <head>
@@ -157,7 +140,8 @@ $moon_scale = 0.4;
         <link rel="stylesheet" type="text/css" href="./static/css/modal-dates.css?v=<?= time() ?>" />
         <link rel="stylesheet" type="text/css" href="./static/css/modal-pws.css?v=<?= time() ?>" />
         <link rel="stylesheet" type="text/css" href="./static/css/modal-moon.css?v=<?= time() ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/moon-phase.php?position=<?= $phase ?>&scale=<?= $moon_scale ?>&v=<?= time() ?>">
+        <!-- El enlace de la hoja de estilos (css) moon-phase.php se actualiza dinámicamente dentro del archivo /static/js/moon.js -->
+        <link id="moon-phase-css" rel="stylesheet" type="text/css" href="./static/css/moon-phase.php?position=0&scale=0.4&bright=1&v=<?= time() ?>">
     </head>
     <body>
         <div class="widgets">
@@ -192,8 +176,9 @@ $moon_scale = 0.4;
                             <!-- Contenedor general de tarjetas -->
                             <div class="cards-grid">
                                 <?php
-    require_once './widget_sun.php';
-            require_once './widget_moon.php';
+                                    require_once './widget_sun.php';
+                                    require_once './widget_moon.php';
+                                    echo $phase;
                                 ?>
                                 <!-- Tarjeta Previsión -->
                                 <div id="forecast" class="forecast-container">

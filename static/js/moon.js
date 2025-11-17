@@ -65,3 +65,29 @@ document.getElementById("moon-text").textContent = phaseText;
 // **********************************************
 document.getElementById("moon-rise-time").textContent = moonRiseTime;
 document.getElementById("moon-set-time").textContent = moonSetTime;
+// **********************************************
+// NUEVO: Generar y enlazar el CSS dinámico
+// **********************************************
+
+// Asumimos que $moon_scale se conoce en JS o es un valor fijo
+const moonScale = '0.4'; // Reemplaza con el valor real de $moon_scale
+
+const phasePercentage = Math.round(window.phase * 99);
+
+// Obtener la referencia al <link> existente (si tiene un ID)
+let cssLink = document.getElementById('moon-phase-css');
+
+// Si no existe, lo creamos
+if (!cssLink) {
+    cssLink = document.createElement('link');
+    cssLink.rel = 'stylesheet';
+    cssLink.type = 'text/css';
+    cssLink.id = 'moon-phase-css';
+    document.head.appendChild(cssLink);
+}
+
+// Generar la URL con el valor calculado de window.phase
+const newHref = `./static/css/moon-phase.php?position=${phasePercentage}&scale=${moonScale}&bright=1&v=${Date.now()}`;
+
+// Actualizar el href del enlace
+cssLink.href = newHref;

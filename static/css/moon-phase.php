@@ -5,6 +5,7 @@ header("Content-Type: text/css");
 /* Lee los parámetros */
 $phase = isset($_GET['position']) ? floatval($_GET['position']) : 0;
 $scale = isset($_GET['scale']) ? floatval($_GET['scale']) : 1;
+$bright = isset($_GET['bright']) ? floatval($_GET['bright']) : 1;
 
 /* Limita valores válidos */
 //$phase = max(0, min(100, $phase));
@@ -53,7 +54,7 @@ function rem($value, $scale) {
   border-radius: 50%;
   animation: cycle 100s linear paused reverse;
   animation-delay: <?= $phase ?>s;
-  filter: blur(<?= rem(0.3, $scale) ?>);
+  filter: blur(<?= rem(0.1, $scale) ?>);
 }
 
 /* Textura de la superficie */
@@ -69,7 +70,7 @@ function rem($value, $scale) {
   background-repeat: no-repeat;
   mix-blend-mode: multiply;
   transform: translateY(52%);
-  filter: brightness(1.4);
+  filter: brightness(<?php echo $bright; ?>);
 }
 
 /* Capa de sombreado interior */
@@ -78,8 +79,8 @@ function rem($value, $scale) {
   height: <?= rem(19.75, $scale) ?>;
   border-radius: 10%;
   box-shadow:
-    inset 0 0 <?= rem(10, $scale) ?> #000,
-    inset 0 0 <?= rem(5, $scale) ?> #000,
+    inset 0 0 <?= rem(2, $scale) ?> #999,
+    inset 0 0 <?= rem(0, $scale) ?> #000,
     inset 0 0 <?= rem(0, $scale) ?> #000;
   position: absolute;
   margin-top: <?= rem(-20.3, $scale) ?>;
