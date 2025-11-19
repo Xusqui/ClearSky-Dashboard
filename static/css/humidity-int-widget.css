@@ -90,7 +90,7 @@ humidity-int-widget-view.humid .humidity-int-mist-ring {
 }
 
 humidity-int-widget-view.dry .humidity-int-mist-ring {
-    border-color:rgba(var(--humidity-int-dry-color), .3)
+    border-color:rgba(var(--humidity-dry-color), .3)
 }
 
 humidity-int-widget-view:not([data-main-value]) .humidity-int-mist-ring {

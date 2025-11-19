@@ -8,7 +8,7 @@ $scale = isset($_GET['scale']) ? floatval($_GET['scale']) : 1;
 $bright = isset($_GET['bright']) ? floatval($_GET['bright']) : 1;
 
 /* Limita valores válidos */
-//$phase = max(0, min(100, $phase));
+$phase = max(0, min(100, $phase));
 $scale = max(0.05, min(5, $scale)); // evita valores extremos
 
 /* Ajuste para animación reverse */

@@ -2,6 +2,7 @@ let secondsSinceUpdate = 0;
 let updateTimer = null;
 
 // Función que actualiza el contador en pantalla
+/*
 function startUpdateTimer() {
     // Si ya hay un contador en marcha, lo reiniciamos
     if (updateTimer) {
@@ -16,7 +17,7 @@ function startUpdateTimer() {
         document.getElementById("pws-status-time-ago").textContent =
             "Actualizado hace " + secondsSinceUpdate + " sec";
     }, 1000);
-}
+} */
 
 function updateWindWidget() {
     fetch("./static/modules/widgets/get_wind_data.php")
@@ -60,7 +61,7 @@ function updateWindWidget() {
             document.getElementById("wind-widget-cuaternary-value").textContent = gustMaxText;
 
             // Reiniciar el contador de segundos desde última actualización exitosa
-            startUpdateTimer();
+/*            startUpdateTimer(); */
         })
         .catch((err) => console.error("Error al actualizar viento:", err));
 }

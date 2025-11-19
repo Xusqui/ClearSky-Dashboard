@@ -191,3 +191,74 @@ dashboard-header-view pws-info dialog li span:first-of-type {
     opacity: 0.7;
     cursor: pointer;
 }
+
+/* --- ANIMACIÓN DE PULSACIÓN --- */
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.4);
+    }
+    70% {
+        /* Se usará el color del estado (online/offline) */
+        box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+    }
+}
+
+/* --- CONTENEDOR DE ESTADO (Para alinear el icono y el texto) --- */
+.pws-status-container {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espacio entre el icono y el texto */
+}
+
+/* --- ESTADO ONLINE (VERDE) --- */
+.pws-status-container.pws-online pws-info {
+    /* Fondo del icono verde */
+    filter: sepia(100%) hue-rotate(80deg) saturate(300%) brightness(100%);
+    /* Esta es una forma de cambiar el color de una imagen SVG a verde usando filtros CSS */
+
+    /* Animación de pulsación con el color verde */
+    animation: pulse 1.5s infinite;
+    --pulse-color: var(--wu-green, #4caf50);
+    box-shadow: 0 0 0 0 var(--pulse-color);
+}
+.pws-status-container.pws-online .pws-status-text {
+    color: var(--wu-green, #4caf50);
+}
+
+/* --- ESTADO OFFLINE (ROJO) --- */
+.pws-status-container.pws-offline pws-info {
+    /* Fondo del icono rojo */
+    filter: sepia(100%) hue-rotate(330deg) saturate(300%) brightness(100%);
+
+    /* Animación de pulsación con el color rojo */
+    animation: pulse 1.5s infinite;
+    --pulse-color: var(--wu-red, #f44336);
+    box-shadow: 0 0 0 0 var(--pulse-color);
+}
+.pws-status-container.pws-offline .pws-status-text {
+    color: var(--wu-red, #f44336);
+}
+
+/* Aplicar la variable de color al box-shadow de la animación */
+.pws-status-container.pws-online pws-info {
+    box-shadow: 0 0 0 0 var(--wu-green, #4caf50);
+}
+.pws-status-container.pws-offline pws-info {
+    box-shadow: 0 0 0 0 var(--wu-red, #f44336);
+}
+
+.pws-status-container.pws-online pws-info,
+.pws-status-container.pws-offline pws-info {
+    /* Reaplicar la animación y el box-shadow con la variable de color dinámica */
+    animation: pulse 1.5s infinite;
+}
+
+/* Estilo para el texto de estado */
+.pws-status-text {
+    font-size: 0.9rem;
+    font-weight: bold;
+    white-space: nowrap; /* Evita que el texto se rompa */
+}

@@ -1,7 +1,7 @@
 // sun.js
 // --- Sol ---
 function updateSunPosition() {
-    const scriptURL = document.currentScript.src;
+    const scriptURL = document.querySelector('script[src*="sun.js"]').src;
     const params = new URLSearchParams(scriptURL.split('?')[1]);
     const lat = parseFloat(params.get('lat'));
     const lon = parseFloat(params.get('lon'));

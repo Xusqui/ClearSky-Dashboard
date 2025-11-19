@@ -76,7 +76,7 @@ if ($result->num_rows === 0) {
 $row = $result->fetch_assoc();
 
 // Humedad interior
-$humidity = isset($row['humedad_interior']) && is_numeric($row['humedad_interior']) ? floatval($row['humedad_interior']) : 0.0;
+$humidity_int = isset($row['humedad_interior']) && is_numeric($row['humedad_interior']) ? floatval($row['humedad_interior']) : 0.0;
 // Temperatura interior
 $temp_int = isset($row['temperatura_interior']) && is_numeric($row['temperatura_interior']) ? floatval($row['temperatura_interior']) : 0.0;
 
@@ -88,36 +88,36 @@ $mysqli->close();
 // 3. Cálculos y Lógica de Estado
 // ----------------------------------------------------
 
-$sensacion = obtenerSensacionAmbiente($temp_int, $humidity); // Esto es el Punto de Rocío Interior
+$sensacion = obtenerSensacionAmbiente($temp_int, $humidity_int); // Esto es el Punto de Rocío Interior
 
 // Calcular ángulo del gráfico (El 100% de humedad es 360 grados)
-$angle_humidity = 360 * ($humidity / 100);
+$angle_humidity_int = 360 * ($humidity_int / 100);
 
 // Determinar estado basado en el Punto de Rocío interior ($sensacion)
 if ($sensacion < 10) {
-    $humid_state  = "dry";
-    $humid_legend = "Seco";
+    $humid_int_state  = "dry";
+    $humid_int_legend = "Seco";
 } elseif ($sensacion >= 20) {
-    $humid_state  = "humid";
-    $humid_legend = "Húmedo";
+    $humid_int_state  = "humid";
+    $humid_int_legend = "Húmedo";
 } else {
-    $humid_state  = "comfortable";
-    $humid_legend = "Confortable";
+    $humid_int_state  = "comfortable";
+    $humid_int_legend = "Confortable";
 }
 
 // Variable color (CSS)
-$humidity_color = "--humidity-{$humid_state}-color";
+$humidity_int_color = "--humidity-{$humid_int_state}-color";
 
 // ----------------------------------------------------
 // 4. Devolver JSON
 // ----------------------------------------------------
 header('Content-Type: application/json');
 echo json_encode([
-    "humidity" => $humidity,
-    "temp" => $temp_int,
-    "angle" => $angle_humidity,
-    "legend" => $humid_legend,
-    "color" => $humidity_color,
-    "state" => $humid_state
+    "humidity_int" => $humidity_int,
+    "temp_int" => $temp_int,
+    "angle_int" => round($angle_humidity_int, 1),
+    "legend_int" => $humid_int_legend,
+    "color_int" => $humidity_int_color,
+    "state_int" => $humid_int_state
 ]);
 ?>

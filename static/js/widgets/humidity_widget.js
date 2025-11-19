@@ -24,7 +24,12 @@ function updateHumidityWidget() {
         // Actualizar clase del widget según estado
         const widgetView = document.querySelector('humidity-widget-view');
         if (widgetView) {
-            widgetView.className = `widget-view ${data.state} loaded`;
+                widgetView.setAttribute('data-humidity', data.humidity);
+                widgetView.setAttribute('data-humidity-string', data.legend);
+                widgetView.setAttribute('data-main-value', data.humidity);
+                widgetView.setAttribute('aria-valuenow', data.humidity);
+                widgetView.setAttribute('data-secondary-value', data.legend);
+                widgetView.className = `widget-view ${data.state} loaded`;
         }
     })
         .catch(err => console.error('Error al actualizar humedad:', err));
