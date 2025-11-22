@@ -234,8 +234,19 @@
     position: relative;
     box-shadow: 0 4px 12px var(--dashboard-widget-box-shadow-color);
     animation: fadeIn 0.3s ease;
-    /* Sombra basada en la variable de sombra del tema */
-    box-shadow: 0 10px 30px rgba(var(--black-or-white), 0.3);
+}
+
+.modal-in-modal-content {
+    background: color-mix(in srgb, var(--bg-color) 60%, transparent); /* fondo adaptado */
+    color: var(--font-color); /* texto adaptado */
+    margin: 5% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 60%;
+    max-width: 600px;
+    position: relative;
+    box-shadow: 0 4px 12px var(--dashboard-widget-box-shadow-color);
+    animation: fadeIn 0.3s ease;
 }
 
 .close {

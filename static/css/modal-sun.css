@@ -109,12 +109,6 @@
     color: var(--font-color);
 }
 
-/* === Ajustes generales del modal === */
-.modal-content {
-    max-width: 90%;
-    margin: auto;
-}
-
 .close {
     position: absolute;
     top: 15px;
