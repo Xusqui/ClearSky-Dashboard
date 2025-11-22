@@ -23,5 +23,5 @@ function updateDewWidget() {
 // Primera actualización inmediata
 updateDewWidget();
 
-// Actualizar cada 1 minuto (60000 ms)
-setInterval(updateDewWidget, 60000);
+// Actualizar cada 1 minuto (60000 ms). Se actualiza desde update_status.js
+//setInterval(updateDewWidget, 60000);

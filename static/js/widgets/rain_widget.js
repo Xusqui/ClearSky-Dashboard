@@ -1,5 +1,5 @@
 /* rain_widget.js */
-let rainInterval = null;
+var rainInterval = null;
 
 function updateRainWidget() {
     fetch('./static/modules/widgets/get_rain_data.php')

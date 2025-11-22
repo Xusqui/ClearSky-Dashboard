@@ -41,5 +41,5 @@ async function updateSolarWidget() {
 // Primera carga
 updateSolarWidget();
 
-// Cada 60 segundos.
-setInterval(updateSolarWidget, 1 * 60 * 1000);
+// Cada 60 segundos. Se actualiza desde update_status.js
+//setInterval(updateSolarWidget, 1 * 60 * 1000);

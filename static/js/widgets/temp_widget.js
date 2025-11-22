@@ -21,5 +21,5 @@ function updateTempWidget() {
 // Primera actualización inmediata
 updateTempWidget();
 
-// Actualizar cada minutos (60000 ms)
-setInterval(updateTempWidget, 1 * 60 * 1000);
+// Actualizar cada minutos (60000 ms). Se actualiza desde update_status.js
+//setInterval(updateTempWidget, 1 * 60 * 1000);

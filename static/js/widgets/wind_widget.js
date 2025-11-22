@@ -1,5 +1,5 @@
-let secondsSinceUpdate = 0;
-let updateTimer = null;
+//let secondsSinceUpdate = 0;
+//let updateTimer = null;
 
 // Función que actualiza el contador en pantalla
 /*
@@ -69,5 +69,5 @@ function updateWindWidget() {
 // Primera actualización inmediata
 updateWindWidget();
 
-// Actualizar cada 60 segundos
-setInterval(updateWindWidget, 1 * 60 * 1000);
+// Actualizar cada 60 segundos. Se actualiza desde update_status.js
+//setInterval(updateWindWidget, 1 * 60 * 1000);

@@ -7,126 +7,6 @@
 //ini_set('display_errors', 1);
 // CONFIGURACIÓN
 include __DIR__ . "/static/config/config.php";
-
-/*-----------------------------------------
-Vamos a obtener la fecha de actualización y convertirla a la zona horaria local.
------------------------------------------*/
-// Inicializar la variable de salida con un valor por defecto en caso de error
-$ts_formatted = "No se pudo obtener la fecha de actualización";
-
-// Inicializar la variable de la zona horaria local a un valor seguro por defecto
-$local_timezone_str = "UTC";
-
-/*-----------------------------------------
-Obtener la fecha de actualización directamente de la base de datos MariaDB.
------------------------------------------*/
-
-// 1. Conectar a la base de datos
-$mysqli = new mysqli($db_url, $db_user, $db_pass, $db_database);
-
-// Verificar si la conexión falló
-if ($mysqli->connect_error) {
-    error_log("Error de conexión a la BD: " . $mysqli->connect_error);
-    $ts_formatted = "Error de conexión a la base de datos";
-} else {
-    // ########################################################
-    // PASO A: OBTENER LA ZONA HORARIA LOCAL (tz)
-    // ########################################################
-    $sql_tz = "SELECT tz FROM config LIMIT 1";
-    if ($result_tz = $mysqli->query($sql_tz)) {
-        if ($result_tz->num_rows > 0) {
-            $row_tz = $result_tz->fetch_assoc();
-            // Asignar la zona horaria obtenida de la BD (ej: "Europe/Madrid")
-            $local_timezone_str = $row_tz["tz"];
-        }
-        $result_tz->free();
-    } else {
-        error_log("Error en la consulta SQL para obtener TZ: " . $mysqli->error);
-        // Si falla, se mantiene el valor por defecto "Europe/Madrid"
-    }
-
-    // ########################################################
-    // PASO B: OBTENER EL ÚLTIMO TIMESTAMP Y CONVERTIR A LOCAL
-    // ########################################################
-
-    // Consulta SQL para obtener la última marca de tiempo
-    $sql_ts = "SELECT timestamp FROM meteo ORDER BY timestamp DESC LIMIT 1";
-
-    if ($result_ts = $mysqli->query($sql_ts)) {
-        if ($result_ts->num_rows > 0) {
-            // 3. Obtener el resultado
-            $row = $result_ts->fetch_assoc();
-            // El timestamp ahora está en UTC (ej: "2025-11-15 11:01:33")
-            $last_timestamp_str = $row["timestamp"];
-
-            // Variables para el estado de la PWS
-            $pws_status_class = "pws-offline"; // Por defecto, si hay error o > 30 min
-            $pws_status_text = "PWS Desconectada";
-            $diffMinutes = -1; // Inicializar diferencia en minutos
-
-            // 4. Procesar y formatear la fecha
-            try {
-                // 4.1. Crear un objeto DateTime asumiendo que el valor de la BD ES UTC
-                $utcTime = new DateTime($last_timestamp_str, new DateTimeZone("UTC"));
-
-                // 4.2. Cambiar la zona horaria al valor local obtenido de la tabla 'config'
-                $localTimeZone = new DateTimeZone($local_timezone_str);
-                $utcTime->setTimezone($localTimeZone);
-
-                // La variable $localTime ahora contiene la hora correcta en la zona local
-                $localTime = $utcTime;
-
-                // Opcional: Calcule la diferencia de tiempo
-                $now = new DateTime("now", $localTimeZone);
-                $diffSeconds = $now->getTimestamp() - $localTime->getTimestamp();
-                $diffMinutes = round($diffSeconds / 60); // Diferencia en minutos
-
-                // === LÓGICA DE ESTADO PWS ===
-                // Si la diferencia es menor o igual a 30 minutos (1800 segundos)
-                if ($diffSeconds <= 1800 && $diffSeconds >= 0) {
-                    $pws_status_class = "pws-online";
-                    $pws_status_text = "PWS Online";
-                } else if ($diffSeconds > 1800) {
-                    // Más de 30 minutos
-                    $pws_status_class = "pws-offline";
-                    $pws_status_text = "PWS Desconectada (hace $diffMinutes min)";
-                } else {
-                    // Si el timestamp es futuro o es un error de diferencia
-                    $pws_status_class = "pws-error";
-                    $pws_status_text = "Error de fecha/hora";
-                }
-                // ============================
-
-                // Formato de salida en español
-                $meses = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
-                $horas = $localTime->format("H");
-                $minutos = $localTime->format("i");
-                $dia = $localTime->format("j");
-                // Obtenemos el mes con índice 0-11
-                $mes = $meses[(int) $localTime->format("n") - 1];
-                $anio = $localTime->format("Y");
-
-                // Asignar el resultado final a la variable de formato
-                $ts_formatted = "$horas:$minutos del $dia de $mes de $anio";
-
-            } catch (Exception $e) {
-                error_log("Error al procesar la fecha de la BD: " . $e->getMessage());
-                $ts_formatted = "Error al procesar el formato de la fecha";
-            }
-            $result_ts->free();
-        } else {
-            // No hay filas en la tabla
-            $ts_formatted = "No hay datos en la tabla 'meteo'";
-        }
-    } else {
-        // Error en la ejecución de la consulta
-        error_log("Error en la consulta SQL (meteo): " . $mysqli->error);
-        $ts_formatted = "Error al ejecutar la consulta a la base de datos";
-    }
-
-    // 5. Cerrar conexión
-    $mysqli->close();
-}
 ?>
 <html lang="es">
     <head>
@@ -173,9 +53,9 @@ if ($mysqli->connect_error) {
                         </div>
                         <div class="name-actions">
                             <h1><?= $observatorio ?></h1>
-                            <div class="pws-status-container <?= $pws_status_class ?>">
-                                <pws-info title="Última actualización: <?= $ts_formatted ?>" id="PWS_info"></pws-info>
-                                <span class="pws-status-text"><?= $pws_status_text ?></span>
+                            <div class="pws-status-container pws-offline">
+                                <pws-info title="Última actualización:" id="PWS_info"></pws-info>
+                                <span class="pws-status-text">PWS Desconectada</span>
                             </div>
                             <div class="theme-buttons">
                                 <button id="theme-toggle" title="Alternar Tema Automático/Día/Noche" data-theme="auto">
@@ -186,10 +66,10 @@ if ($mysqli->connect_error) {
                             </div>
                         </div>
                         <div class="location-info">
-                            <span>En <?= $city ?>, a las</span>
-                            <span class="long" id="pws-status-time-long"><?= $ts_formatted ?>.</span>
+                            <span>En <?= $city ?>, </span>
+                            <span class="long" id="pws-status-time-long"></span>
                             <!-- El script de "actualizado hace x segundos", está dentro del wind_widget.js -->
-                            <span class="ago" id="pws-status-time-ago" data-updated="<?= $localTime->getTimestamp() ?>">Actualizado hace <?= $diffSeconds ?> sec</span>
+                            <span class="ago" id="pws-status-time-ago" data-updated=""></span>
                         </div>
                     </div>
                 </dashboard-header-view>
@@ -270,40 +150,29 @@ if ($mysqli->connect_error) {
             </content-router-wc>
         </div>
         <!-- JS Varios -->
-        <script src="https://unpkg.com/suncalc@1.9.0/suncalc.js"></script> <!-- YA ESTÁ CARGADO SIN MODULE -->
-        <script src="./static/config/conf_to_js.php"></script> <!-- YA ESTÁ CARGADO SIN MODULE -->
-        <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script> <!-- YA ESTÁ CARGADO SIN MODULE -->
-        <script src="./static/js/moon.js?v<?= time() ?>"></script> <!-- YA ESTÁ CARGADO SIN MODULE -->
-        <script src="./static/js/sun.js?lat=<?= $lat ?>&lon=<?= $lon ?>&v=<?= time() ?>"></script> <!-- YA ESTÁ CARGADO SIN MODULE -->
-        <script src="./static/js/date-time.js?v=<?= time() ?>"></script> <!-- No requiere Module-->
-        <script type ="module" src="./static/js/theme-switcher.js?v=<?= time() ?>"></script> <!-- No requiere Module-->
-        <!-- JS de widgets -->
-        <script src="./static/js/widgets/wind_widget.js?v=<?= time() ?>"></script> <!-- No requiere Module-->
-        <script src="./static/js/widgets/dew_widget.js?v=<?= time() ?>"></script> <!-- No requiere Module-->
-        <script src="./static/js/widgets/temp_widget.js?v=<?= time() ?>"></script> <!-- No requiere Module-->
-        <script src="./static/js/widgets/humidity_widget.js?v=<?= time() ?>"></script> <!-- No requiere Module-->
-        <script src="./static/js/widgets/rain_widget.js?v=<?= time() ?>"></script> <!-- No requiere Module-->
-        <script src="./static/js/widgets/pressure_widget.js?v=<?= time() ?>"></script> <!-- No requiere Module-->
-        <script src="./static/js/widgets/uv_widget.js?v=<?= time() ?>"></script> <!-- No requiere Module-->
-        <script src="./static/js/widgets/solar_widget.js?v=<?= time() ?>"></script> <!-- No requiere Module-->
-        <script src="./static/js/widgets/temp_interior_widget.js?v=<?= time() ?>"></script> <!-- No requiere Module-->
-        <script src="./static/js/widgets/humidity_interior_widget.js?v=<?= time() ?>"></script> <!-- No requiere Module-->
-        <script src="./static/js/widgets/seeing_widget.js?v=<?= time() ?>"></script> <!-- YA ESTÁ CARGADO SIN MODULE -->
-        <script src="./static/js/widgets/forecast.js?v=<?= time() ?>"></script> <!-- No requiere Module-->
-        <script type="module" src="./static/js/widgets/pws_info.js?v=<?= time() ?>"></script> <!-- SÍ requiere Module-->
+        <script src="./static/config/conf_to_js.php"></script>
+        <script src="https://unpkg.com/suncalc@1.9.0/suncalc.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+        <script src="./static/js/moon.js?v<?= time() ?>"></script>
+        <script src="./static/js/sun.js?lat=<?= $lat ?>&lon=<?= $lon ?>&v=<?= time() ?>"></script>
+        <script type="module" src="./static/js/theme-switcher.js?v=<?= time() ?>"></script>
+        <script type="module" src="./static/js/modals/modal_pws_info.js?v=<?= time() ?>"></script>
+        <!-- JS de widgets-->
+        <script src="./static/js/widgets/update_status.js?v=<?= time() ?>"></script>
+        <script src="./static/js/widgets/forecast.js?v=<?= time() ?>"></script>
         <!-- JS de Modales -->
-        <script type="module" src="./static/js/modals/modal_moon.js?v<?= time() ?>"></script> <!-- Sí requiere Module-->
-        <script src="./static/js/modals/modal_temp.js?v=<?= time() ?>"></script> <!-- No requiere Module-->
-        <script src="./static/js/modals/modal_humidity.js?v=<?= time() ?>"></script> <!-- No requiere Module-->
-        <script src="./static/js/modals/modal_wind.js?v=<?= time() ?>"></script> <!-- No requiere Module-->
-        <script src="./static/js/modals/modal_rain.js?v=<?= time() ?>"></script> <!-- No requiere Module-->
-        <script src="./static/js/modals/modal_pressure.js?v=<?= time() ?>"></script> <!-- No requiere Module-->
-        <script src="./static/js/modals/modal_solar.js?v=<?= time() ?>"></script> <!-- No requiere Module-->
-        <script src="./static/js/modals/modal_tempint.js?v=<?= time() ?>"></script> <!-- No requiere Module-->
-        <script src="./static/js/modals/modal_humidityint.js?v=<?= time() ?>"></script> <!-- No requiere Module-->
-        <script src="./static/js/modals/modal_seeing.js?v=<?= time() ?>"></script> <!-- No requiere Module-->
-        <script src="./static/js/modals/modal_sun.js?lat=<?= $lat ?>&lon=<?= $lon ?>&v=<?= time() ?>"></script> <!-- YA ESTÁ CARGADO SIN MODULE -->
-        <script type="module" src="./static/js/modals/modal_credits.js?v=<?= time() ?>"></script> <!-- Sí requiere Module. Pero hay que revisarlo para ver si se puede cambiar a que no sea Module -->
+        <script type="module" src="./static/js/modals/modal_moon.js?v<?= time() ?>"></script>
+        <script src="./static/js/modals/modal_temp.js?v=<?= time() ?>"></script>
+        <script src="./static/js/modals/modal_humidity.js?v=<?= time() ?>"></script>
+        <script src="./static/js/modals/modal_wind.js?v=<?= time() ?>"></script>
+        <script src="./static/js/modals/modal_rain.js?v=<?= time() ?>"></script>
+        <script src="./static/js/modals/modal_pressure.js?v=<?= time() ?>"></script>
+        <script src="./static/js/modals/modal_solar.js?v=<?= time() ?>"></script>
+        <script src="./static/js/modals/modal_tempint.js?v=<?= time() ?>"></script>
+        <script src="./static/js/modals/modal_humidityint.js?v=<?= time() ?>"></script>
+        <script src="./static/js/modals/modal_seeing.js?v=<?= time() ?>"></script>
+        <script src="./static/js/modals/modal_sun.js?lat=<?= $lat ?>&lon=<?= $lon ?>&v=<?= time() ?>"></script>
+        <script src="./static/js/modals/modal_credits.js?v=<?= time() ?>"></script>
         <!-- SCRIPT de depuración
         <script>
             (function() {

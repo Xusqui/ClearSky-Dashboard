@@ -1,5 +1,8 @@
 <?php
 // setup.php
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 session_start();
 // === CONEXIÓN A LA BASE DE DATOS ===
 // Asegúrate de que config_db.php existe y define $db_url, $db_user, $db_pass, $db_database
@@ -75,15 +78,6 @@ if (!$meteo_table_exists) {
         // Usamos backticks para la columna, ya que la exportación lo usa.
         $definitions[] = "`$col` $definition";
     }
-
-    // 2. **QUITAR ESTE PASO** - Eliminamos la lógica redundante de Clave Primaria.
-    // La PK ya está en la definición de la columna 'id'.
-    /*
-    if (isset($meteo_indexes_to_add['PRIMARY KEY'])) {
-        $pk_cols = implode(', ', $meteo_indexes_to_add['PRIMARY KEY']);
-        $definitions[] = "PRIMARY KEY (`$pk_cols`)";
-    }
-    */
 
     // 3. Crear la consulta final sin la definición de PK redundante
     $create_table_sql = "CREATE TABLE `meteo` (" . implode(', ', $definitions) . ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci";

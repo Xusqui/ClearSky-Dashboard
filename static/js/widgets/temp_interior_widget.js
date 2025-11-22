@@ -38,5 +38,5 @@ async function updateTempInteriorWidget() {
 // Primera carga
 updateTempInteriorWidget();
 
-// Actualizar cada minuto
-setInterval(updateTempInteriorWidget, 1 * 60 * 1000);
+// Actualizar cada minuto. Se actualiza desde update_status.js
+//setInterval(updateTempInteriorWidget, 1 * 60 * 1000);

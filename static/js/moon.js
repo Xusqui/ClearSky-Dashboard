@@ -12,7 +12,7 @@ const longitude = parseFloat(LON);
 
 window.moon = SunCalc.getMoonIllumination(now);
 window.fraction = window.moon.fraction;
-window.phase = Math.round(window.moon.phase);
+window.phase = window.moon.phase;
 
 // --- Calcular la salida y puesta de la Luna ---
 const moonTimes = SunCalc.getMoonTimes(now, latitude, longitude);
@@ -72,7 +72,7 @@ document.getElementById("moon-set-time").textContent = moonSetTime;
 // Asumimos que $moon_scale se conoce en JS o es un valor fijo
 const moonScale = '0.4'; // Reemplaza con el valor real de $moon_scale
 
-const phasePercentage = Math.round(window.phase * 100);
+const phasePercentage = Math.round(window.phase * 101);
 
 // Obtener la referencia al <link> existente (si tiene un ID)
 let cssLink = document.getElementById('moon-phase-css');

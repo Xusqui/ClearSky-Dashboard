@@ -47,5 +47,5 @@ async function updateUVWidget() {
 // Primera carga
 updateUVWidget();
 
-// Actualizar cada minuto (60000 ms)
-setInterval(updateUVWidget, 1 * 60 * 1000);
+// Actualizar cada minuto (60000 ms) Se actualiza desde update_status.js
+//setInterval(updateUVWidget, 1 * 60 * 1000);

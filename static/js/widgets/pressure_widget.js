@@ -29,5 +29,5 @@ function fetchPressureData() {
 // Actualización inmediata al cargar
 fetchPressureData();
 
-// Refresco automático cada minuto
-setInterval(fetchPressureData, 1 * 60 * 1000);
+// Refresco automático cada minuto. Se actualiza desde update_status.js
+//setInterval(fetchPressureData, 1 * 60 * 1000);

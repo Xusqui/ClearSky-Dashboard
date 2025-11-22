@@ -38,5 +38,5 @@ function updateHumidityWidget() {
 // Primera actualización inmediata
 updateHumidityWidget();
 
-// Actualizar cada minuto (60000 ms)
-setInterval(updateHumidityWidget, 60000);
+// Actualizar cada minuto (60000 ms). Se actualiza desde update_status.js
+//setInterval(updateHumidityWidget, 60000);

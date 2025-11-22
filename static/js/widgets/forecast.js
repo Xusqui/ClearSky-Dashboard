@@ -2,7 +2,7 @@
 // ==========================
 // 🔧 CONFIGURACIÓN
 // ==========================
-const OPENMETEO_URL = `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}&hourly=temperature_2m,temperature_500hPa,temperature_300hPa,wind_speed_2m,wind_speed_500hPa,wind_speed_300hPa,relative_humidity_2m,pressure_msl,cloud_cover_low,cloud_cover_mid,cloud_cover_high,weathercode&timezone=auto&forecast_hours=7`;
+var OPENMETEO_URL = `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}&hourly=temperature_2m,temperature_500hPa,temperature_300hPa,wind_speed_2m,wind_speed_500hPa,wind_speed_300hPa,relative_humidity_2m,pressure_msl,cloud_cover_low,cloud_cover_mid,cloud_cover_high,weathercode&timezone=auto&forecast_hours=7`;
 
 // ==========================
 // 🌞 FUNCIÓN AUXILIAR DÍA/NOCHE
