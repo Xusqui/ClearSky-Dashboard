@@ -60,6 +60,56 @@ MODO DÍA
     --color-secondary-font: rgb(105, 105, 105);
     --link-color: rgb(0, 111, 158);
     --black-or-white: 0, 0, 0;
+    --wu-white: rgb(255, 255, 255);
+    --wu-white-raw: 255, 255, 255;
+    --wu-white20: rgb(243, 215, 214);
+    --wu-white40: rgb(231, 174, 173);
+    --wu-white60: rgb(220, 134, 133);
+    --wu-white80: rgb(208, 93, 92);
+    --wu-red: rgb(196, 53, 51);
+    --wu-red-raw: 196, 53, 51;
+    --wu-red20: rgb(205, 71, 55);
+    --wu-red40: rgb(213, 89, 59);
+    --wu-red60: rgb(222, 106, 64);
+    --wu-red80: rgb(230, 124, 68);
+    --wu-orange: rgb(239, 142, 72);
+    --wu-orange-raw: 239, 142, 72;
+    --wu-orange20: rgb(240, 151, 73);
+    --wu-orange40: rgb(241, 160, 75);
+    --wu-orange60: rgb(243, 170, 76);
+    --wu-orange80: rgb(244, 179, 78);
+    --wu-yellow: rgb(245, 188, 79);
+    --wu-yellow-raw: 245, 188, 79;
+    --wu-yellow20: rgb(217, 182, 80);
+    --wu-yellow40: rgb(190, 176, 81);
+    --wu-yellow60: rgb(162, 169, 81);
+    --wu-yellow80: rgb(135, 163, 82);
+    --wu-green: rgb(107, 157, 83);
+    --wu-green-raw: 107, 157, 83;
+    --wu-green20: rgb(101, 159, 109);
+    --wu-green40: rgb(96, 161, 136);
+    --wu-green60: rgb(90, 163, 162);
+    --wu-green80: rgb(85, 165, 189);
+    --wu-lightblue: rgb(79, 167, 215);
+    --wu-lightblue-raw: 79, 167, 215;
+    --wu-lightblue20: rgb(70, 150, 206);
+    --wu-lightblue40: rgb(61, 133, 196);
+    --wu-lightblue60: rgb(51, 116, 187);
+    --wu-lightblue80: rgb(42, 99, 177);
+    --wu-darkblue: rgb(33, 82, 168);
+    --wu-darkblue-raw: 33, 82, 168;
+    --wu-darkblue20: rgb(59, 83, 166);
+    --wu-darkblue40: rgb(84, 85, 163);
+    --wu-darkblue60: rgb(110, 86, 161);
+    --wu-darkblue80: rgb(135, 88, 158);
+    --wu-purple: rgb(161, 89, 156);
+    --wu-purple-raw: 161, 89, 156;
+    --wu-purple20: rgb(129, 71, 125);
+    --wu-purple40: rgb(97, 53, 94);
+    --wu-purple60: rgb(64, 36, 62);
+    --wu-purple80: rgb(32, 18, 31);
+    --wu-black: rgb(0, 0, 0);
+    --wu-black-raw: 0, 0, 0;
     --nav-menu-bg-color: rgb(247, 247, 247);
     --nav-menu-bg-color-hover: rgb(255, 255, 255);
     --nav-menu-font-color: rgba(0, 0, 0, 0.87);
@@ -73,6 +123,7 @@ MODO DÍA
     --page-nav-border-color: rgb(215, 215, 215);
     --input-bg-color: rgb(247, 247, 247);
     --input-border-color: rgb(163, 163, 163);
+    --blue-button-highlight: rgb(0, 143, 191);
     --color-box-bg: rgb(242, 242, 242);
     --color-box-alternate-bg: rgba(0, 0, 0, .1);
     --color-box-title-bg: rgba(0, 0, 0, .1);
@@ -92,14 +143,32 @@ MODO DÍA
     --sun-moon-forecast-border-color: rgba(0, 0, 0, 0.2);
     --dashboard-widget-border-color: rgba(0, 0, 0, .1);
     --dashboard-widget-box-shadow-color: rgba(0, 0, 0, .1);
+    --humidity-comfortable-color: var(--wu-green-raw);
+    --humidity-humid-color: var(--wu-lightblue-raw);
+    --humidity-dry-color: var(--wu-red-raw);
     --dashboard-body-border-color: rgba(0, 0, 0, .05);
     --chart-light-color: #fff;
-    --chart-dark-color: #e9ecef;
+    --chart-dark-color:#e9ecef;
+    /* Variables para el selector de tema */
     --theme-toggle-bg: rgba(0,0,0,0.04);
     --theme-toggle-border: rgba(0,0,0,0.08);
-    --theme-toggle-color: var(--font-color);
+    --theme-toggle-color: var(--tt-color);
     --theme-toggle-active-bg: var(--wu-lightblue);
     --theme-toggle-active-color: var(--wu-white);
+    --theme-toggle-radius: 10px;
+    --theme-toggle-padding: 6px;
+    --theme-toggle-gap: 6px;
+    --theme-toggle-icon-size: 18px;
+    --moon_sunlight: rgb(255, 255, 220);
+    --moon_shadow: rgb(24,24,24);
+    --moon_surround: rgb(230,230,230);
+    /* Variables de Diseño Observatorio (Modo Claro) */
+    --obs-bg-dark: rgb(250, 250, 250); /* Fondo casi blanco */
+    --obs-neon-light: rgb(0, 150, 136); /* Verde oscuro/cian para texto en modo claro */
+    --obs-neon-shadow: 0, 150, 136;
+    --obs-accent-light: rgb(255, 140, 0); /* Naranja oscuro */
+    --obs-description-bg: rgba(0, 0, 0, 0.03);
+    --obs-close-color: rgb(200, 0, 100);
     --icon-settings: url(../../static/images/icons/settings.svg);
     --icon-city: url(../../static/images/icons/location_city.svg);
     --icon-github: url(../../static/images/icons/github.svg);
@@ -188,6 +257,7 @@ MODO NOCHE
     --font-color: rgb(255, 255, 255);
     --color-secondary-font: rgb(195, 195, 195);
     --black-or-white: 255, 255, 255;
+    --link-color: rgb(200, 200, 255);
     --nav-menu-bg-color: rgb(51, 51, 52);
     --nav-menu-bg-color-hover: rgb(76, 76, 76);
     --nav-menu-font-color: rgb(231, 231, 231);
@@ -216,12 +286,19 @@ MODO NOCHE
     --widget-empty: rgb(83, 84, 87);
     --dashboard-body-border-color: rgba(255, 255, 255, .05);
     --chart-light-color: #f8f9fa;
-    --chart-dark-color: #e9ecef;
+    --chart-dark-color:#e9ecef;
     --theme-toggle-bg: rgba(255,255,255,0.03);
     --theme-toggle-border: rgba(255,255,255,0.06);
     --theme-toggle-color: var(--font-color);
-    --theme-toggle-active-bg: var(--wu-lightblue40, var(--wu-lightblue));
+    --theme-toggle-active-bg: var(--wu-lightblue-40, var(--wu-lightblue));
     --theme-toggle-active-color: var(--wu-black);
+    /* Variables de Diseño Observatorio (Modo Oscuro) */
+    --obs-bg-dark: rgb(1, 4, 28); /* Fondo muy oscuro, casi negro-azul */
+    --obs-neon-light: rgb(0, 255, 192); /* Verde Neón brillante para texto */
+    --obs-neon-shadow: 0, 255, 192;
+    --obs-accent-light: rgb(255, 192, 0); /* Amarillo/Naranja brillante para énfasis */
+    --obs-description-bg: rgba(255, 255, 255, 0.05); /* Fondo ligeramente transparente */
+    --obs-close-color: rgb(255, 0, 112);
     --icon-settings: url(../../static/images/icons/settings-dark.svg);
     --icon-city: url(../../static/images/icons/city-dark.svg);
     --icon-github: url(../../static/images/icons/github-dark.svg);

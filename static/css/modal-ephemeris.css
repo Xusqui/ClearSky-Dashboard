@@ -81,3 +81,15 @@
     display: block; /* En una línea separada para mayor claridad */
     color: var(--color-secondary-font);
 }
+
+/* Estilo para hacer las tarjetas Messier clicables */
+.clickable-dso {
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.clickable-dso:hover {
+    transform: translateY(-3px);
+    /* Asumiendo que usas sombras para las tarjetas */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}

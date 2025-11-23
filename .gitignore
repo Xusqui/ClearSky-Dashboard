@@ -21,3 +21,6 @@
 /wunderground_history.py
 /import_meteo_4752905479849785(copy 1).php
 /wu_data_to_my_db.php
+/static/messier/messier_scraper.py
+/static/messier/download_messier.py
+/static/messier/messier_html/

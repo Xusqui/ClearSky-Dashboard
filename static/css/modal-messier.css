@@ -1,0 +1,155 @@
+/* modal-messier.css - Diseño "Tarjeta de Datos de Observatorio" */
+
+/* ------------------------------------------------------------- */
+/* 1. Estructura General del Modal (Clase .modal-content)        */
+/* ------------------------------------------------------------- */
+
+.modal-content {
+    /* Fondo del Modal: Usamos el oscuro de Observatorio */
+    background: var(--obs-bg-dark);
+    /* Color de Fuente General: Usamos el neón */
+    color: var(--obs-neon-light);
+
+    /* Estilos Estructurales */
+    margin: 5% auto;
+    padding: 30px;
+    border-radius: 5px;
+    position: relative;
+    /* Sombra exterior de neón (usa la variable raw para la sombra) */
+    box-shadow: 0 0 20px 5px rgba(var(--obs-neon-shadow), 0.3);
+
+    /* Adaptación de tamaño */
+    max-width: 850px;
+    width: 90%;
+    text-align: left;
+
+    /* Permite que el modal crezca según el contenido (sin scroll interno) */
+}
+
+/* Cierre (Asegúrate de que el botón de cierre sea visible) */
+.modal-content .close {
+    color: var(--obs-close-color); /* Color rosa/rojo brillante para el botón de cierre */
+    right: 15px;
+    top: 15px;
+    font-size: 2em;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.modal-content .close:hover {
+    opacity: 1;
+}
+
+/* ------------------------------------------------------------- */
+/* 2. Contenido Específico de Messier (Infografía)               */
+/* ------------------------------------------------------------- */
+
+/* Contenedor de la Infografía */
+.infografia.ephemeris-infografia {
+    font-family: 'Consolas', 'Courier New', monospace; /* Tipo de letra de terminal */
+    line-height: 1.6;
+}
+
+/* Título Principal */
+.messier-detail-title {
+    font-size: 2.5em;
+    color: var(--wu-white); /* Título en blanco puro */
+    text-shadow: 0 0 5px var(--obs-neon-light); /* Efecto de brillo sutil */
+    border-bottom: 2px solid var(--obs-neon-light);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+/* Estructura del Encabezado (Imagen y Título) */
+.messier-detail-header {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 30px;
+    align-items: flex-start;
+    margin-bottom: 30px;
+}
+
+/* Imagen de Objeto */
+.messier-detail-image {
+    width: 100%;
+    max-width: 250px;
+    height: auto;
+    object-fit: cover;
+    border-radius: 5px;
+    border: 3px solid var(--obs-neon-light); /* Marco de neón */
+    box-shadow: 0 0 10px rgba(var(--obs-neon-shadow), 0.5); /* Brillo alrededor */
+}
+
+/* Cuerpo de los Detalles (Datos y Descripción) */
+.messier-detail-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+/* Secciones de Contenido */
+.messier-detail-section {
+    color: var(--font-color);
+    padding: 15px;
+    /* Borde punteado tenue con el color neón */
+    border: 1px dashed rgba(var(--obs-neon-shadow), 0.4);
+    background-color: var(--obs-description-bg); /* Fondo ligeramente transparente */
+    margin-top: 0;
+    border-radius: 3px;
+}
+
+.messier-detail-section h3 {
+    color: var(--obs-accent-light); /* Títulos de sección en amarillo/naranja (contraste) */
+    font-size: 1.2em;
+    border-bottom: 1px solid var(--obs-accent-light);
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+}
+
+/* Estilos de las líneas de datos */
+.messier-detail-section p {
+    color: var(--font-color);
+    display: flex;
+    align-items: center;
+    margin: 5px 0;
+    font-size: 0.95em;
+}
+
+.messier-detail-section strong {
+    color: var(--fot-color); /* Claves de datos en blanco (más contraste) */
+    white-space: nowrap;
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+.messier-visibility-description {
+    grid-column: 1 / span 2;
+}
+
+/* Descripción (ocupa toda la fila inferior) */
+.messier-detail-description {
+    grid-column: 1 / span 2;
+}
+
+.messier-detail-description p {
+    margin-bottom: 1.2em; /* Puedes ajustar este valor (ej: 1em, 1.5em) */
+    margin-top: 0; /* Asegura que el espacio viene después, no antes */
+}
+
+/* ------------------------------------------------------------- */
+/* 3. Tarjetas Messier Clicables (Únicamente aquí)               */
+/* ------------------------------------------------------------- */
+
+/* Estilo para hacer las tarjetas Messier clicables (NO DUPLICAR) */
+.clickable-dso {
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.clickable-dso:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(var(--wu-black-raw), 0.3); /* Sombra estándar */
+}

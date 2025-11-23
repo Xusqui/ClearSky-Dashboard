@@ -89,6 +89,13 @@
                     <p class="credits-card-value">Cálculos de posición y visibilidad de cuerpos celestes realizados gracias a la biblioteca **ORB-V2.JS**</p>
                     <span class="credits-card-source">github.com/lizard-isana/orb.js</span>
                 </a>
+                <!-- 9. EspacioProfundo.com -->
+                <a class="credits-card" href="https://www.espacioprofundo.com/catalogo_messier/" target="_blank" rel="noopener noreferrer">
+                    <span class="credits-card-icon icon city"></span>
+                    <h3 class="credits-card-title">Catálogo Messier</h3>
+                    <p class="credits-card-value">Detalles del catálogo Messier extraídos de la web astronómica espacioprofundo.com</p>
+                    <span class="credits-card-source">espacioprofundo.com</span>
+                </a>
             </div>
             <!-- Nuevo Título de Sección -->
             <h2 class="credits-section-title">Asistencia en la Creación de Código</h2>
