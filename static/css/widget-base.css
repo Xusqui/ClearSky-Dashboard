@@ -220,7 +220,7 @@
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px); /* Compatibilidad con safary */
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
 }
 
 .modal-content {

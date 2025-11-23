@@ -121,5 +121,6 @@
 }
 
 .close:hover {
+    color: var(--wu-red);
     transform: scale(1.2);
 }

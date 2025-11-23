@@ -1,0 +1,30 @@
+/* widget-ephemeris.css */
+
+.ephemeris-card-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 100%;
+}
+
+.ephemeris-icon {
+    margin: -1px 0;
+}
+
+.ephemeris-img-icon {
+    width: 150px; /* Ajusta el tamaño del icono según tu diseño */
+    height: 100px;
+}
+
+.ephemeris-title p {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: var(--font-color);
+    margin: 0;
+}
+
+.ephemeris-subtitle p {
+    font-size: 0.9em;
+    color: var(--color-secondary-font);
+    margin-top: 5px;
+}

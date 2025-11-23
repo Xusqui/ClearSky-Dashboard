@@ -38,7 +38,7 @@
                     <!-- Usamos un icono de noche despejada como representación lunar genérica -->
                     <span class="credits-card-icon icon clear-night"></span>
                     <h3 class="credits-card-title">Fases Lunares (CSS)</h3>
-                    <p class="credits-card-value">Código de **Pure CSS Moon Phases**.</p>
+                    <p class="credits-card-value">Código de **Pure CSS Moon Phases**</p>
                     <span class="credits-card-source">codepen.io/xaelan</span>
                 </a>
                 <!-- 3. Cloudy Nights (Mapa Lunar) -->
@@ -46,7 +46,7 @@
                     <!-- Usamos un icono de información para referencia de mapa -->
                     <span class="credits-card-icon icon info"></span>
                     <h3 class="credits-card-title">Mapa Lunar 100</h3>
-                    <p class="credits-card-value">Referencia: **High Resolution Lunar 100 Map**.</p>
+                    <p class="credits-card-value">Referencia: **High Resolution Lunar 100 Map**</p>
                     <span class="credits-card-source">cloudynights.com</span>
                 </a>
                 <!-- 4. Open-Meteo (Datos en Altura) -->
@@ -62,7 +62,7 @@
                     <!-- Icono de Nubes/Previsión -->
                     <span class="credits-card-icon icon cloudy"></span>
                     <h3 class="credits-card-title">Previsión Meteorológica</h3>
-                    <p class="credits-card-value">Previsión horaria obtenida de **Open-Meteo**.</p>
+                    <p class="credits-card-value">Previsión horaria obtenida de **Open-Meteo**</p>
                     <span class="credits-card-source">open-meteo.com</span>
                 </a>
                 <!-- 6. SunCalc (Cálculos Astronómicos) -->
@@ -73,13 +73,21 @@
                     <p class="credits-card-value">Librería **SunCalc** para horas solares y lunares.</p>
                     <span class="credits-card-source">unpkg.com/suncalc</span>
                 </a>
-                <!-- 7. OpenStreetMap (NUEVO: Mapas) -->
+                <!-- 7. OpenStreetMap -->
                 <a class="credits-card" href="https://www.openstreetmap.org" target="_blank" rel="noopener noreferrer">
                     <!-- Icono de Ciudad/Ubicación (city) -->
                     <span class="credits-card-icon icon city"></span>
                     <h3 class="credits-card-title">Datos de Mapas y Ubicación</h3>
-                    <p class="credits-card-value">Mapas base y datos geográficos proporcionados por **OpenStreetMap**.</p>
+                    <p class="credits-card-value">Mapas base y datos geográficos proporcionados por **OpenStreetMap**</p>
                     <span class="credits-card-source">openstreetmap.org</span>
+                </a>
+                <!-- 8. Librería Orb.v2.js -->
+                <a class="credits-card" href="https://github.com/lizard-isana/orb.js" target="_blank" rel="noopener noreferrer">
+                    <!-- Icono de Ciudad/Ubicación (city) -->
+                    <span class="credits-card-icon icon github"></span>
+                    <h3 class="credits-card-title">Datos de localización de cuerpos celestes</h3>
+                    <p class="credits-card-value">Cálculos de posición y visibilidad de cuerpos celestes realizados gracias a la biblioteca **ORB-V2.JS**</p>
+                    <span class="credits-card-source">github.com/lizard-isana/orb.js</span>
                 </a>
             </div>
             <!-- Nuevo Título de Sección -->
@@ -90,7 +98,7 @@
                     <!-- Icono de información o ajustes (settings) -->
                     <span class="credits-card-icon icon settings"></span>
                     <h3 class="credits-card-title">Asistencia de Gemini</h3>
-                    <p class="credits-card-value">Generación y optimización de código, HTML y CSS.</p>
+                    <p class="credits-card-value">Generación, revisión y optimización de código PHP, JS, HTML y CSS.</p>
                     <span class="credits-card-source">google.com/gemini</span>
                 </a>
                 <!-- 9. Agradecimiento a ChatGPT -->
@@ -98,7 +106,7 @@
                     <!-- Icono de información o tiempo (time) -->
                     <span class="credits-card-icon icon time"></span>
                     <h3 class="credits-card-title">Asistencia de ChatGPT</h3>
-                    <p class="credits-card-value">Revisión de estructura, lógica y mejoras de diseño.</p>
+                    <p class="credits-card-value">Generación, revisión y optimización de código PHP, JS, HTML y CSS.</p>
                     <span class="credits-card-source">openai.com/chatgpt</span>
                 </a>
             </div>

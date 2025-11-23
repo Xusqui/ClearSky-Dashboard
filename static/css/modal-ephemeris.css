@@ -1,0 +1,83 @@
+/* -------------------------------------------------------------------------- */
+/* modal-ephemeris.css - Estilos Personalizados                */
+/* -------------------------------------------------------------------------- */
+
+/*
+* NOTA: Este CSS asume que los estilos básicos de los modales (clases: .modal,
+* .modal-content, .infografia, .close) y los títulos (.seeing-modal-title,
+* .seeing-group-title) ya están definidos en tu hoja de estilos principal
+* o en la CSS del modal lunar, ya que has solicitado mantener esa estructura.
+*/
+
+/* --- Contenedor de la Rejilla de Tarjetas --- */
+
+.ephemeris-card-grid {
+    display: grid;
+    /* Grid responsiva: Mínimo 200px por columna, se ajusta automáticamente */
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+    padding: 10px 0;
+    margin-bottom: 20px;
+    justify-content: start;
+}
+
+/* --- Estilo de la Tarjeta Individual --- */
+.ephemeris-item-card {
+    background-color: var(--bg-color);
+    border: 1px solid var(--color-box-border);
+    border-radius: 8px;
+    padding: 15px 10px;
+    text-align: center;
+    box-shadow: 0 4px 8px var(--dashboard-widget-box-shadow-color);
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin: 0;
+}
+
+.ephemeris-item-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px var(--dashboard-widget-box-shadow-color), 0 0 10px var(--wu-green80);
+}
+
+/* --- Elementos de la Tarjeta --- */
+
+/* Encabezado (Nombre y Tipo) */
+.ephemeris-item-header {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: var(--font-color);
+    margin-bottom: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Valor Principal (Altitud) */
+.ephemeris-item-value {
+    font-size: 2.0em; /* Tamaño grande para el dato principal */
+    font-weight: 900;
+    color: var(--wu-green80); /* Color brillante para destacar */
+    margin: 5px 0 10px 0;
+    line-height: 1;
+}
+
+.ephemeris-item-value span {
+    font-size: 0.6em; /* Grados */
+    font-weight: normal;
+    color: #bbb;
+}
+
+/* Detalles Secundarios (Azimut y Visibilidad) */
+.ephemeris-item-details {
+    font-size: 0.9em;
+    color: var(--color-secondary-font);;
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 0.5px dashed var(--link-color); /* Separador sutil */
+}
+
+/* Estado de Visibilidad (Ojo Desnudo / Telescopio) */
+.visibility-status {
+    font-weight: bold;
+    display: block; /* En una línea separada para mayor claridad */
+    color: var(--color-secondary-font);
+}

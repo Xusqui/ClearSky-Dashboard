@@ -15,7 +15,7 @@
                 <line x1="6" y1="6" x2="18" y2="18" />
             </svg>
         </button>
-        <canvas id="moonFeatureCanvas" width="400" height="400" style="display:block;margin:2rem auto;border-radius:50%;background: var(--wu-darkblue80);"></canvas>
+        <canvas id="moonFeatureCanvas" width="400" height="400" style="display:block;margin:2rem auto;border-radius:50%;background: var(--wu-black);"></canvas>
         <p id="moonFeatureInfo" style="text-align:center;margin-top:0.5rem;font-size:0.9rem;color: var(--font-secondary-color);"></p>
         <p id="moonFeatureDescription" style="text-align:center;margin-top:0.5rem;font-size:0.9rem;color: var(--font-secondary-color);"></p>
     </div>

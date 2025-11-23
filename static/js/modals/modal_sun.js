@@ -14,7 +14,7 @@ const modal = document.getElementById("solarModal");
 const closeBtn = document.getElementById("closeSolarModal");
 
 // --- Mostrar modal al hacer clic en el arco solar ---
-const arcContainer = document.getElementById("sun-arc-container");
+const arcContainer = document.getElementById("big-card-sun");
 arcContainer.addEventListener("click", () => {
     fillSolarModal();
     modal.style.display = "flex";

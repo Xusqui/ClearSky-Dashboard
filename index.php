@@ -41,6 +41,8 @@ include __DIR__ . "/static/config/config.php";
         <link rel="stylesheet" type="text/css" href="./static/css/modal-dates.css?v=<?= time() ?>" />
         <link rel="stylesheet" type="text/css" href="./static/css/modal-pws.css?v=<?= time() ?>" />
         <link rel="stylesheet" type="text/css" href="./static/css/modal-moon.css?v=<?= time() ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/widget-ephemeris.css?v=<?= time() ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/modal-ephemeris.css?v=<?= time() ?>" />
         <!-- El enlace de la hoja de estilos (css) moon-phase.php se actualiza dinámicamente dentro del archivo /static/js/moon.js -->
         <link id="moon-phase-css" rel="stylesheet" type="text/css" href="./static/css/moon-phase.php?position=&scale=0.4&bright=1&v=<?= time() ?>">
     </head>
@@ -80,6 +82,7 @@ include __DIR__ . "/static/config/config.php";
                             <div class="cards-grid">
                                 <?php
                                     require_once './widget_sun.php';
+                                    require_once './widget_ephemeris.php';
                                     require_once './widget_moon.php';
                                 ?>
                                 <!-- Tarjeta Previsión -->
@@ -129,6 +132,7 @@ include __DIR__ . "/static/config/config.php";
                         include_once './modal_moon_zoom.php';
                         include_once './modal_sun.php';
                         include_once './modal_credits.php';
+                        include_once './modal_ephemeris.php';
                         ?>
                         <!-- ############################################################
                              ############## FIN DE LAS GRÁFICAS MODALES #################
@@ -156,7 +160,7 @@ include __DIR__ . "/static/config/config.php";
         <script src="./static/js/moon.js?v<?= time() ?>"></script>
         <script src="./static/js/sun.js?lat=<?= $lat ?>&lon=<?= $lon ?>&v=<?= time() ?>"></script>
         <script type="module" src="./static/js/theme-switcher.js?v=<?= time() ?>"></script>
-        <script type="module" src="./static/js/modals/modal_pws_info.js?v=<?= time() ?>"></script>
+        <script src="./static/js/other/orb.v2.js?v=<?= time() ?>"></script>
         <!-- JS de widgets-->
         <script src="./static/js/widgets/update_status.js?v=<?= time() ?>"></script>
         <script src="./static/js/widgets/forecast.js?v=<?= time() ?>"></script>
@@ -172,7 +176,9 @@ include __DIR__ . "/static/config/config.php";
         <script src="./static/js/modals/modal_humidityint.js?v=<?= time() ?>"></script>
         <script src="./static/js/modals/modal_seeing.js?v=<?= time() ?>"></script>
         <script src="./static/js/modals/modal_sun.js?lat=<?= $lat ?>&lon=<?= $lon ?>&v=<?= time() ?>"></script>
+        <script type="module" src="./static/js/modals/modal_pws_info.js?v=<?= time() ?>"></script>
         <script src="./static/js/modals/modal_credits.js?v=<?= time() ?>"></script>
+        <script src="./static/js/modals/modal_ephemeris.js?v=<?= time() ?>"></script>
         <!-- SCRIPT de depuración
         <script>
             (function() {

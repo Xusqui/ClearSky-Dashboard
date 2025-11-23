@@ -2,7 +2,7 @@
 // widget_sun.php
 ?>
 <!-- Widget Sol -->
-<div class="big-card-sun sun-card">
+<div class="big-card-sun sun-card" id="big-card-sun">
     <div id="sun-arc-container" class="sun-arc-container">
         <svg id="sun-arc" width="100%" height="100%" viewBox="0 0 100 100">
             <defs>

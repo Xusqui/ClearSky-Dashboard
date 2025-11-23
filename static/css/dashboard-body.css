@@ -129,7 +129,7 @@ sun-moon-forecast .astro-info {
 /* Contenedor general de tarjetas */
 sun-moon-forecast .cards-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* Dos columnas iguales: Sol y Luna */
+    grid-template-columns: repeat(3, 1fr);
     gap: 1rem;
     align-items: stretch;
     width: 100%;
@@ -170,6 +170,25 @@ sun-moon-forecast .big-card-moon {
     overflow: hidden; /* necesario para el pseudo-elemento */
 }
 
+/** --- Tarjeta grande para las efemérides --- */
+sun-moon-forecast .big-card-ephemeris {
+    position: relative;
+    background: var(--sun-moon-forecast-bg-color);
+    cursor: default;
+    border-radius: 16px;
+    border: 1px solid var(--sun-moon-forecast-border-color);
+    padding: 16px 20px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: auto;
+    min-height: 160px;
+    box-sizing: border-box;
+    text-align: center;
+}
+
 sun-moon-forecast .big-card-moon::before {
     content: "";
     position: absolute;
@@ -192,7 +211,7 @@ sun-moon-forecast .big-card-moon > * {
 
 /* --- Previsión meteorológica ocupa todo el ancho --- */
 #forecast.forecast-container {
-    grid-column: 1 / 3; /* Se extiende a través de las dos columnas */
+    grid-column: 1 / 4; /* Se extiende a través de las dos columnas */
     display: grid;
     grid-template-columns: repeat(6, 1fr); /* 6 tarjetas */
     gap: 8px;

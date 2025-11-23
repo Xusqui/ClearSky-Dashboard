@@ -98,7 +98,7 @@
     /* Variables para el selector de tema */
     --theme-toggle-bg: rgba(0,0,0,0.04);
     --theme-toggle-border: rgba(0,0,0,0.08);
-    --theme-toggle-color: var(--font-color);
+    --theme-toggle-color: var(--tt-color);
     --theme-toggle-active-bg: var(--wu-lightblue);
     --theme-toggle-active-color: var(--wu-white);
     --theme-toggle-radius: 10px;
