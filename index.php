@@ -17,7 +17,7 @@ include __DIR__ . "/static/config/config.php";
         <link rel="stylesheet" type="text/css" href="./static/css/images.php?v=<?= time() ?>" />
         <link rel="stylesheet" type="text/css" href="./static/css/global.css?v=<?= time() ?>" />
         <link rel="stylesheet" type="text/css" href="./static/css/colors.css?v=<?= time() ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/theme-switcher.css?v=<?= time() ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/theme-switcher.php?v=<?= time() ?>" />
         <link rel="stylesheet" type="text/css" href="./static/css/dashboard-header.css?v=<?= time() ?>" />
         <link rel="stylesheet" type="text/css" href="./static/css/dashboard-body.css?v=<?= time() ?>" />
         <link rel="stylesheet" type="text/css" href="./static/css/dashboard-footer.css?v=<?= time() ?>" />

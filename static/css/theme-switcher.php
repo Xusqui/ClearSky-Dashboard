@@ -2,7 +2,22 @@
 /* ============================
 Botones de cambio de tema
 ============================ */
+<?php
+/* images.php */
+header("Content-Type: text/css");
 
+// Ruta absoluta del directorio donde está este script
+$scriptDir = __DIR__; // p.ej. /var/www/html/weather/static/css
+
+// Raíz del servidor web
+$docRoot = realpath($_SERVER['DOCUMENT_ROOT']); // p.ej. /var/www/html
+
+// Obtenemos la ruta relativa a la raíz del servidor
+$root = str_replace('\\', '/', str_replace($docRoot, '', realpath($scriptDir.'/../..')));
+
+// Aseguramos barra inicial y sin barra final
+$root = '/' . trim($root, '/');
+?>
 .theme-buttons {
     display: flex;
     align-items: center;
@@ -169,82 +184,84 @@ MODO DÍA
     --obs-accent-light: rgb(255, 140, 0); /* Naranja oscuro */
     --obs-description-bg: rgba(0, 0, 0, 0.03);
     --obs-close-color: rgb(200, 0, 100);
-    --icon-settings: url(../../static/images/icons/settings.svg);
-    --icon-city: url(../../static/images/icons/location_city.svg);
-    --icon-github: url(../../static/images/icons/github.svg);
-    --icon-rain-drop: url(../../static/images/icons/rain-drop.svg);
-    --icon-rain-drop-empty: url(../../static/images/icons/rain-drop-empty.svg);
-    --icon-pws: url(../../static/images/icons/pws.svg);
-    --icon-time: url(../../static/images/icons/time.svg);
-    --icon-arrow-back: url(../../static/images/icons/arrow-back.svg);
-    --icon-arrow-forward: url(../../static/images/icons/arrow-forward.svg);
-    --icon-arrow-dropdown-blue: url(../../static/images/icons/arrow_drop_down-blue.svg);
-    --icon-info: url(../../static/images/icons/info.svg);
-    --icon-plus: url(../../static/images/icons/plus.svg);
-    --icon-minus: url(../../static/images/icons/minus.svg);
-    --icon-arrow-right-blue: url(../../static/images/icons/arrow-right-blue.svg);
-    --icon-tornado: url(./static/images/icons/tornado.svg);
-    --icon-tropical-storm: url(./static/images/icons/tropical-storm.svg);
-    --icon-hurricane: url(./static/images/icons/hurricane.svg);
-    --icon-strong-storms: url(./static/images/icons/strong-storms.svg);
-    --icon-thunderstorms: url(./static/images/icons/thunderstorms.svg);
-    --icon-rain-snow: url(./static/images/icons/rain-snow.svg);
-    --icon-rain-sleet: url(./static/images/icons/rain-sleet.svg);
-    --icon-wintry-mix: url(./static/images/icons/wintry-mix.svg);
-    --icon-freezing-drizzle: url(./static/images/icons/freezing-drizzle.svg);
-    --icon-drizzle: url(./static/images/icons/drizzle.svg);
-    --icon-freezing-rain: url(./static/images/icons/freezing-rain.svg);
-    --icon-showers: url(./static/images/icons/showers.svg);
-    --icon-rain: url(./static/images/icons/rain.svg);
-    --icon-flurries: url(./static/images/icons/flurries.svg);
-    --icon-snow-showers: url(./static/images/icons/snow-showers.svg);
-    --icon-blowing-drifting-snow: url(./static/images/icons/blowing-drifting-snow.svg);
-    --icon-snow: url(./static/images/icons/snow.svg);
-    --icon-hail: url(./static/images/icons/hail.svg);
-    --icon-sleet: url(./static/images/icons/sleet.svg);
-    --icon-blowing-dust-sandstorm: url(./static/images/icons/blowing-dust-sandstorm.svg);
-    --icon-foggy: url(./static/images/icons/foggy.svg);
-    --icon-haze: url(./static/images/icons/haze.svg);
-    --icon-smoke: url(./static/images/icons/smoke.svg);
-    --icon-breezy: url(./static/images/icons/breezy.svg);
-    --icon-windy: url(./static/images/icons/windy.svg);
-    --icon-frigid-ice-crystals: url(./static/images/icons/frigid-ice-crystals.svg);
-    --icon-cloudy: url(./static/images/icons/cloudy.svg);
-    --icon-mostly-cloudy-night: url(./static/images/icons/mostly-cloudy-night.svg);
-    --icon-mostly-cloudy-day: url(./static/images/icons/mostly-cloudy-day.svg);
-    --icon-partly-cloudy-night: url(./static/images/icons/partly-cloudy-night.svg);
-    --icon-partly-cloudy-day: url(./static/images/icons/partly-cloudy-day.svg);
-    --icon-clear-night: url(./static/images/icons/clear-night.svg);
-    --icon-sunny-day: url(./static/images/icons/sunny-day.svg);
-    --icon-fair-mostly-clear-night: url(./static/images/icons/fair-mostly-clear-night.svg);
-    --icon-fair-mostly-sunny-day: url(./static/images/icons/fair-mostly-sunny-day.svg);
-    --icon-mixed-rain-and-hail: url(./static/images/icons/mixed-rain-and-hail.svg);
-    --icon-hot-day: url(./static/images/icons/hot-day.svg);
-    --icon-isolated-thunderstorms-day: url(./static/images/icons/isolated-thunderstorms-day.svg);
-    --icon-scattered-thunderstorms-day: url(./static/images/icons/scattered-thunderstorms-day.svg);
-    --icon-scattered-showers-day: url(./static/images/icons/scattered-showers-day.svg);
-    --icon-heavy-rain: url(./static/images/icons/heavy-rain.svg);
-    --icon-scattered-snow-showers-day: url(./static/images/icons/scattered-snow-showers-day.svg);
-    --icon-heavy-snow: url(./static/images/icons/heavy-snow.svg);
-    --icon-blizzard: url(./static/images/icons/blizzard.svg);
-    --icon-not-available: url(./static/images/icons/not-available.svg);
-    --icon-scattered-showers-night: url(./static/images/icons/scattered-showers-night.svg);
-    --icon-scattered-snow-showers-night: url(./static/images/icons/scattered-snow-showers-night.svg);
-    --icon-scattered-thunderstorms-night: url(./static/images/icons/scattered-thunderstorms-night.svg);
-    --icon-thermometer: url(../../static/images/icons/thermometer.svg);
-    --icon-chevron-right: url(../../static/images/icons/chevron-right.svg);
-    --icon-sunrise: url(../../static/images/icons/sunrise.svg);
-    --icon-sunset: url(../../static/images/icons/sunset.svg);
-    --mask-gauge: url(../../static/images/masks/gauge.svg);
-    --mask-thermometer: url(../../static/images/masks/thermometer.svg);
-    --image-wind-bg: url(../../static/images/widgets/wind-bg.svg);
-    --image-wind-arrow-tip: url(../../static/images/widgets/wind-arrow-tip.svg);
-    --image-dew-point-bg: url(../../static/images/widgets/dewpoint-bg.svg);
-    --image-dew-point-empty-bg: url(../../static/images/widgets/dewpoint-empty-bg.svg);
-    --image-temp-arrow-tip: url(../../static/images/widgets/temp-arrow-tip.svg);
-    --image-pressure-bg: url(../../static/images/widgets/pressure-bg.svg);
-    --icon-wu-logo: url(../../static/images/icons/wu-logo.svg);
-    --icon-copyright: url(../../static/images/icons/copyright-light.svg);
+    --icon-settings: url('<?= $root ?>/static/images/icons/settings.svg');
+    --icon-city: url('<?= $root ?>/static/images/icons/location_city.svg');
+    --icon-github: url('<?= $root ?>/static/images/icons/github.svg');
+    --icon-rain-drop: url('<?= $root ?>/static/images/icons/rain-drop.svg');
+    --icon-rain-drop-empty: url('<?= $root ?>/static/images/icons/rain-drop-empty.svg');
+    --icon-pws: url('<?= $root ?>/static/images/icons/pws.svg');
+    --icon-time: url('<?= $root ?>/static/images/icons/time.svg');
+    --icon-arrow-back: url('<?= $root ?>/static/images/icons/arrow-back.svg');
+    --icon-arrow-forward: url('<?= $root ?>/static/images/icons/arrow-forward.svg');
+    --icon-arrow-dropdown-blue: url('<?= $root ?>/static/images/icons/arrow_drop_down-blue.svg');
+    --icon-info: url('<?= $root ?>/static/images/icons/info.svg');
+    --icon-plus: url('<?= $root ?>/static/images/icons/plus.svg');
+    --icon-minus: url('<?= $root ?>/static/images/icons/minus.svg');
+    --icon-arrow-right-blue: url('<?= $root ?>/./static/images/icons/arrow-right-blue.svg');
+    --icon-tornado: url('<?= $root ?>/static/images/icons/tornado.svg');
+    --icon-tropical-storm: url('<?= $root ?>/static/images/icons/tropical-storm.svg');
+    --icon-hurricane: url('<?= $root ?>/static/images/icons/hurricane.svg');
+    --icon-strong-storms: url('<?= $root ?>/static/images/icons/strong-storms.svg');
+    --icon-thunderstorms: url('<?= $root ?>/static/images/icons/thunderstorms.svg');
+    --icon-rain-snow: url('<?= $root ?>/static/images/icons/rain-snow.svg');
+    --icon-rain-sleet: url('<?= $root ?>/static/images/icons/rain-sleet.svg');
+    --icon-wintry-mix: url('<?= $root ?>/static/images/icons/wintry-mix.svg');
+    --icon-freezing-drizzle: url('<?= $root ?>/static/images/icons/freezing-drizzle.svg');
+    --icon-drizzle: url('<?= $root ?>/static/images/icons/drizzle.svg');
+    --icon-freezing-rain: url('<?= $root ?>/static/images/icons/freezing-rain.svg');
+    --icon-showers: url('<?= $root ?>/static/images/icons/showers.svg');
+    --icon-rain: url('<?= $root ?>/static/images/icons/rain.svg');
+    --icon-flurries: url('<?= $root ?>/static/images/icons/flurries.svg');
+    --icon-snow-showers: url('<?= $root ?>/static/images/icons/snow-showers.svg');
+    --icon-blowing-drifting-snow: url('<?= $root ?>/static/images/icons/blowing-drifting-snow.svg');
+    --icon-snow: url('<?= $root ?>/static/images/icons/snow.svg');
+    --icon-hail: url('<?= $root ?>/static/images/icons/hail.svg');
+    --icon-sleet: url('<?= $root ?>/static/images/icons/sleet.svg');
+    --icon-blowing-dust-sandstorm: url('<?= $root ?>/static/images/icons/blowing-dust-sandstorm.svg');
+    --icon-foggy: url('<?= $root ?>/static/images/icons/foggy.svg');
+    --icon-haze: url('<?= $root ?>/static/images/icons/haze.svg');
+    --icon-smoke: url('<?= $root ?>/static/images/icons/smoke.svg');
+    --icon-breezy: url('<?= $root ?>/static/images/icons/breezy.svg');
+    --icon-windy: url('<?= $root ?>/static/images/icons/windy.svg');
+    --icon-frigid-ice-crystals: url('<?= $root ?>/static/images/icons/frigid-ice-crystals.svg');
+    --icon-cloudy: url('<?= $root ?>/static/images/icons/cloudy.svg');
+    --icon-mostly-cloudy-night: url('<?= $root ?>/static/images/icons/mostly-cloudy-night.svg');
+    --icon-mostly-cloudy-day: url('<?= $root ?>/static/images/icons/mostly-cloudy-day.svg');
+    --icon-partly-cloudy-night: url('<?= $root ?>/static/images/icons/partly-cloudy-night.svg');
+    --icon-partly-cloudy-day: url('<?= $root ?>/static/images/icons/partly-cloudy-day.svg');
+    --icon-clear-night: url('<?= $root ?>/static/images/icons/clear-night.svg');
+    --icon-sunny-day: url('<?= $root ?>/static/images/icons/sunny-day.svg');
+    --icon-fair-mostly-clear-night: url('<?= $root ?>/static/images/icons/fair-mostly-clear-night.svg');
+    --icon-fair-mostly-sunny-day: url('<?= $root ?>/static/images/icons/fair-mostly-sunny-day.svg');
+    --icon-mixed-rain-and-hail: url('<?= $root ?>/static/images/icons/mixed-rain-and-hail.svg');
+    --icon-hot-day: url('<?= $root ?>/static/images/icons/hot-day.svg');
+    --icon-isolated-thunderstorms-day: url('<?= $root ?>/static/images/icons/isolated-thunderstorms-day.svg');
+    --icon-scattered-thunderstorms-day: url('<?= $root ?>/static/images/icons/scattered-thunderstorms-day.svg');
+    --icon-scattered-showers-day: url('<?= $root ?>/static/images/icons/scattered-showers-day.svg');
+    --icon-heavy-rain: url('<?= $root ?>/static/images/icons/heavy-rain.svg');
+    --icon-scattered-snow-showers-day: url('<?= $root ?>/static/images/icons/scattered-snow-showers-day.svg');
+    --icon-heavy-snow: url('<?= $root ?>/static/images/icons/heavy-snow.svg');
+    --icon-blizzard: url('<?= $root ?>/static/images/icons/blizzard.svg');
+    --icon-not-available: url('<?= $root ?>/static/images/icons/not-available.svg');
+    --icon-scattered-showers-night: url('<?= $root ?>/static/images/icons/scattered-showers-night.svg');
+    --icon-scattered-snow-showers-night: url('<?= $root ?>/static/images/icons/scattered-snow-showers-night.svg');
+    --icon-scattered-thunderstorms-night: url('<?= $root ?>/static/images/icons/scattered-thunderstorms-night.svg');
+    --icon-thermometer: url('<?= $root ?>/static/images/icons/thermometer.svg');
+    --icon-chevron-right: url('<?= $root ?>/static/images/icons/chevron-right.svg');
+    --icon-sunrise: url('<?= $root ?>/static/images/icons/sunrise.svg');
+    --icon-sunset: url('<?= $root ?>/static/images/icons/sunset.svg');
+    --mask-gauge: url('<?= $root ?>/static/images/masks/gauge.svg');
+    --mask-thermometer: url('<?= $root ?>/static/images/masks/thermometer.svg');
+    --image-wind-bg: url('<?= $root ?>/static/images/widgets/wind-bg.svg');
+    --image-wind-arrow-tip: url('<?= $root ?>/static/images/widgets/wind-arrow-tip.svg');
+    --image-dew-point-bg: url('<?= $root ?>/static/images/widgets/dewpoint-bg.svg');
+    --image-dew-point-empty-bg: url('<?= $root ?>/static/images/widgets/dewpoint-empty-bg.svg');
+    --image-temp-arrow-tip: url('<?= $root ?>/static/images/widgets/temp-arrow-tip.svg');
+    --image-pressure-bg: url('<?= $root ?>/static/images/widgets/pressure-bg.svg');
+    --icon-wu-logo: url('<?= $root ?>/static/images/icons/wu-logo.svg');
+    --icon-copyright: url('<?= $root ?>/static/images/icons/copyright-light.svg');
+    --image-background-moon-card: url('<?= $root ?>/static/images/backgrounds/stars1.png');
+    --icon-espacioprofundo: url('<?= $root ?>/static/images/icons/espacioprofundo-day.png');
 }
 
 /* ======================================================
@@ -299,23 +316,27 @@ MODO NOCHE
     --obs-accent-light: rgb(255, 192, 0); /* Amarillo/Naranja brillante para énfasis */
     --obs-description-bg: rgba(255, 255, 255, 0.05); /* Fondo ligeramente transparente */
     --obs-close-color: rgb(255, 0, 112);
-    --icon-settings: url(../../static/images/icons/settings-dark.svg);
-    --icon-city: url(../../static/images/icons/city-dark.svg);
-    --icon-github: url(../../static/images/icons/github-dark.svg);
-    --icon-pws: url(../../static/images/icons/pws-dark.svg);
-    --icon-time: url(../../static/images/icons/time-dark.svg);
-    --icon-arrow-back: url(../../static/images/icons/arrow-back-dark.svg);
-    --icon-arrow-forward: url(../../static/images/icons/arrow-forward-dark.svg);
-    --icon-info: url(../../static/images/icons/info-dark.svg);
-    --icon-thermometer: url(../../static/images/icons/thermometer-dark.svg);
-    --icon-chevron-right: url(../../static/images/icons/chevron-right-dark.svg);
-    --icon-plus: url(../../static/images/icons/plus-dark.svg);
-    --icon-minus: url(../../static/images/icons/minus-dark.svg);
-    --image-wind-bg: url(../../static/images/widgets/wind-bg-dark.svg);
-    --image-wind-arrow-tip: url(../../static/images/widgets/wind-arrow-tip-dark.svg);
-    --icon-copyright: url(../../static/images/icons/copyright-dark.svg);
-    --image-pressure-bg: url(../../static/images/widgets/pressure-bg-dark.svg);
-
+    --icon-settings: url('<?= $root ?>/static/images/icons/settings-dark.svg');
+    --icon-city: url('<?= $root ?>/static/images/icons/city-dark.svg');
+    --icon-github: url('<?= $root ?>/static/images/icons/github-dark.svg');
+    --icon-clear-night: url('<?= $root ?>/static/images/icons/clear-night.svg');
+    --icon-breezy: url('<?= $root ?>/static/images/icons/breezy.svg');
+    --icon-cloudy: url('<?= $root ?>/static/images/icons/cloudy.svg');
+    --icon-sunrise: url('<?= $root ?>/static/images/icons/sunrise.svg');
+    --icon-pws: url('<?= $root ?>/static/images/icons/pws-dark.svg');
+    --icon-time: url('<?= $root ?>/static/images/icons/time-dark.svg');
+    --icon-arrow-back: url('<?= $root ?>/static/images/icons/arrow-back-dark.svg');
+    --icon-arrow-forward: url('<?= $root ?>/static/images/icons/arrow-forward-dark.svg');
+    --icon-info: url('<?= $root ?>/static/images/icons/info-dark.svg');
+    --icon-thermometer: url('<?= $root ?>/static/images/icons/thermometer-dark.svg');
+    --icon-chevron-right: url('<?= $root ?>/static/images/icons/chevron-right-dark.svg');
+    --icon-plus: url('<?= $root ?>/static/images/icons/plus-dark.svg');
+    --icon-minus: url('<?= $root ?>/static/images/icons/minus-dark.svg');
+    --image-wind-bg: url('<?= $root ?>/static/images/widgets/wind-bg-dark.svg');
+    --image-wind-arrow-tip: url('<?= $root ?>/static/images/widgets/wind-arrow-tip-dark.svg');
+    --icon-copyright: url('<?= $root ?>/static/images/icons/copyright-dark.svg');
+    --image-pressure-bg: url('<?= $root ?>/static/images/widgets/pressure-bg-dark.svg');
+    --icon-espacioprofundo: url('<?= $root ?>/static/images/icons/espacioprofundo-night.png');
 }
 
 /* ===============================================

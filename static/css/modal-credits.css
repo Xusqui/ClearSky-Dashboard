@@ -174,6 +174,7 @@ Estilos del Modal (Créditos) modal-credits.css
 .icon.time { background-image: var(--icon-time); }
 .icon.city { background-image: var(--icon-city); }
 .icon.github {background-image: var(--icon-github); }
+.icon.espacioprofundo {background-image: var(--icon-espacioprofundo); }
 
 /* Título de la tarjeta (el recurso principal) */
 .credits-card-title {

@@ -92,13 +92,18 @@ $root = '/' . trim($root, '/');
     --icon-wu-logo: url('<?= $root ?>/static/images/icons/wu-logo.svg');
     --icon-copyright: url('<?= $root ?>/static/images/icons/copyright-light.svg');
     --image-background-moon-card: url('<?= $root ?>/static/images/backgrounds/stars1.png');
+    --icon-espacioprofundo: url('<?= $root ?>/static/images/icons/espacioprofundo-day.png');
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
         --icon-settings: url('<?= $root ?>/static/images/icons/settings-dark.svg');
-        --icon-city: url('<?= $root ?>/ther/static/images/icons/city-dark.svg');
+        --icon-city: url('<?= $root ?>/static/images/icons/city-dark.svg');
         --icon-github: url('<?= $root ?>/static/images/icons/github-dark.svg');
+        --icon-clear-night: url('<?= $root ?>/static/images/icons/clear-night.svg');
+        --icon-breezy: url('<?= $root ?>/static/images/icons/breezy.svg');
+        --icon-cloudy: url('<?= $root ?>/static/images/icons/cloudy.svg');
+        --icon-sunrise: url('<?= $root ?>/static/images/icons/sunrise.svg');
         --icon-pws: url('<?= $root ?>/static/images/icons/pws-dark.svg');
         --icon-time: url('<?= $root ?>/static/images/icons/time-dark.svg');
         --icon-arrow-back: url('<?= $root ?>/static/images/icons/arrow-back-dark.svg');
@@ -112,6 +117,7 @@ $root = '/' . trim($root, '/');
         --image-wind-arrow-tip: url('<?= $root ?>/static/images/widgets/wind-arrow-tip-dark.svg');
         --icon-copyright: url('<?= $root ?>/static/images/icons/copyright-dark.svg');
         --image-pressure-bg: url('<?= $root ?>/static/images/widgets/pressure-bg-dark.svg');
+        --icon-espacioprofundo: url('<?= $root ?>/static/images/icons/espacioprofundo-night.png');
     }
     /* 🔆 Ajuste visual de iconos meteorológicos en modo oscuro */
     .forecast-icon {
@@ -406,4 +412,12 @@ $root = '/' . trim($root, '/');
 .icon.github {
     background-repeat: no-repeat;
     background-image:var(--icon-github)
+}
+.icon.city {
+    background-repeat: no-repeat;
+    background-image:var(--icon-city)
+}
+.icon.espacioprofundo {
+    background-repeat: no-repeat;
+    background-image:var(--icon-espacioprofundo)
 }
