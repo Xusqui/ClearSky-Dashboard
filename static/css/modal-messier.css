@@ -6,7 +6,7 @@
 
 .modal-content {
     /* Fondo del Modal: Usamos el oscuro de Observatorio */
-    background: var(--obs-bg-dark);
+    /* background: var(--obs-bg-dark); */
     /* Color de Fuente General: Usamos el neón */
     color: var(--obs-neon-light);
 
@@ -16,7 +16,7 @@
     border-radius: 5px;
     position: relative;
     /* Sombra exterior de neón (usa la variable raw para la sombra) */
-    box-shadow: 0 0 20px 5px rgba(var(--obs-neon-shadow), 0.3);
+    /*box-shadow: 0 0 20px 5px rgba(var(--obs-neon-shadow), 0.3); */
 
     /* Adaptación de tamaño */
     max-width: 850px;

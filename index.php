@@ -180,7 +180,7 @@ include __DIR__ . "/static/config/config.php";
         <script src="./static/js/modals/modal_sun.js?lat=<?= $lat ?>&lon=<?= $lon ?>&v=<?= time() ?>"></script>
         <script type="module" src="./static/js/modals/modal_pws_info.js?v=<?= time() ?>"></script>
         <script src="./static/js/modals/modal_credits.js?v=<?= time() ?>"></script>
-        <script src="./static/js/modals/modal_ephemeris.js?v=<?= time() ?>"></script>
+        <script type="module" src="./static/js/modals/modal_ephemeris.js?v=<?= time() ?>"></script>
         <!-- SCRIPT de depuración
         <script>
             (function() {
