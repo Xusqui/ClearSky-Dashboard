@@ -15,8 +15,16 @@ window.fraction = window.moon.fraction;
 window.phase = window.moon.phase;
 
 // --- Calcular la salida y puesta de la Luna ---
+
+// 1. Obtener la salida y puesta para el día de 'now'
 const moonTimes = SunCalc.getMoonTimes(now, latitude, longitude);
 window.moonTimes = moonTimes;
+
+// 2. Crear una fecha para el día siguiente para verificar la puesta si es null hoy
+const tomorrow = new Date(now);
+tomorrow.setDate(now.getDate() + 1);
+const moonTimesTomorrow = SunCalc.getMoonTimes(tomorrow, latitude, longitude);
+
 
 // Función auxiliar para formatear la hora (HH:MM)
 function formatTime(date) {
@@ -27,29 +35,44 @@ function formatTime(date) {
     return date.toLocaleTimeString(navigator.language, options);
 }
 
+// Obtener la hora de salida (siempre del día 'now')
 const moonRiseTime = formatTime(moonTimes.rise);
-const moonSetTime = formatTime(moonTimes.set);
+
+// Obtener la hora de puesta:
+let moonSetTime;
+if (moonTimes.set) {
+    // Si la Luna se pone hoy, usamos la hora de hoy.
+    moonSetTime = formatTime(moonTimes.set);
+} else if (moonTimesTomorrow.set) {
+    // Si no se pone hoy, comprobamos si se pone en el día de mañana (moonTimesTomorrow.set contendrá la hora de puesta)
+    moonSetTime = formatTime(moonTimesTomorrow.set);
+    // Opcionalmente, puedes añadir un indicador de que es el día siguiente, e.g., ' mañana'
+    // moonSetTime += ' (+1)';
+} else {
+    // Si no se pone ni hoy ni mañana (o mañana tampoco se pone), devolvemos el guion.
+    moonSetTime = '—';
+}
 
 // --- Texto de la fase lunar ---
-const fractionPercent = Math.round(fraction * 100);
+const fractionPercent = Math.round(window.fraction * 100);
 let phaseText = "";
 const tol = 0.02; // tolerancia
 
-if ((phase >= 0 && phase < tol) || phase > 1 - tol) {
+if ((window.phase >= 0 && window.phase < tol) || window.phase > 1 - tol) {
     phaseText = "Luna nueva";
-} else if (phase >= tol && phase < 0.25 - tol) {
+} else if (window.phase >= tol && window.phase < 0.25 - tol) {
     phaseText = "Luna creciente";
-} else if (phase >= 0.25 - tol && phase <= 0.25 + tol) {
+} else if (window.phase >= 0.25 - tol && window.phase <= 0.25 + tol) {
     phaseText = "Cuarto creciente";
-} else if (phase > 0.25 + tol && phase < 0.5 - tol) {
+} else if (window.phase > 0.25 + tol && window.phase < 0.5 - tol) {
     phaseText = "Gibosa creciente";
-} else if (phase >= 0.5 - tol && phase <= 0.5 + tol) {
+} else if (window.phase >= 0.5 - tol && window.phase <= 0.5 + tol) {
     phaseText = "Luna llena";
-} else if (phase > 0.5 + tol && phase < 0.75 - tol) {
+} else if (window.phase > 0.5 + tol && window.phase < 0.75 - tol) {
     phaseText = "Gibosa menguante";
-} else if (phase >= 0.75 - tol && phase <= 0.75 + tol) {
+} else if (window.phase >= 0.75 - tol && window.phase <= 0.75 + tol) {
     phaseText = "Cuarto menguante";
-} else if (phase > 0.75 + tol && phase < 1 - tol) {
+} else if (window.phase > 0.75 + tol && window.phase < 1 - tol) {
     phaseText = "Luna menguante";
 }
 

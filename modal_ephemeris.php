@@ -18,11 +18,16 @@
 
             <h2 class="seeing-group-title">Sistema Solar (Planetas, Luna y Sol)</h2>
             <div id="solar-system-cards-container" class="ephemeris-card-grid">
-                </div>
+            </div>
 
-            <h2 class="seeing-group-title">Catálogo Messier (Cielo Profundo)</h2>
+            <div class="seeing-group-title-container">
+                <h2 class="seeing-group-title">Catálogo Messier (Cielo Profundo)</h2>
+                <button id="toggleDSOOrder" class="sort-toggle-button" title="Alternar Orden">
+                    Ordenar por Altitud ⬆️
+                </button>
+            </div>
             <div id="dso-cards-container" class="ephemeris-card-grid">
-                 </div>
+            </div>
 
             <div class="footer">
                 <p class="ephemeris-attribution">

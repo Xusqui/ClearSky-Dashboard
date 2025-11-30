@@ -24,3 +24,7 @@
 /static/messier/messier_scraper.py
 /static/messier/download_messier.py
 /static/messier/messier_html/
+/static/messier/venv_caldwell/
+/static/messier/caldwellcat.html
+/static/messier/messier_data_borrame.json
+/static/messier/messier_data_correcto_borrame.json

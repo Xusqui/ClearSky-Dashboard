@@ -184,6 +184,8 @@ MODO DÍA
     --obs-accent-light: rgb(255, 140, 0); /* Naranja oscuro */
     --obs-description-bg: rgba(0, 0, 0, 0.03);
     --obs-close-color: rgb(200, 0, 100);
+    --button: rgb(220, 220, 220);
+    --button-hover: rgb(170, 170, 170);
     --icon-settings: url('<?= $root ?>/static/images/icons/settings.svg');
     --icon-city: url('<?= $root ?>/static/images/icons/location_city.svg');
     --icon-github: url('<?= $root ?>/static/images/icons/github.svg');
@@ -316,6 +318,8 @@ MODO NOCHE
     --obs-accent-light: rgb(255, 192, 0); /* Amarillo/Naranja brillante para énfasis */
     --obs-description-bg: rgba(255, 255, 255, 0.05); /* Fondo ligeramente transparente */
     --obs-close-color: rgb(255, 0, 112);
+    --button: rgb(50,50,50);
+    --button-hover: rgb(100, 100, 100);
     --icon-settings: url('<?= $root ?>/static/images/icons/settings-dark.svg');
     --icon-city: url('<?= $root ?>/static/images/icons/city-dark.svg');
     --icon-github: url('<?= $root ?>/static/images/icons/github-dark.svg');

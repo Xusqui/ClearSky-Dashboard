@@ -93,3 +93,21 @@
     /* Asumiendo que usas sombras para las tarjetas */
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
 }
+
+/* Estilo para el botón de alternancia */
+.sort-toggle-button {
+    background-color: var(--button); /* Color de acento de tu tema */
+    color: var(--color-font); /* Texto en color claro */
+    border: none;
+    border-radius: 5px;
+    padding: 8px 15px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.9em;
+    transition: background-color 0.2s ease;
+    white-space: nowrap; /* Evita que el texto del botón se rompa en varias líneas */
+}
+
+.sort-toggle-button:hover {
+    background-color: var(--button-hover); /* Tono más oscuro al pasar el ratón */
+}

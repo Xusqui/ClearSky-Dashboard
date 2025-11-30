@@ -29,6 +29,15 @@
     margin-bottom: 15px;
     text-align: center;
 }
+.seeing-group-title-container {
+    display: flex;
+    /* Alinea el título y el botón en la misma línea */
+    align-items: center;
+    /* Distribuye el espacio entre el título y el botón */
+    justify-content: space-between;
+    margin-top: 1.5rem; /* Margen superior para separarlo del grupo anterior */
+    margin-bottom: 0.5rem; /* Margen inferior para separarlo de la rejilla */
+}
 /* Quitar margen superior al primer título */
 .infografia h2.seeing-group-title:first-of-type {
     margin-top: 0;
