@@ -31,7 +31,7 @@
 
             <div class="footer">
                 <p class="ephemeris-attribution">
-                    Cálculos de efemérides realizados localmente usando la librería <a href="https://github.com/lizard-isana/orb.js/tree/master" target="_blank">Orb</a> y datos del Catálogo Messier.
+                    Cálculos de efemérides realizados localmente usando astro.xusqui.com api y datos del Catálogo Messier.
                 </p>
             </div>
         </div>

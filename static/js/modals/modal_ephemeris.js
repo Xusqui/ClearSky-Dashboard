@@ -392,7 +392,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const apiLon = YOUR_LOCATION.longitude;
         const datetime_str = calculationTime.toISOString().split('.')[0];
 
-        const apiEndpoint = `https://astro.xusqui.com/visible_objects?lat=${apiLat}&lon=${apiLon}&datetime_str=${encodeURIComponent(datetime_str)}&min_alt=${minAlt}`;
+        const apiEndpoint = `https://astro.xusqui.com/messier_visible_objects?lat=${apiLat}&lon=${apiLon}&datetime_str=${encodeURIComponent(datetime_str)}&min_alt=${minAlt}`;
 
         try {
             const response = await fetch(apiEndpoint);
