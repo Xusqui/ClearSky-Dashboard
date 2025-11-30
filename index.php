@@ -44,6 +44,7 @@ include __DIR__ . "/static/config/config.php";
         <link rel="stylesheet" type="text/css" href="./static/css/widget-ephemeris.css?v=<?= time() ?>" />
         <link rel="stylesheet" type="text/css" href="./static/css/modal-ephemeris.css?v=<?= time() ?>" />
         <link rel="stylesheet" type="text/css" href="./static/css/modal-messier.css?v=<?= time() ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/modal-sistema-solar.css?v=<?= time() ?>" />
         <!-- El enlace de la hoja de estilos (css) moon-phase.php se actualiza dinámicamente dentro del archivo /static/js/moon.js -->
         <link id="moon-phase-css" rel="stylesheet" type="text/css" href="./static/css/moon-phase.php?position=&scale=0.4&bright=1&v=<?= time() ?>">
     </head>
@@ -135,6 +136,7 @@ include __DIR__ . "/static/config/config.php";
                         include_once './modal_credits.php';
                         include_once './modal_ephemeris.php';
                         include_once './modal_messier.php';
+                        include_once './modal_sistema_solar.php';
                         ?>
                         <!-- ############################################################
                              ############## FIN DE LAS GRÁFICAS MODALES #################

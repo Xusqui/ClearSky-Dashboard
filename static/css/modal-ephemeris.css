@@ -94,6 +94,18 @@
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
 }
 
+/* Estilo para hacer las tarjetas Sistema Solar clicables */
+.clickable-ss {
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.clickable-ss:hover {
+    transform: translateY(-3px);
+    /* Asumiendo que usas sombras para las tarjetas */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
 /* Estilo para el botón de alternancia */
 .sort-toggle-button {
     background-color: var(--button); /* Color de acento de tu tema */
@@ -110,4 +122,20 @@
 
 .sort-toggle-button:hover {
     background-color: var(--button-hover); /* Tono más oscuro al pasar el ratón */
+}
+
+.solar-system-detail-image {
+    width: 100%;
+    max-height: 400px; /* Mantén esta altura máxima, ajústala si es necesario */
+    height: auto; /* Importante para mantener la proporción */
+
+    /* ***** CAMBIO AQUÍ ***** */
+    object-fit: contain; /* <-- Cambia de 'cover' a 'contain' */
+    /* ********************* */
+
+    border-radius: 8px;
+    display: block;
+
+    /* Opcional: Centrar la imagen horizontalmente si hay espacio extra */
+    margin: 0 auto;
 }

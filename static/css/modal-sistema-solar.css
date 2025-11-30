@@ -1,0 +1,142 @@
+/* modal-sistema-solar.css */
+/* ==============================================
+   ESTILOS GENERALES DEL MODAL
+   ============================================== */
+
+/* Contenedor del Modal (el fondo negro que oscurece la pantalla) */
+#solarSystemDetailModal.modal {
+    background-color: rgba(0, 0, 0, 0.85); /* Fondo negro semitransparente */
+}
+
+/* Contenido Principal del Modal (el panel de datos) */
+#solarSystemDetailModal .modal-content {
+    background-color: #121212; /* Fondo muy oscuro, casi negro */
+    color: #E0E0E0; /* Color principal del texto */
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7); /* Sombra intensa */
+    border: 1px solid #333;
+    max-width: 650px; /* Ancho máximo del panel */
+    width: 90%; /* Responsive en móviles */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    position: relative; /* Para posicionar el botón de cerrar */
+}
+
+/* Botón de Cerrar (la X) */
+#solarSystemDetailModal .close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #87CEFA; /* Azul espacial */
+    transition: color 0.2s;
+}
+
+#solarSystemDetailModal .close:hover {
+    color: #FFFFFF;
+}
+
+
+/* ==============================================
+   ESTILOS DEL ENCABEZADO Y IMAGEN
+   ============================================== */
+
+/* Contenedor principal de la imagen y el título */
+.solar-system-detail-header {
+    display: flex;
+    flex-direction: column; /* La imagen va encima del texto */
+    align-items: center; /* Centra el contenido en el header */
+    margin-bottom: 20px;
+}
+
+/* Imagen */
+.solar-system-detail-image {
+    width: 100%;
+    max-height: 450px; /* Límite de altura */
+    object-fit: contain; /* Asegura que la imagen se vea completa */
+    height: auto;
+    border-radius: 50%; /* Intenta un borde circular para planetas */
+    margin-bottom: 25px;
+    border: 3px solid #5A5A5A; /* Borde de enfoque sutil */
+    box-shadow: 0 0 20px rgba(100, 149, 237, 0.4); /* Brillo azulado */
+}
+
+/* Título (Nombre) */
+.solar-system-detail-title {
+    color: #FFFFFF;
+    font-size: 2.2em;
+    font-weight: 700;
+    margin: 0 0 5px 0;
+    text-align: center;
+}
+
+/* Tipo de Cuerpo */
+.solar-system-detail-bodytype {
+    color: #87CEFA; /* Azul claro */
+    font-style: italic;
+    font-size: 1.1em;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+
+/* ==============================================
+   ESTILOS DE SECCIONES Y DATOS
+   ============================================== */
+
+/* Contenedor de las Secciones (Características Físicas, Datos Orbitales) */
+.solar-system-detail-section {
+    margin-bottom: 25px;
+}
+
+/* Subtítulos (h3) */
+.solar-system-detail-section h3 {
+    color: #87CEFA; /* Azul claro para los títulos */
+    font-size: 1.3em;
+    font-weight: 500;
+    margin-top: 25px;
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #3A3A3A; /* Separador de sección */
+}
+
+/* FILA DE DATOS - El diseño de dos columnas */
+.data-row {
+    display: flex;
+    justify-content: space-between; /* Alinea clave a izquierda y valor a derecha */
+    margin-bottom: 6px;
+    padding: 3px 0;
+    line-height: 1.4;
+    border-bottom: 1px dotted rgba(60, 60, 60, 0.5); /* Separador punteado suave */
+}
+
+.data-row:last-child {
+    border-bottom: none; /* Elimina la línea en la última fila de cada sección */
+}
+
+/* Clave del dato (ej. "Radio Medio:") */
+.data-row .label {
+    color: #B0C4DE; /* Gris azulado sutil */
+    font-weight: 400;
+    padding-right: 15px; /* Espacio entre clave y valor */
+}
+
+/* Valor del dato (ej. "1737.0 km") */
+.data-row .value {
+    color: #FFFFFF; /* Blanco puro para el valor */
+    font-weight: 500;
+    text-align: right;
+}
+
+/* Dato de Gravedad, un poco más resaltado */
+.data-row .value.gravity {
+    color: #FFA07A; /* Naranja/coral para resaltar valores importantes */
+    font-weight: 600;
+}
+
+.solar-system-detail-image {
+    /* ... otros estilos ... */
+    background-color: #000000; /* Asegura que la propia imagen no tenga un fondo blanco */
+}

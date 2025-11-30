@@ -15,7 +15,7 @@
 // -------------------------------------------------------------
 
 // Objetos del Sistema Solar (Usan Orb.VSOP, Orb.Sun, Orb.Luna) - MANTENIDO
- import { ORB_TARGETS } from './solar_system.js';
+import { ORB_TARGETS } from './solar_system.js';
 
 // Ubicación del observador en el formato requerido por Orb.Observation - MANTENIDO
 const YOUR_LOCATION = {
@@ -23,6 +23,23 @@ const YOUR_LOCATION = {
     "longitude": LON,
     "altitude": ELEV
 };
+
+// -----------------------------------------------------------
+// Paso 1.5: Variables Globales de Estado y Caché de Datos
+// -----------------------------------------------------------
+
+// --- VARIABLES GLOBALES PARA ESTADO DE ORDENACIÓN (DSO) ---
+// Almacena los DSO visibles para re-renderizado sin recalcular
+let visibleDSOData = [];
+// 'altitud' (default) o 'messier'
+let dsoOrderState = 'altitud';
+// -----------------------------------------------------------
+
+// --- NUEVAS VARIABLES GLOBALES PARA SISTEMA SOLAR ---
+let visibleSolarSystemData = []; // Para almacenar los cuerpos visibles CON alt/az y detalles raw
+let solarSystemDetailsCache = []; // Para almacenar todos los detalles del JSON
+const SOLAR_SYSTEM_DATA_URL = './static/solar_system/sistema_solar.json';
+// -----------------------------------------------------------
 
 // -------------------------------------------------------------
 // Paso 2: Funciones de Cálculo Universal (Solo para Sistema Solar)
@@ -45,21 +62,36 @@ function getHorizontalPosition(targetObject, time) {
     return { alt: horizontal.elevation, az: horizontal.azimuth };
 }
 
+/**
+ * Carga los detalles de los objetos del Sistema Solar desde el archivo JSON.
+ * Se llama al abrir el modal de efemérides.
+ * @returns {Promise<void>}
+ */
+async function fetchSolarSystemDetails() {
+    if (solarSystemDetailsCache.length > 0) {
+        return; // Ya cargado, se evita re-fetch.
+    }
+    try {
+        const response = await fetch(SOLAR_SYSTEM_DATA_URL);
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+        const data = await response.json();
+        solarSystemDetailsCache = data.bodies;
+    } catch (error) {
+        console.error("Error al cargar los detalles del Sistema Solar:", error);
+    }
+}
+
+
 // -------------------------------------------------------------
 // Paso 3: Renderizado y Manejo de DOM
 // -------------------------------------------------------------
 
-// --- VARIABLES GLOBALES PARA ESTADO DE ORDENACIÓN ---
-// Almacena los DSO visibles para re-renderizado sin recalcular
-let visibleDSOData = [];
-// 'altitud' (default) o 'messier'
-let dsoOrderState = 'altitud';
-// -----------------------------------------------------------
-
 
 /**
  * Genera el string HTML para una tarjeta de efemérides.
- * @param {object} body - Objeto del cuerpo celeste con propiedades añadidas `alt` y `az`.
+ * @param {object} body - Objeto del cuerpo celeste con propiedades añadidas `alt` y `az`, y opcionales `messierId` o `ssId`.
  * @returns {string} HTML de la tarjeta.
  */
 function createHtmlCard(body) {
@@ -77,18 +109,20 @@ function createHtmlCard(body) {
         default: icon = '⭐';
     }
 
-    // EXTRACCIÓN DEL NÚMERO MESSIER
+    // EXTRACCIÓN DEL NÚMERO MESSIER O ID DEL SISTEMA SOLAR
     let dataAttribute = '';
     let cardClass = 'ephemeris-item-card';
 
-    // Usamos body.messierId si existe para evitar la regex en objetos SS
-    // El objeto DSO lo tiene, el objeto SS es null
     const messierId = body.messierId || body.name.match(/^M(\d+)/)?.[1];
 
     if (messierId && body.type !== 'Planeta' && body.type !== 'Luna' && body.name !== 'Sol') {
         dataAttribute = `data-messier-id="${messierId}"`;
-        // Añadimos una clase para distinguir las tarjetas clicables
+        // Clase para distinguir las tarjetas Messier clicables
         cardClass += ' clickable-dso';
+    } else if (body.ssId) { // NUEVA LÓGICA PARA SISTEMA SOLAR
+        dataAttribute = `data-ss-id="${body.ssId}"`;
+        // Clase para distinguir las tarjetas SS clicables
+        cardClass += ' clickable-ss';
     }
 
     const visibilityText = body.nakedEye ? 'Ojo Desnudo' : 'Telescopio';
@@ -108,7 +142,7 @@ function createHtmlCard(body) {
 }
 
 /**
- * Muestra el modal de detalles del objeto Messier.
+ * Muestra el modal de detalles del objeto Messier. (Lógica Mantenida)
  * Se utiliza el objeto 'raw' del API directamente.
  * @param {string} messierId - El número del objeto Messier (ej: '1', '2', etc.).
  * @param {object} details - Los datos 'raw' del objeto Messier cargados desde la API.
@@ -152,12 +186,12 @@ function showMessierDetailModal(messierId, details) {
 
     // Ajustamos la URL de la imagen si necesitas que funcione localmente con el id
     const imageUrl = `./static/messier/messier_images/messier${messierId}.jpg`;
-    const coords = details.coordenadas_ecuatoriales || {};
+    // const coords = details.coordenadas_ecuatoriales || {};
 
     content.innerHTML = `
        <div class="messier-detail-header">
             <div>
-                <img src="${imageUrl}" alt="${details.nombre_comun}" class="messier-detail-image" onerror="this.onerror=null;this.src='./static/messier/placeholder.jpg';">
+                <img src="${imageUrl}" alt="${details.nombre_comun}" class="messier-detail-image" onerror="this.onerror=null;this.src='./static/messier/messier_images/placeholder.jpg';">
             </div>
 
             <div>
@@ -197,7 +231,87 @@ function showMessierDetailModal(messierId, details) {
 }
 
 /**
- * Ordena y renderiza las tarjetas DSO en el DOM.
+ * NUEVA FUNCIÓN: Muestra el modal de detalles del objeto del Sistema Solar.
+ * @param {object} details - Los datos 'raw' del objeto SS cargados desde el JSON.
+ */
+function showSolarSystemDetailModal(details) {
+    const modal = document.getElementById('solarSystemDetailModal');
+    const content = document.getElementById('solarSystemDetailContent');
+
+    if (!modal || !content || !details) {
+        console.error('Elementos DOM para el modal SS no encontrados o datos no disponibles.');
+        return;
+    }
+
+    // Función auxiliar para formatear valores de masa/volumen
+    const formatExponent = (val) => {
+        if (!val || !val.massValue) return 'N/A';
+        // toLocaleString() para separadores de miles
+        const massValue = val.massValue.toFixed(3).toLocaleString('es-ES');
+        return `${massValue} x 10^${val.massExponent} kg`;
+    };
+
+    // Función auxiliar para listar lunas
+    const listMoons = (moons) => {
+        if (!moons || moons.length === 0) return 'Ninguna conocida';
+        return moons.map(m => m.moon).join(', ');
+    };
+
+    const isPlanetText = details.isPlanet ? 'Sí' : (details.bodyType || 'No');
+    // Asumimos que la imagen sigue el patrón /weather/static/solar_system/images/{id}.jpg
+    const imageUrl = `./static/solar_system/images/${details.id}.jpg`;
+    console.log("URL de la imagen generada:", imageUrl);
+    const meanRadius = details.meanRadius.toFixed(1).toLocaleString('es-ES');
+
+    // Mapeo simple para la luna (porque el JSON la nombra "La Lune")
+    const commonName = details.id === 'luna' ? 'Luna' : details.name;
+
+    content.innerHTML = `
+    <div class="solar-system-detail-header">
+        <div class="image-wrapper">
+            <img src="${imageUrl}" alt="${commonName}" class="solar-system-detail-image" onerror="this.onerror=null;this.src='./static/solar_system/images/placeholder.jpg';">
+        </div>
+
+        <div class="header-info">
+            <h2 class="solar-system-detail-title">${commonName} (${details.englishName})</h2>
+            <p class="solar-system-detail-bodytype">Tipo de Cuerpo: ${details.bodyType || 'N/A'}</p>
+
+            <div class="solar-system-detail-section">
+                <h3>Características Físicas</h3>
+
+                <div class="data-row"><span class="label">Radio Medio:</span> <span class="value">${meanRadius} km</span></div>
+                <div class="data-row"><span class="label">Densidad:</span> <span class="value">${details.density ? details.density.toFixed(3) : 'N/A'} g/cm³</span></div>
+                <div class="data-row"><span class="label">Gravedad Superficial:</span> <span class="value gravity">${details.gravity ? details.gravity.toFixed(2) : 'N/A'} m/s²</span></div>
+                <div class="data-row"><span class="label">Temperatura Media:</span> <span class="value">${details.avgTemp || 'N/A'}°K</span></div>
+                <div class="data-row"><span class="label">Masa:</span> <span class="value">${formatExponent(details.mass)} kg</span></div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="solar-system-detail-body">
+        <div class="solar-system-detail-section">
+            <h3>Datos Orbitales</h3>
+            <div class="data-row"><span class="label">Período Orbital Sidéreo:</span> <span class="value">${details.sideralOrbit ? details.sideralOrbit.toFixed(2) : 'N/A'} días</span></div>
+            <div class="data-row"><span class="label">Período de Rotación Sidéreo:</span> <span class="value">${details.sideralRotation ? details.sideralRotation.toFixed(2) : 'N/A'} horas</span></div>
+            <div class="data-row"><span class="label">Inclinación Axial:</span> <span class="value">${details.axialTilt ? details.axialTilt.toFixed(2) : 'N/A'}°</span></div>
+            <div class="data-row"><span class="label">Semieje Mayor:</span> <span class="value">${details.semimajorAxis ? details.semimajorAxis.toLocaleString('es-ES') : 'N/A'} km</span></div>
+        </div>
+
+        <div class="solar-system-detail-section">
+            <h3>Lunas y Descubrimiento</h3>
+            <div class="data-row"><span class="label">Es Planeta:</span> <span class="value">${isPlanetText}</span></div>
+            <div class="data-row"><span class="label">Lunas:</span> <span class="value">${listMoons(details.moons)}</span></div>
+            <div class="data-row"><span class="label">Descubierto por:</span> <span class="value">${details.discoveredBy || 'Desconocido'}</span></div>
+            <div class="data-row"><span class="label">Fecha de Descubrimiento:</span> <span class="value">${details.discoveryDate || 'N/A'}</span></div>
+        </div>
+    </div>`;
+
+    modal.style.display = 'flex';
+}
+
+/**
+ * Ordena y renderiza las tarjetas DSO en el DOM. (Mantenida)
  */
 function renderDSOData() {
     const dsoContainer = document.getElementById('dso-cards-container');
@@ -248,6 +362,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const detailModal = document.getElementById('messierDetailModal');
     const closeDetailButton = document.getElementById('closeMessierDetailModal');
 
+    // NUEVAS variables DOM para el modal del Sistema Solar
+    const solarSystemDetailModal = document.getElementById('solarSystemDetailModal');
+    const closeSolarSystemDetailButton = document.getElementById('closesolarSystemDetailModal');
+
+
     // Manejo de eventos del modal de efemérides (Apertura y Cierre)
     if (widget && modal && closeButton) {
         widget.addEventListener('click', () => {
@@ -261,7 +380,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Manejo de eventos del nuevo modal de detalles
+    // Manejo de eventos del modal de detalles de DSO (Mantenido)
     if (detailModal && closeDetailButton) {
         closeDetailButton.addEventListener('click', () => { detailModal.style.display = 'none'; });
         window.addEventListener('click', (event) => {
@@ -269,7 +388,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- MANEJO DE EVENTOS PARA EL BOTÓN DE ORDENACIÓN DSO ---
+    // --- NUEVO: Manejo de eventos del modal de detalles del Sistema Solar ---
+    if (solarSystemDetailModal && closeSolarSystemDetailButton) {
+        closeSolarSystemDetailButton.addEventListener('click', () => { solarSystemDetailModal.style.display = 'none'; });
+        window.addEventListener('click', (event) => {
+            if (event.target === solarSystemDetailModal) { solarSystemDetailModal.style.display = 'none'; }
+        });
+    }
+    // --------------------------------------------------------------------------
+
+    // --- MANEJO DE EVENTOS PARA EL BOTÓN DE ORDENACIÓN DSO (Mantenido) ---
     const toggleOrderButton = document.getElementById('toggleDSOOrder');
     if (toggleOrderButton) {
         toggleOrderButton.addEventListener('click', () => {
@@ -282,7 +410,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // -------------------------------------------------------------
 
 
-    // --- MANEJO DE CLIC PARA LAS TARJETAS DSO (Usa la caché global) ---
+    // --- MANEJO DE CLIC PARA LAS TARJETAS DSO (Mantenido) ---
     if (dsoContainer) {
         dsoContainer.addEventListener('click', async (event) => {
             const card = event.target.closest('.clickable-dso');
@@ -306,12 +434,45 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     // -------------------------------------------------
 
+    // --- NUEVO: MANEJO DE CLIC PARA LAS TARJETAS DEL SISTEMA SOLAR ---
+    if (solarSystemContainer) {
+        solarSystemContainer.addEventListener('click', async (event) => {
+            const card = event.target.closest('.clickable-ss');
+
+            if (card) {
+                const ssId = card.getAttribute('data-ss-id');
+
+                if (ssId) {
+                    // Busca el objeto completo en la caché de visibles
+                    const ssObject = visibleSolarSystemData.find(ss => ss.ssId === ssId);
+
+                    if (ssObject && ssObject.raw_details) {
+                        // Usa la nueva función de modal para el Sistema Solar
+                        showSolarSystemDetailModal(ssObject.raw_details);
+                    } else {
+                        console.warn(`No se encontraron detalles raw para SS ID: ${ssId} en la caché de visibles.`);
+                    }
+                }
+            }
+        });
+    }
+    // -------------------------------------------------
+
+
     async function fetchAndDisplayLocalEphemerides() {
         // Limpiar los contenedores y mostrar mensaje de carga inicial
-        solarSystemContainer.innerHTML = '<p class="loading-message" style="text-align: center;">Calculando Hora de Referencia...</p>';
+        const solarSystemContainer = document.getElementById('solar-system-cards-container');
+        const dsoContainer = document.getElementById('dso-cards-container');
+
+        solarSystemContainer.innerHTML = '<p class="loading-message" style="text-align: center;">Calculando Hora de Referencia y cargando detalles SS...</p>';
         dsoContainer.innerHTML = '<p class="loading-message" style="text-align: center;">Obteniendo objetos Messier desde la API...</p>';
 
         visibleDSOData = []; // Limpiamos el caché de DSO visibles
+        visibleSolarSystemData = []; // Limpiamos el caché de SS visibles
+
+        // --- NUEVO: Cargar detalles del Sistema Solar ---
+        await fetchSolarSystemDetails();
+        // -----------------------------------------------
 
         // --- CALCULAR HORA DE REFERENCIA CON SUN CALC (LÓGICA ASTRONÓMICA) ---
         const now = new Date();
@@ -344,9 +505,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Actualizar el título del modal con el tiempo de referencia
         dateTitleElement.innerHTML = `Posiciones Altazimutales Calculadas: ${timeLabel}`;
 
-        const visibleSolarSystem = [];
 
-        // --- 1. LÓGICA MANTENIDA: CÁLCULO DE OBJETOS DEL SISTEMA SOLAR (Planetas/Luna) ---
+        // --- 1. CÁLCULO DE OBJETOS DEL SISTEMA SOLAR (Planetas/Luna) ---
         // (Usando Orb.js y la hora de cálculo)
         Object.keys(ORB_TARGETS).forEach((name) => {
             const body = ORB_TARGETS[name];
@@ -360,15 +520,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (alt < minAlt) { return; }
 
+                // --- NUEVO: Mapeo al detalle del JSON ---
+                const orbNameKey = name.toLowerCase().replace(/[^a-z0-9]/g, '');
+                const ssDetail = solarSystemDetailsCache.find(d => {
+                    // Intenta hacer coincidir el ID o el nombre en inglés (normalizado)
+                    return d.id === orbNameKey ||
+                        d.englishName?.toLowerCase().replace(/[^a-z0-9]/g, '') === orbNameKey;
+                });
+
+                const ssId = ssDetail ? ssDetail.id : name.toLowerCase(); // ID para data-ss-id
+                // ----------------------------------------
+
                 // El objeto del sistema solar usa la estructura antigua
                 const visibleBody = {
                     ...body,
                     alt,
                     az,
                     name: name, // Asegura que el nombre (ej. 'Luna') esté disponible
-                    messierId: null // No es Messier
+                    messierId: null, // No es Messier
+                    ssId: ssId, // <-- NUEVO: ID para enlazar con el modal
+                    raw_details: ssDetail // <-- NUEVO: Detalles del JSON para el modal
                 };
-                visibleSolarSystem.push(visibleBody);
+                visibleSolarSystemData.push(visibleBody); // <-- USO DE LA VARIABLE GLOBAL
 
             } catch (e) {
                 console.error(`Error calculando ${name}:`, e);
@@ -376,17 +549,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Ordenar el Sistema Solar
-        visibleSolarSystem.sort((a, b) => b.alt - a.alt);
+        visibleSolarSystemData.sort((a, b) => b.alt - a.alt);
         // Inserción en el DOM
-        if (visibleSolarSystem.length > 0) {
-            solarSystemContainer.innerHTML = visibleSolarSystem.map(createHtmlCard).join('');
+        if (visibleSolarSystemData.length > 0) {
+            solarSystemContainer.innerHTML = visibleSolarSystemData.map(createHtmlCard).join('');
         } else {
             solarSystemContainer.innerHTML = '<p style="text-align: center; color: #aaa;">Ningún objeto del Sistema Solar visible con elevación suficiente (Sol excluido) a esta hora.</p>';
         }
         // ---------------------------------------------------------------------------------
 
 
-        // --- 2. NUEVA LÓGICA: FETCH DE OBJETOS DSO DESDE LA API ---
+        // --- 2. NUEVA LÓGICA: FETCH DE OBJETOS DSO DESDE LA API (Mantenida) ---
 
         const apiLat = YOUR_LOCATION.latitude;
         const apiLon = YOUR_LOCATION.longitude;
@@ -403,28 +576,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Mapear los datos de la API al formato que renderDSOData espera
             visibleDSOData = dsoApiData
-                // Filtramos los objetos que no son Messier o no tienen raw data, si es necesario
+            // Filtramos los objetos que no son Messier o no tienen raw data, si es necesario
                 .filter(dso => dso.messier_number)
                 .map(dso => {
-                    const messierId = dso.messier_number.replace('M', '');
+                const messierId = dso.messier_number.replace('M', '');
 
-                    // Intentar inferir el tipo o usar el nombre común si el tipo no está en raw
-                    const objectType = dso.raw.type || dso.raw.clasificacion || dso.nombre_comun.includes('Galaxia') ? 'Galaxia' : 'Objeto de Cielo Profundo';
+                // Intentar inferir el tipo o usar el nombre común si el tipo no está en raw
+                const rawType = dso.raw.type || dso.raw.clasificacion;
+                let objectType;
 
-                    // Asumir 'Ojo Desnudo' si la descripción incluye 'fácil' o 'sencillo'
-                    const isNakedEye = dso.raw.visibilidad?.A_ojo_desnudo?.toLowerCase().includes('fácil') || dso.raw.visibilidad?.A_ojo_desnudo?.toLowerCase().includes('sencillo');
-
-                    return {
-                        // Nombre en formato M## (Nombre Común) para ordenación y visualización
-                        name: `${dso.messier_number} (${dso.nombre_comun.replace('Ã¡', 'á').replace('Ãº', 'ú')})`, // Limpieza de caracteres si es necesario
-                        type: objectType,
-                        alt: dso.altitude_deg,
-                        az: dso.azimuth_deg,
-                        messierId: messierId,
-                        nakedEye: isNakedEye,
-                        raw_details: dso.raw // Guardamos todos los detalles para el modal
+                if (rawType) {
+                    // Mapear clasificación a tipo amigable (ej. 'Galaxia', 'Cúmulo Abierto')
+                    const typeMap = {
+                        'Galaxia': 'Galaxia',
+                        'Cúmulo Abierto': 'Cúmulo Abierto',
+                        'Cúmulo Globular': 'Cúmulo Globular',
+                        'Nebulosa Difusa': 'Nebulosa',
+                        'Resto de Supernova': 'Resto Supernova',
+                        'Nebulosa Planetaria': 'Nebulosa Planetaria'
                     };
-                });
+                    objectType = typeMap[rawType] || rawType;
+
+                } else if (dso.nombre_comun.includes('Galaxia')) {
+                    objectType = 'Galaxia';
+                } else {
+                    objectType = 'Objeto de Cielo Profundo';
+                }
+
+                // Asumir 'Ojo Desnudo' si la descripción incluye 'fácil' o 'sencillo'
+                const isNakedEye = dso.raw.visibilidad?.A_ojo_desnudo?.toLowerCase().includes('fácil') || dso.raw.visibilidad?.A_ojo_desnudo?.toLowerCase().includes('sencillo');
+
+                return {
+                    // Nombre en formato M## (Nombre Común) para ordenación y visualización
+                    name: `${dso.messier_number} (${dso.nombre_comun.replace(/Ã¡/g, 'á').replace(/Ãº/g, 'ú').replace(/Ã©/g, 'é')})`, // Limpieza de caracteres si es necesario
+                    type: objectType,
+                    alt: dso.altitude_deg,
+                    az: dso.azimuth_deg,
+                    messierId: messierId,
+                    nakedEye: isNakedEye,
+                    raw_details: dso.raw // Guardamos todos los detalles para el modal
+                };
+            });
 
         } catch (error) {
             console.error("Error al obtener objetos visibles de la API:", error);
