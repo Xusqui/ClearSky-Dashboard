@@ -1,6 +1,7 @@
 <?php
 // conf_to_js.php
 // Trae las variables de php a un archivo que pueda ser incluido en javascript
+// para llevar la web a otro día: const now = new Date(2025-08-30);
 require_once './config.php';
 header('Content-Type: application/javascript');
 echo "

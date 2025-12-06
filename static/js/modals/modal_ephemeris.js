@@ -260,7 +260,6 @@ function showSolarSystemDetailModal(details) {
     const isPlanetText = details.isPlanet ? 'Sí' : (details.bodyType || 'No');
     // Asumimos que la imagen sigue el patrón /weather/static/solar_system/images/{id}.jpg
     const imageUrl = `./static/solar_system/images/${details.id}.jpg`;
-    console.log("URL de la imagen generada:", imageUrl);
     const meanRadius = details.meanRadius.toFixed(1).toLocaleString('es-ES');
 
     // Mapeo simple para la luna (porque el JSON la nombra "La Lune")

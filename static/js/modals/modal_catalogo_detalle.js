@@ -28,10 +28,7 @@ const solarSystemDetailContent = document.getElementById('solarSystemDetailConte
  * @param {string} targetKey - La clave del cuerpo celeste (ej: 'Jupiter') según ASTRO_TARGET_MAP.
  * @returns {Promise<string>} - Una cadena de texto con la fecha y hora formateada.
  */
-async function nextRiseTransitSet(body, startDate) {
-    //Convertimos Date → Astronomy.Time
-    const startAstro = Astronomy.MakeTime(startDate);
-    //console.log("DEBUG: startAstro:", startAstro);
+async function nextRiseTransitSet(body) {
     let rise;
     let set;
     let transit;
@@ -45,7 +42,6 @@ async function nextRiseTransitSet(body, startDate) {
             const transitInfo = Astronomy.SearchTransit(body, startAstro);
 
             transit = transitInfo.peak;
-            console.log("transit: ", transit);
         } catch (error) {
             console.warn(`Advertencia: Error al calcular tránsito para ${body || body}. Estableciendo como 'No disponible'.`, error);
             transit = "No disponible"; // Si el cálculo falla para Mercurio/Venus, se establece como "No disponible"
@@ -150,9 +146,8 @@ function openSolarSystemDetailModal(details) {
     solarSystemDetailModal.style.display = "block"; // Mostrar el modal
 
     // --- CÁLCULO ASÍNCRONO DEL TRÁNSITO ---
-    let startDate = new Date();
     if (bodyObject) {
-        nextRiseTransitSet(bodyObject, startDate) // Se asume que ahora pasas bodyObject
+        nextRiseTransitSet(bodyObject) // Se asume que ahora pasas bodyObject
             .then((result) => {
             const riseElement = document.getElementById("nextRiseTime");
             const setElement = document.getElementById("nextSetTime");

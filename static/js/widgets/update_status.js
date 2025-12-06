@@ -40,13 +40,11 @@ let lastKnownDiffSeconds = Infinity; // Inicializado alto para forzar la primera
  * 1. Carga inicial de todos los scripts de widgets.
  */
 function loadWidgetScripts() {
-    console.log('🚀 Iniciando carga inicial de scripts de widgets...');
     WIDGET_SCRIPTS.forEach(scriptUrl => {
         const script = document.createElement('script');
         // Usamos Date.now() para asegurar que siempre se cargue la versión más reciente
         script.src = `${scriptUrl}?v=${Date.now()}`;
         headElement.appendChild(script);
-        console.log(`Cargado: ${scriptUrl}`);
     });
 }
 
@@ -54,8 +52,6 @@ function loadWidgetScripts() {
  * 2. Recarga dinámica de todos los scripts de widgets (al detectar nueva actualización).
  */
 function reloadWidgetScripts() {
-    console.log('🔄 Nueva actualización detectada. Recargando scripts de widgets...');
-
     WIDGET_SCRIPTS.forEach(scriptUrl => {
         // Buscar el script existente en el DOM.
         // Buscamos un script cuya ruta comience con la URL base, ignorando el parámetro de versión.
@@ -68,7 +64,6 @@ function reloadWidgetScripts() {
 
             // Reemplazar la etiqueta antigua por la nueva.
             existingScript.parentNode.replaceChild(newScript, existingScript);
-            console.log(`✅ Recargado: ${scriptUrl}`);
         } else {
             // Si por alguna razón no se encuentra, lo añadimos de nuevo.
             const newScript = document.createElement('script');
