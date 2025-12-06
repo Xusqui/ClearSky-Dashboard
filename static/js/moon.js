@@ -3,8 +3,8 @@
 
 // Para probar la fase problemática, puedes usar esta fecha:
 // const now = new Date("2025-09-08T12:00:00"); // Debería ser Cuarto Menguante
-//const now = new Date();
-const now = new Date("2025-12-05T12:00:00");
+const now = new Date();
+
 // --- Obtener coordenadas del observador (usando las constantes de conf_to_js.php) ---
 // Convertir las constantes string a números de punto flotante
 const latitude = parseFloat(LAT);
