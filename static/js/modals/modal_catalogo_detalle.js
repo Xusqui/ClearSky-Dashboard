@@ -29,10 +29,6 @@ const solarSystemDetailContent = document.getElementById('solarSystemDetailConte
  * @returns {Promise<string>} - Una cadena de texto con la fecha y hora formateada.
  */
 async function nextRiseTransitSet(body, startDate) {
-    let latitude = parseFloat(LAT);
-    let longitude = parseFloat(LON);
-    let elevation = parseFloat(ELEV);
-    let obs = new Astronomy.Observer(latitude, longitude, elevation);
     //Convertimos Date → Astronomy.Time
     const startAstro = Astronomy.MakeTime(startDate);
     //console.log("DEBUG: startAstro:", startAstro);
@@ -63,8 +59,8 @@ async function nextRiseTransitSet(body, startDate) {
         // Al pasar el objeto 'body' (Astronomy.Body.X) directamente, podemos
         // usar la sobrecarga simple de SearchRiseSet/SearchTransit sin callbacks,
         // lo cual es mucho más estable.
-        const rise = Astronomy.SearchRiseSet(body, obs, +1, startAstro, 365);
-        const set = Astronomy.SearchRiseSet(body, obs, -1, startAstro, 365);
+        const rise = Astronomy.SearchRiseSet(body, observer, +1, startAstro, 365);
+        const set = Astronomy.SearchRiseSet(body, observer, -1, startAstro, 365);
         return {
             rise: rise,
             set: set,

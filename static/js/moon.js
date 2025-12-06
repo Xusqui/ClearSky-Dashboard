@@ -1,19 +1,6 @@
 // moon.js
+
 // Asume que conf_to_js.php ha definido: const LAT = '...'; const LON = '...';
-
-// Para probar la fase problemática, puedes usar esta fecha:
-// const now = new Date("2025-09-08T12:00:00"); // Debería ser Cuarto Menguante
-const now = new Date();
-
-// --- Obtener coordenadas del observador (usando las constantes de conf_to_js.php) ---
-// Convertir las constantes string a números de punto flotante
-const latitude = parseFloat(LAT);
-const longitude = parseFloat(LON);
-const elevation = parseFloat(ELEV);
-
-let observer = new Astronomy.Observer(latitude, longitude, elevation);
-let startAstro = Astronomy.MakeTime(now);
-
 let moonRise = Astronomy.SearchRiseSet('Moon', observer, +1, startAstro, 1);
 let moonSet = Astronomy.SearchRiseSet('Moon', observer, -1, startAstro, 1);
 
