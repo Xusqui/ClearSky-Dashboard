@@ -68,7 +68,63 @@ async function nextRiseTransitSet(body) {
         throw error; // Relanzamos el error para que el .catch de la promesa lo maneje
     }
 }
+/**
+ * Convierte un objeto Date o un objeto con una propiedad 'date' (como AstroTime)
+ * a una cadena de texto legible en español.
+ * @param {Date | {date: Date}} dateInput La fecha a formatear.
+ * @returns {string} La fecha formateada (ej: "7 de diciembre de 2025 a las 15:53").
+ */
+function formatAstroTime(dateInput) {
+    // 1. Verificar si la entrada es nula, indefinida o no válida
+    if (!dateInput) {
+        return "No Disponible";
+    }
 
+    // 2. Extraer el objeto Date real (maneja tanto Date como AstroTime/objetos con propiedad .date)
+    let dateObject;
+    if (dateInput instanceof Date) {
+        dateObject = dateInput;
+    } else if (dateInput.date instanceof Date) {
+        dateObject = dateInput.date;
+    } else {
+        // En caso de que result.rise, set o transit sean objetos AstroTime completos,
+        // la propiedad .toLocaleString() llama a .ToDate() internamente y formatea.
+        // Si tu librería lo maneja automáticamente, podrías devolver la cadena directa.
+        // Si no, volvemos al formato de fecha estándar de JS:
+        try {
+            dateObject = dateInput.ToDate(); // Asumiendo que ToDate existe si no es un Date
+        } catch (e) {
+            return "No Disponible"; // Fallback
+        }
+    }
+
+    // Si la extracción de dateObject falló o no es una fecha válida
+    if (!(dateObject instanceof Date) || isNaN(dateObject)) {
+        return "No Disponible";
+    }
+
+    // 3. Opciones de formato (Fecha y Hora)
+    const options = {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false, // Formato 24 horas (ej: 15:53)
+    };
+
+    // 4. Aplicar el formato y ajustar la cadena
+    try {
+        let formattedString = dateObject.toLocaleString("es-ES", options);
+
+        // Reemplazar la coma de separación por " a las"
+        return formattedString.replace(',', ' a las');
+
+    } catch (e) {
+        console.error("Error al formatear la fecha:", e);
+        return "No Disponible";
+    }
+}
 /**
  * Abre el modal de detalle y renderiza toda la información de un cuerpo celeste.
  * (MODIFICADA para incluir la llamada asíncrona al cálculo de tránsito)
@@ -157,19 +213,19 @@ function openSolarSystemDetailModal(details) {
             let txtTransit = "";
 
             if (result.rise) {
-                txtRise = result.rise.toLocaleString("es-ES", { hour12: false});
+                txtRise = formatAstroTime(result.rise);
             } else {
                 txtRise = "No Disponible";
             }
 
             if (result.set) {
-                txtSet = result.set.toLocaleString("es-ES", { hour12: false});
+                txtSet = formatAstroTime(result.set);
             } else {
                 txtSet = "No Disponible";
             }
 
             if (result.transit) {
-                txtTransit = result.transit.toLocaleString("es-ES", { hour12: false });
+                txtTransit = formatAstroTime(result.transit);
             } else {
                 txtTransit = "No Disponible";
             }
