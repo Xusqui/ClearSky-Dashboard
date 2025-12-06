@@ -66,7 +66,7 @@ function rem($value, $scale) {
   margin-top: <?= rem(-20, $scale) ?>;
   background-image: url(../images/icons/moons/full_moon-2.png);
   background-position: center center;
-  background-size: 101%;
+  background-size: 102%;
   background-repeat: no-repeat;
   mix-blend-mode: multiply;
   transform: translateY(52%);

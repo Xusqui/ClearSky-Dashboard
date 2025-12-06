@@ -1,0 +1,113 @@
+/* modal-catalogo.css
+#CatalogoModal {
+    z-index: 1010; /* Un poco más alto que Efemérides */
+}
+/* Contenedor para agrupar los botones de Catálogo */
+.button-group {
+    display: flex; /* Alinea los botones uno al lado del otro */
+    flex-direction: column; /* Cambia a columna para apilarlos */
+    gap: 15px; /* Espacio entre los botones */
+    margin: 20px 0;
+    padding: 0 10px; /* Un poco de padding lateral si es necesario */
+}
+
+/* Estilos individuales para los botones de Catálogo */
+.catalogo-option-button {
+    /* Base */
+    background-color: #1a1a2e; /* Fondo muy oscuro, casi negro-azulado */
+    color: #f1f1f1; /* Texto gris claro/blanco */
+    border: 1px solid #00c9e8; /* Borde de color cian para simular luz de estrella */
+    border-radius: 12px; /* Más redondeado para un aspecto suave */
+    padding: 15px;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: left; /* Alinea el texto a la izquierda para mejor lectura */
+    transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+/* Efecto al pasar el ratón (Hover) */
+.catalogo-option-button:hover {
+    background-color: #2b395a; /* Se ilumina un poco el fondo */
+    border-color: #ffffff; /* Borde más brillante */
+    box-shadow: 0 4px 10px rgba(0, 201, 232, 0.4); /* Sombra con el color de acento */
+}
+
+/* Efecto al hacer clic (Active) */
+.catalogo-option-button:active {
+    background-color: #1a1a2e;
+    transform: translateY(1px);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* Para centrar el contenido en el modal del Catálogo */
+#CatalogoContent {
+    text-align: center;
+}
+/* ------------------------------------- */
+/* Estilos Generales de la Rejilla/Tarjeta */
+/* ------------------------------------- */
+
+/* Clase asumida del modal de Efemérides para la rejilla */
+.ephemeris-card-grid {
+    display: grid;
+    /* Diseño responsivo: mínimo 250px por columna */
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    margin-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ephemeris-card {
+    background-color: #1a1a2e; /* Fondo oscuro (similar al color de los botones) */
+    border: 1px solid #3b5998;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    color: #f1f1f1;
+    position: relative;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ephemeris-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.7);
+    border-color: #6a95f8;
+}
+
+.card-title {
+    color: #00c9e8; /* Título en color de acento */
+    margin-top: 0;
+    margin-bottom: 5px;
+    font-size: 1.3em;
+}
+
+.card-subtitle {
+    color: #aaaaaa;
+    font-size: 0.9em;
+    margin-bottom: 10px;
+}
+
+.card-details p {
+    margin: 3px 0;
+    font-size: 0.95em;
+}
+
+.card-details strong {
+    color: #ffffff;
+}
+
+/* Estilo para el Planeta Mayor (opcional) */
+.planet-badge {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: #e8c900; /* Dorado/Amarillo */
+    color: #1a1a2e;
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-size: 0.75em;
+    font-weight: bold;
+}

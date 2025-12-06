@@ -11,6 +11,11 @@
 
 /* --- Contenedor de la Rejilla de Tarjetas --- */
 
+/* 1. Modal de Efemérides (el más bajo, ya que queda abierto detrás del catálogo) */
+#ephemerisModal {
+    z-index: 1000;
+}
+
 .ephemeris-card-grid {
     display: grid;
     /* Grid responsiva: Mínimo 200px por columna, se ajusta automáticamente */
@@ -137,5 +142,51 @@
     display: block;
 
     /* Opcional: Centrar la imagen horizontalmente si hay espacio extra */
+    margin: 0 auto;
+}
+/* Estilos para el botón del Catálogo en el modal de Efemérides */
+.catalog-button {
+    /* Diseño y Apariencia General */
+    background-color: #3b5998; /* Un azul oscuro, recordando el cielo o el espacio */
+    color: #ffffff; /* Texto blanco para alto contraste */
+    border: 2px solid #6a95f8; /* Un borde azul claro para darle relieve */
+    border-radius: 8px; /* Esquinas ligeramente redondeadas */
+    padding: 10px 20px; /* Espacio interno para un buen tamaño */
+    font-size: 1.1em; /* Un poco más grande para destacar */
+    font-weight: bold;
+    cursor: pointer; /* Indica que es clickeable */
+
+    /* Centrado y Margen */
+    display: block; /* Ocupa todo el ancho si es necesario, o úsalo para centrar */
+    margin: 15px auto 25px auto; /* Espacio alrededor: Arriba, Derecha, Abajo, Izquierda (auto para centrar) */
+
+    /* Transiciones para suavizar los efectos hover/active */
+    transition: background-color 0.3s ease, transform 0.1s ease, border-color 0.3s ease;
+
+    /* Sombra ligera para darle profundidad */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+
+    /* Letras un poco espaciadas para mejorar la lectura */
+    letter-spacing: 0.5px;
+}
+
+/* Efecto al pasar el ratón (Hover) */
+.catalog-button:hover {
+    background-color: #4a70b9; /* Se oscurece ligeramente al pasar el ratón */
+    border-color: #a4c6ff; /* El borde se ilumina */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5); /* Sombra más pronunciada */
+}
+
+/* Efecto al hacer clic (Active) */
+.catalog-button:active {
+    background-color: #2c4475; /* Se oscurece más, simulando el hundimiento */
+    transform: translateY(1px); /* Mueve el botón ligeramente hacia abajo */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4); /* Sombra más pequeña, como si se hundiera */
+}
+
+/* Estilos si quieres que el botón tenga el mismo ancho que los títulos (opcional) */
+.ephemeris-infografia {
+    /* Asegúrate de que este contenedor tiene un ancho definido o max-width */
+    max-width: 600px; /* Ejemplo */
     margin: 0 auto;
 }

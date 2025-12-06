@@ -13,6 +13,9 @@
 
         <div class="infografia ephemeris-infografia">
             <h1 class="seeing-modal-title">🔭 Objetos Visibles Hoy</h1>
+            <button id="openCatalogoButton" class="catalog-button" title="Explorar Catálogo">
+                Consultar Catálogo Astronómico
+            </button>
 
             <h2 class="seeing-group-title" id="ephemeris-time-title">Posiciones Altazimutales Calculadas: --:--:--</h2>
 

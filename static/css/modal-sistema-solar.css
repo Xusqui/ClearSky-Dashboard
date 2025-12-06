@@ -2,7 +2,9 @@
 /* ==============================================
    ESTILOS GENERALES DEL MODAL
    ============================================== */
-
+#solarSystemDetailModal {
+    z-index: 1020; /* El valor más alto para asegurar que siempre sea visible en primer plano */
+}
 /* Contenedor del Modal (el fondo negro que oscurece la pantalla) */
 #solarSystemDetailModal.modal {
     background-color: rgba(0, 0, 0, 0.85); /* Fondo negro semitransparente */

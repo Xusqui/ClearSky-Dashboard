@@ -478,7 +478,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const now = new Date();
         let calculationTime = now;
         let timeLabel = `Ahora (${now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })})`;
-        const minAlt = 30; // Altitud mínima de visibilidad
+        const minAlt = 15; // Altitud mínima de visibilidad
 
         try {
             // Utilizamos SunCalc (asumido global)
