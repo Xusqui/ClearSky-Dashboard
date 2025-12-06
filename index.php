@@ -14,38 +14,38 @@ include __DIR__ . "/static/config/config.php";
         <title>Estación Meteorológica <?= $observatorio ?></title>
         <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js"></script>
         <link rel="stylesheet" type="text/css" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" />
-        <link rel="stylesheet" type="text/css" href="./static/css/images.php?v=<?= time() ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/global.css?v=<?= time() ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/colors.css?v=<?= time() ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/theme-switcher.php?v=<?= time() ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/dashboard-header.css?v=<?= time() ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/dashboard-body.css?v=<?= time() ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/dashboard-footer.css?v=<?= time() ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/images.php" />
+        <link rel="stylesheet" type="text/css" href="./static/css/global.css" />
+        <link rel="stylesheet" type="text/css" href="./static/css/colors.css" />
+        <link rel="stylesheet" type="text/css" href="./static/css/theme-switcher.php" />
+        <link rel="stylesheet" type="text/css" href="./static/css/dashboard-header.css" />
+        <link rel="stylesheet" type="text/css" href="./static/css/dashboard-body.css" />
+        <link rel="stylesheet" type="text/css" href="./static/css/dashboard-footer.css" />
         <!-- Widgets' & Modals CSS -->
-        <link rel="stylesheet" type="text/css" href="./static/css/dew-point-widget.css?v=<?= time() ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/humidity-widget.css?v=<?= time() ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/humidity-int-widget.css?v=<?= time() ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/pressure-widget.css?v=<?= time() ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/rain-widget.css?v=<?= time() ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/solar-radiation-widget.css?v=<?= time() ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/temp-widget.css?v=<?= time() ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/uv-widget.css?v=<?= time() ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/widget-base.css?v=<?= time() ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/widget-wind.css?v=<?= time() ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/widget-moon.css?v=<?= time() ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/widget-sun.css?v=<?= time() ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/forecast.css?v=<?= time() ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/widget-seeing.css?v=<?= time() ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/modal-seeing.css?v=<?= time() ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/modal-credits.css?v=<?= time() ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/modal-dates.css?v=<?= time() ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/modal-pws.css?v=<?= time() ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/modal-moon.css?v=<?= time() ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/widget-ephemeris.css?v=<?= time() ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/modal-ephemeris.css?v=<?= time() ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/modal-messier.css?v=<?= time() ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/modal-sistema-solar.css?v=<?= time() ?>" />
-        <link rel="stylesheet" type="text/css" href="./static/css/modal-catalogo.css?v=<?= time() ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/dew-point-widget.css" />
+        <link rel="stylesheet" type="text/css" href="./static/css/humidity-widget.css" />
+        <link rel="stylesheet" type="text/css" href="./static/css/humidity-int-widget.css" />
+        <link rel="stylesheet" type="text/css" href="./static/css/pressure-widget.css" />
+        <link rel="stylesheet" type="text/css" href="./static/css/rain-widget.css" />
+        <link rel="stylesheet" type="text/css" href="./static/css/solar-radiation-widget.css" />
+        <link rel="stylesheet" type="text/css" href="./static/css/temp-widget.css" />
+        <link rel="stylesheet" type="text/css" href="./static/css/uv-widget.css" />
+        <link rel="stylesheet" type="text/css" href="./static/css/widget-base.css" />
+        <link rel="stylesheet" type="text/css" href="./static/css/widget-wind.css" />
+        <link rel="stylesheet" type="text/css" href="./static/css/widget-moon.css" />
+        <link rel="stylesheet" type="text/css" href="./static/css/widget-sun.css" />
+        <link rel="stylesheet" type="text/css" href="./static/css/forecast.css" />
+        <link rel="stylesheet" type="text/css" href="./static/css/widget-seeing.css" />
+        <link rel="stylesheet" type="text/css" href="./static/css/modal-seeing.css" />
+        <link rel="stylesheet" type="text/css" href="./static/css/modal-credits.css" />
+        <link rel="stylesheet" type="text/css" href="./static/css/modal-dates.css" />
+        <link rel="stylesheet" type="text/css" href="./static/css/modal-pws.css" />
+        <link rel="stylesheet" type="text/css" href="./static/css/modal-moon.css" />
+        <link rel="stylesheet" type="text/css" href="./static/css/widget-ephemeris.css" />
+        <link rel="stylesheet" type="text/css" href="./static/css/modal-ephemeris.css" />
+        <link rel="stylesheet" type="text/css" href="./static/css/modal-messier.css" />
+        <link rel="stylesheet" type="text/css" href="./static/css/modal-sistema-solar.css" />
+        <link rel="stylesheet" type="text/css" href="./static/css/modal-catalogo.css" />
         <!-- El enlace de la hoja de estilos (css) moon-phase.php se actualiza dinámicamente dentro del archivo /static/js/moon.js -->
         <link id="moon-phase-css" rel="stylesheet" type="text/css" href="./static/css/moon-phase.php?position=&scale=0.4&bright=1&v=<?= time() ?>">
     </head>
@@ -162,32 +162,32 @@ include __DIR__ . "/static/config/config.php";
         <!-- JS Varios -->
         <script src="https://unpkg.com/suncalc@1.9.0/suncalc.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
-        <script src="./static/js/other/orb.v2.js?v=<?= time() ?>"></script>
+        <script src="./static/js/other/orb.v2.js"></script>
         <script src="./static/js/other/astronomy.browser.js"></script>
-        <script src="./static/config/conf_to_js.php?v=<?= time() ?>"></script>
+        <script src="./static/config/conf_to_js.php"></script>
         <script src="./static/js/moon.js?v<?= time() ?>"></script>
-        <script src="./static/js/sun.js?v=<?= time() ?>"></script>
-        <script type="module" src="./static/js/theme-switcher.js?v=<?= time() ?>"></script>
+        <script src="./static/js/sun.js"></script>
+        <script type="module" src="./static/js/theme-switcher.js"></script>
         <!-- JS de widgets-->
-        <script src="./static/js/widgets/update_status.js?v=<?= time() ?>"></script>
-        <script src="./static/js/widgets/forecast.js?v=<?= time() ?>"></script>
+        <script src="./static/js/widgets/update_status.js"></script>
+        <script src="./static/js/widgets/forecast.js"></script>
         <!-- JS de Modales -->
         <script type="module" src="./static/js/modals/modal_moon.js?v<?= time() ?>"></script>
-        <script src="./static/js/modals/modal_temp.js?v=<?= time() ?>"></script>
-        <script src="./static/js/modals/modal_humidity.js?v=<?= time() ?>"></script>
-        <script src="./static/js/modals/modal_wind.js?v=<?= time() ?>"></script>
-        <script src="./static/js/modals/modal_rain.js?v=<?= time() ?>"></script>
-        <script src="./static/js/modals/modal_pressure.js?v=<?= time() ?>"></script>
-        <script src="./static/js/modals/modal_solar.js?v=<?= time() ?>"></script>
-        <script src="./static/js/modals/modal_tempint.js?v=<?= time() ?>"></script>
-        <script src="./static/js/modals/modal_humidityint.js?v=<?= time() ?>"></script>
-        <script src="./static/js/modals/modal_seeing.js?v=<?= time() ?>"></script>
+        <script src="./static/js/modals/modal_temp.js"></script>
+        <script src="./static/js/modals/modal_humidity.js"></script>
+        <script src="./static/js/modals/modal_wind.js"></script>
+        <script src="./static/js/modals/modal_rain.js"></script>
+        <script src="./static/js/modals/modal_pressure.js"></script>
+        <script src="./static/js/modals/modal_solar.js"></script>
+        <script src="./static/js/modals/modal_tempint.js"></script>
+        <script src="./static/js/modals/modal_humidityint.js"></script>
+        <script src="./static/js/modals/modal_seeing.js"></script>
         <script src="./static/js/modals/modal_sun.js?lat=<?= $lat ?>&lon=<?= $lon ?>&v=<?= time() ?>"></script>
-        <script type="module" src="./static/js/modals/modal_pws_info.js?v=<?= time() ?>"></script>
-        <script src="./static/js/modals/modal_credits.js?v=<?= time() ?>"></script>
-        <script type="module" src="./static/js/modals/modal_ephemeris.js?v=<?= time() ?>"></script>
-        <script src="./static/js/modals/modal_catalogo.js?v=<?= time() ?>"></script>
-        <script src="./static/js/modals/modal_catalogo_detalle.js?v=<?= time() ?>"></script>
+        <script type="module" src="./static/js/modals/modal_pws_info.js"></script>
+        <script src="./static/js/modals/modal_credits.js"></script>
+        <script type="module" src="./static/js/modals/modal_ephemeris.js"></script>
+        <script src="./static/js/modals/modal_catalogo.js"></script>
+        <script src="./static/js/modals/modal_catalogo_detalle.js"></script>
         <!-- SCRIPT de depuración
         <script>
             (function() {
