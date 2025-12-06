@@ -3,28 +3,26 @@
 
 // Para probar la fase problemática, puedes usar esta fecha:
 // const now = new Date("2025-09-08T12:00:00"); // Debería ser Cuarto Menguante
-const now = new Date();
-
+//const now = new Date();
+const now = new Date("2025-12-05T12:00:00");
 // --- Obtener coordenadas del observador (usando las constantes de conf_to_js.php) ---
 // Convertir las constantes string a números de punto flotante
 const latitude = parseFloat(LAT);
 const longitude = parseFloat(LON);
+const elevation = parseFloat(ELEV);
+
+let observer = new Astronomy.Observer(latitude, longitude, elevation);
+let startAstro = Astronomy.MakeTime(now);
+
+let moonRise = Astronomy.SearchRiseSet('Moon', observer, +1, startAstro, 1);
+let moonSet = Astronomy.SearchRiseSet('Moon', observer, -1, startAstro, 1);
+
+const moonRiseTime = moonRise.date;
+const moonSetTime = moonSet.date;
 
 window.moon = SunCalc.getMoonIllumination(now);
 window.fraction = window.moon.fraction;
 window.phase = window.moon.phase;
-
-// --- Calcular la salida y puesta de la Luna ---
-
-// 1. Obtener la salida y puesta para el día de 'now'
-const moonTimes = SunCalc.getMoonTimes(now, latitude, longitude);
-window.moonTimes = moonTimes;
-
-// 2. Crear una fecha para el día siguiente para verificar la puesta si es null hoy
-const tomorrow = new Date(now);
-tomorrow.setDate(now.getDate() + 1);
-const moonTimesTomorrow = SunCalc.getMoonTimes(tomorrow, latitude, longitude);
-
 
 // Función auxiliar para formatear la hora (HH:MM)
 function formatTime(date) {
@@ -34,24 +32,8 @@ function formatTime(date) {
     const options = { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' };
     return date.toLocaleTimeString(navigator.language, options);
 }
-
-// Obtener la hora de salida (siempre del día 'now')
-const moonRiseTime = formatTime(moonTimes.rise);
-
-// Obtener la hora de puesta:
-let moonSetTime;
-if (moonTimes.set) {
-    // Si la Luna se pone hoy, usamos la hora de hoy.
-    moonSetTime = formatTime(moonTimes.set);
-} else if (moonTimesTomorrow.set) {
-    // Si no se pone hoy, comprobamos si se pone en el día de mañana (moonTimesTomorrow.set contendrá la hora de puesta)
-    moonSetTime = formatTime(moonTimesTomorrow.set);
-    // Opcionalmente, puedes añadir un indicador de que es el día siguiente, e.g., ' mañana'
-    // moonSetTime += ' (+1)';
-} else {
-    // Si no se pone ni hoy ni mañana (o mañana tampoco se pone), devolvemos el guion.
-    moonSetTime = '—';
-}
+const formatterRiseTime = formatTime(moonRiseTime);
+const formatterSetTime = formatTime(moonSetTime);
 
 // --- Texto de la fase lunar ---
 const fractionPercent = Math.round(window.fraction * 100);
@@ -86,8 +68,8 @@ document.getElementById("moon-text").textContent = phaseText;
 // **********************************************
 // NUEVO: Asignar las horas de salida y puesta
 // **********************************************
-document.getElementById("moon-rise-time").textContent = moonRiseTime;
-document.getElementById("moon-set-time").textContent = moonSetTime;
+document.getElementById("moon-rise-time").textContent = formatterRiseTime;
+document.getElementById("moon-set-time").textContent = formatterSetTime;
 // **********************************************
 // NUEVO: Generar y enlazar el CSS dinámico
 // **********************************************

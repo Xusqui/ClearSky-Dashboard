@@ -163,11 +163,11 @@ include __DIR__ . "/static/config/config.php";
         <script src="./static/config/conf_to_js.php"></script>
         <script src="https://unpkg.com/suncalc@1.9.0/suncalc.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+        <script src="./static/js/other/orb.v2.js?v=<?= time() ?>"></script>
+        <script src="./static/js/other/astronomy.browser.js"></script>
         <script src="./static/js/moon.js?v<?= time() ?>"></script>
         <script src="./static/js/sun.js?lat=<?= $lat ?>&lon=<?= $lon ?>&v=<?= time() ?>"></script>
         <script type="module" src="./static/js/theme-switcher.js?v=<?= time() ?>"></script>
-        <script src="./static/js/other/orb.v2.js?v=<?= time() ?>"></script>
-        <script src="./static/js/other/astronomy.browser.js"></script>
         <!-- JS de widgets-->
         <script src="./static/js/widgets/update_status.js?v=<?= time() ?>"></script>
         <script src="./static/js/widgets/forecast.js?v=<?= time() ?>"></script>
