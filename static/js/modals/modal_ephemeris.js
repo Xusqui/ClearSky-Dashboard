@@ -17,12 +17,7 @@
 // Objetos del Sistema Solar (Usan Orb.VSOP, Orb.Sun, Orb.Luna) - MANTENIDO
 import { ORB_TARGETS } from './solar_system.js';
 
-// Ubicación del observador en el formato requerido por Orb.Observation - MANTENIDO
-const YOUR_LOCATION = {
-    "latitude": LAT,
-    "longitude": LON,
-    "altitude": ELEV
-};
+// Ubicación del observador en el formato requerido por Orb.Observation - Definido en conf_to_js.php
 
 // -----------------------------------------------------------
 // Paso 1.5: Variables Globales de Estado y Caché de Datos
@@ -33,6 +28,10 @@ const YOUR_LOCATION = {
 let visibleDSOData = [];
 // 'altitud' (default) o 'messier'
 let dsoOrderState = 'altitud';
+// --- NUEVAS VARIABLES GLOBALES PARA ESTADO DE ORDENACIÓN (Caldwell) ---
+let visibleCaldwellData = [];
+// 'altitud' (default) o 'caldwell'
+let caldwellOrderState = 'altitud';
 // -----------------------------------------------------------
 
 // --- NUEVAS VARIABLES GLOBALES PARA SISTEMA SOLAR ---
@@ -109,15 +108,22 @@ function createHtmlCard(body) {
         default: icon = '⭐';
     }
 
-    // EXTRACCIÓN DEL NÚMERO MESSIER O ID DEL SISTEMA SOLAR
+    // EXTRACCIÓN DEL NÚMERO MESSIER, CALDWELL O ID DEL SISTEMA SOLAR
     let dataAttribute = '';
     let cardClass = 'ephemeris-item-card';
 
     const messierId = body.messierId || body.name.match(/^M(\d+)/)?.[1];
+    // NUEVA: Extraer el número Caldwell
+    const caldwellId = body.caldwellId || body.name.match(/^C(\d+)/)?.[1];
+
 
     if (messierId && body.type !== 'Planeta' && body.type !== 'Luna' && body.name !== 'Sol') {
         dataAttribute = `data-messier-id="${messierId}"`;
         // Clase para distinguir las tarjetas Messier clicables
+        cardClass += ' clickable-dso';
+    } else if (caldwellId && body.type !== 'Planeta' && body.type !== 'Luna' && body.name !== 'Sol') { // NUEVA LÓGICA PARA CALDWELL
+        dataAttribute = `data-caldwell-id="${caldwellId}"`;
+        // Clase para distinguir las tarjetas Caldwell clicables (usamos la misma clase de DSO)
         cardClass += ' clickable-dso';
     } else if (body.ssId) { // NUEVA LÓGICA PARA SISTEMA SOLAR
         dataAttribute = `data-ss-id="${body.ssId}"`;
@@ -343,6 +349,37 @@ function renderDSOData() {
     }
 }
 
+/**
+ * Ordena y renderiza las tarjetas Caldwell en el DOM. (NUEVA FUNCIÓN)
+ */
+function renderCaldwellData() {
+    const caldwellContainer = document.getElementById('caldwell-cards-container');
+    const toggleButton = document.getElementById('toggleCaldwellOrder');
+
+    if (!caldwellContainer || !toggleButton) return;
+
+    // Lógica de Ordenación
+    if (caldwellOrderState === 'altitud') {
+        // Altitud descendente (los más altos primero)
+        visibleCaldwellData.sort((a, b) => b.alt - a.alt);
+        toggleButton.innerHTML = 'Ordenar por Número C #️⃣';
+    } else { // 'caldwell'
+        // Orden ascendente por número Caldwell (ej. C1, C2, C3...)
+        visibleCaldwellData.sort((a, b) => {
+            const numA = parseInt(a.caldwellId || 9999);
+            const numB = parseInt(b.caldwellId || 9999);
+            return numA - numB;
+        });
+        toggleButton.innerHTML = 'Ordenar por Altitud ⬆️';
+    }
+
+    // Inserción en el DOM
+    if (visibleCaldwellData.length > 0) {
+        caldwellContainer.innerHTML = visibleCaldwellData.map(createHtmlCard).join('');
+    } else {
+        caldwellContainer.innerHTML = '<p style="text-align: center; color: #aaa;">Ningún objeto Caldwell visible con elevación suficiente a esta hora.</p>';
+    }
+}
 
 // -------------------------------------------------------------
 // Paso 4: Inicialización de Eventos y Modales
@@ -352,6 +389,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ... Variables DOM existentes (se mantienen)
     const solarSystemContainer = document.getElementById('solar-system-cards-container');
     const dsoContainer = document.getElementById('dso-cards-container');
+    const caldwellContainer = document.getElementById('caldwell-cards-container');
     const widget = document.getElementById('ephemeris-widget');
     const modal = document.getElementById('ephemerisModal');
     const closeButton = document.getElementById('closeEphemerisModal');
@@ -396,7 +434,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     // --------------------------------------------------------------------------
 
-    // --- MANEJO DE EVENTOS PARA EL BOTÓN DE ORDENACIÓN DSO (Mantenido) ---
+    // --- MANEJO DE EVENTOS PARA EL BOTÓN DE ORDENACIÓN MESSIER ---
     const toggleOrderButton = document.getElementById('toggleDSOOrder');
     if (toggleOrderButton) {
         toggleOrderButton.addEventListener('click', () => {
@@ -406,26 +444,64 @@ document.addEventListener('DOMContentLoaded', () => {
             renderDSOData();
         });
     }
+    // --- MANEJO DE EVENTOS PARA EL BOTÓN DE ORDENACIÓN CALDWELL ---
+    const toggleCaldwellOrderButton = document.getElementById('toggleCaldwellOrder');
+    if (toggleCaldwellOrderButton) {
+        toggleCaldwellOrderButton.addEventListener('click', () => {
+            // 1. Cambiar el estado de ordenación
+            caldwellOrderState = caldwellOrderState === 'altitud' ? 'caldwell' : 'altitud';
+            // 2. Re-renderizar con el nuevo orden
+            renderCaldwellData();
+        });
+    }
     // -------------------------------------------------------------
 
 
-    // --- MANEJO DE CLIC PARA LAS TARJETAS DSO (Mantenido) ---
+    // --- MANEJO DE CLIC PARA LAS TARJETAS DSO Y CALDWELL ---
     if (dsoContainer) {
         dsoContainer.addEventListener('click', async (event) => {
             const card = event.target.closest('.clickable-dso');
 
             if (card) {
                 const messierId = card.getAttribute('data-messier-id');
+                const caldwellId = card.getAttribute('data-caldwell-id'); // <-- NUEVO
 
                 if (messierId) {
-                    // Busca el objeto completo en la caché de visibles
+                    // Lógica Messier mantenida
                     const dsoObject = visibleDSOData.find(dso => dso.messierId === messierId);
 
                     if (dsoObject && dsoObject.raw_details) {
-                        // Pasa los detalles 'raw' que ya están cargados desde la API
                         showMessierDetailModal(messierId, dsoObject.raw_details);
                     } else {
                         console.warn(`No se encontraron detalles para M${messierId} en la caché.`);
+                    }
+                } else if (caldwellId) {
+                    // NUEVA LÓGICA CALDWELL: Se asume que el modal de Messier es genérico para DSO.
+                    const caldwellObject = visibleCaldwellData.find(c => c.caldwellId === caldwellId);
+
+                    if (caldwellObject && caldwellObject.raw_details) {
+                        // REUTILIZAMOS EL MODAL DE MESSIER, ya que es genérico para DSO
+                        showMessierDetailModal(caldwellId, caldwellObject.raw_details);
+                    } else {
+                        console.warn(`No se encontraron detalles para C${caldwellId} en la caché.`);
+                    }
+                }
+            }
+        });
+    }
+    // Añadimos el mismo listener al nuevo contenedor para que capture los clics:
+    if (caldwellContainer && caldwellContainer !== dsoContainer) {
+        caldwellContainer.addEventListener('click', async (event) => {
+            const card = event.target.closest('.clickable-dso');
+            if (card) {
+                const caldwellId = card.getAttribute('data-caldwell-id');
+                if (caldwellId) {
+                    const caldwellObject = visibleCaldwellData.find(c => c.caldwellId === caldwellId);
+
+                    if (caldwellObject && caldwellObject.raw_details) {
+                        showMessierDetailModal(caldwellId, caldwellObject.raw_details);
+                    } else {
+                        console.warn(`No se encontraron detalles para C${caldwellId} en la caché.`);
                     }
                 }
             }
@@ -462,12 +538,18 @@ document.addEventListener('DOMContentLoaded', () => {
         // Limpiar los contenedores y mostrar mensaje de carga inicial
         const solarSystemContainer = document.getElementById('solar-system-cards-container');
         const dsoContainer = document.getElementById('dso-cards-container');
+        const caldwellContainer = document.getElementById('caldwell-cards-container');
 
         solarSystemContainer.innerHTML = '<p class="loading-message" style="text-align: center;">Calculando Hora de Referencia y cargando detalles SS...</p>';
         dsoContainer.innerHTML = '<p class="loading-message" style="text-align: center;">Obteniendo objetos Messier desde la API...</p>';
+        if (caldwellContainer) {
+            caldwellContainer.innerHTML = '<p class="loading-message" style="text-align: center;">Obteniendo objetos Caldwell desde la API...</p>';
+        }
+
 
         visibleDSOData = []; // Limpiamos el caché de DSO visibles
         visibleSolarSystemData = []; // Limpiamos el caché de SS visibles
+        visibleCaldwellData = []; // Limpiamos el caché de Caldwell visibles
 
         // --- NUEVO: Cargar detalles del Sistema Solar ---
         await fetchSolarSystemDetails();
@@ -477,7 +559,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const now = new Date();
         let calculationTime = now;
         let timeLabel = `Ahora (${now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })})`;
-        const minAlt = 15; // Altitud mínima de visibilidad
+        //const minAlt = 15; // Altitud mínima de visibilidad
 
         try {
             // Utilizamos SunCalc (asumido global)
@@ -558,14 +640,18 @@ document.addEventListener('DOMContentLoaded', () => {
         // ---------------------------------------------------------------------------------
 
 
-        // --- 2. NUEVA LÓGICA: FETCH DE OBJETOS DSO DESDE LA API (Mantenida) ---
+        // --- 2. CÁLCULO Y FETCH DE OBJETOS DSO DESDE LA API ---
 
-        const apiLat = YOUR_LOCATION.latitude;
-        const apiLon = YOUR_LOCATION.longitude;
+        const apiLat = latitude;
+        const apiLon = longitude;
         const datetime_str = calculationTime.toISOString().split('.')[0];
+        //const minAlt = 15;
+
+        // ---------------------------------------------------------------------------------
+        // 2.1 FETCH DE MESSIER (Mantenido)
+        // ---------------------------------------------------------------------------------
 
         const apiEndpoint = `https://astro.xusqui.com/messier_visible_objects?lat=${apiLat}&lon=${apiLon}&datetime_str=${encodeURIComponent(datetime_str)}&min_alt=${minAlt}`;
-
         try {
             const response = await fetch(apiEndpoint);
             if (!response.ok) {
@@ -621,11 +707,74 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error("Error al obtener objetos visibles de la API:", error);
             // Mostrar un mensaje de error claro
             dsoContainer.innerHTML = `<p style="text-align: center; color: var(--color-danger, red);">❌ Error de conexión o API: ${error.message}</p>`;
-            // Salimos para no intentar renderizar datos fallidos
-            return;
+            // NO salimos, ya que el Caldwell puede funcionar.
         }
 
-        // Llama a la nueva función para ordenar y renderizar los DSO
+        // ---------------------------------------------------------------------------------
+        // 2.2 FETCH DE CALDWELL
+        // ---------------------------------------------------------------------------------
+        const caldwellEndpoint = `https://astro.xusqui.com/caldwell_visible_objects?lat=${apiLat}&lon=${apiLon}&datetime_str=${encodeURIComponent(datetime_str)}&min_alt=${minAlt}`;
+        console.log("caldwellEndpoint: ",caldwellEndpoint);
+
+        if (caldwellContainer) { // Solo si el contenedor existe en el DOM
+            try {
+                const response = await fetch(caldwellEndpoint);
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status} - ${await response.text()}`);
+                }
+                const caldwellApiData = await response.json();
+
+                visibleCaldwellData = caldwellApiData
+                    .filter(c => c.caldwell_number)
+                    .map(c => {
+                        const caldwellId = c.caldwell_number.replace('C', '');
+
+                        const rawType = c.raw.type || c.raw.clasificacion;
+                        let objectType;
+
+                        // Mapeo similar al de Messier para el tipo de objeto
+                        if (rawType) {
+                            const typeMap = {
+                                'Galaxia': 'Galaxia',
+                                'Cúmulo Abierto': 'Cúmulo Abierto',
+                                'Cúmulo Globular': 'Cúmulo Globular',
+                                'Nebulosa Difusa': 'Nebulosa',
+                                'Resto de Supernova': 'Resto Supernova',
+                                'Nebulosa Planetaria': 'Nebulosa Planetaria'
+                            };
+                            objectType = typeMap[rawType] || rawType;
+                        } else if (c.nombre_comun.includes('Galaxia')) {
+                            objectType = 'Galaxia';
+                        } else {
+                            objectType = 'Objeto de Cielo Profundo';
+                        }
+
+                        const isNakedEye = c.raw.visibilidad?.A_ojo_desnudo?.toLowerCase().includes('fácil') || c.raw.visibilidad?.A_ojo_desnudo?.toLowerCase().includes('sencillo');
+
+                        return {
+                            name: `${c.caldwell_number} (${c.nombre_comun.replace(/Ã¡/g, 'á').replace(/Ãº/g, 'ú').replace(/Ã©/g, 'é')})`,
+                            type: objectType,
+                            alt: c.altitude_deg,
+                            az: c.azimuth_deg,
+                            caldwellId: caldwellId, // <-- NUEVA PROPIEDAD
+                            nakedEye: isNakedEye,
+                            raw_details: c.raw
+                        };
+                    });
+
+            } catch (error) {
+                console.error("Error al obtener objetos Caldwell visibles de la API:", error);
+                caldwellContainer.innerHTML = `<p style="text-align: center; color: var(--color-danger, red);">❌ Error de conexión o API de Caldwell: ${error.message}</p>`;
+            }
+        }
+        // ---------------------------------------------------------------------------------
+
+        // Llama a la nueva función para ordenar y renderizar los Messier
         renderDSOData();
+
+        // Llama a la NUEVA función para ordenar y renderizar los Caldwell
+        if (caldwellContainer) {
+            renderCaldwellData();
+        }
     }
 });

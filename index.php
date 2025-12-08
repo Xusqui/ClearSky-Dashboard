@@ -184,7 +184,7 @@ include __DIR__ . "/static/config/config.php";
         <script src="./static/js/modals/modal_sun.js?lat=<?= $lat ?>&lon=<?= $lon ?>&v=<?= time() ?>"></script>
         <script type="module" src="./static/js/modals/modal_pws_info.js"></script>
         <script src="./static/js/modals/modal_credits.js"></script>
-        <script type="module" src="./static/js/modals/modal_ephemeris.js"></script>
+        <script type="module" src="./static/js/modals/modal_ephemeris.js?v=<?= time() ?>"></script>
         <script src="./static/js/modals/modal_catalogo.js"></script>
         <script src="./static/js/modals/modal_catalogo_detalle.js"></script>
         <!-- SCRIPT de depuración

@@ -32,6 +32,14 @@
             <div id="dso-cards-container" class="ephemeris-card-grid">
             </div>
 
+            <div class="seeing-group-title-container">
+                <h2 class="seeing-group-title">Catálogo Caldwell (Cielo Profundo)</h2>
+                <button id="toggleCaldwellOrder" class="sort-toggle-button" title="Alternar Orden">
+                    Ordenar por Altitud ⬆️
+                </button>
+            </div>
+            <div id="caldwell-cards-container" class="ephemeris-card-grid">
+            </div>
             <div class="footer">
                 <p class="ephemeris-attribution">
                     Cálculos de efemérides realizados localmente usando astro.xusqui.com api y datos del Catálogo Messier.
