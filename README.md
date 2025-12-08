@@ -130,7 +130,8 @@ La integración de las estaciones meteorológicas con Home Assistant, corre de v
 ---
 ### &check; ToDo
 
-* Cualquier sugerencia es bienvenida.
+* Pendiente realizar el catálogo detallado de Messier y Caldwell
+* Pendiente las instrucciones de instalación de la api astro.
 
 
 ### 💬 Feedback
