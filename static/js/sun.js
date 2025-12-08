@@ -1,12 +1,11 @@
 // sun.js
-//
 // --- Sol ---
 function updateSunPosition() {
-    const times = SunCalc.getTimes(now, latitude, longitude);
-    const sunrisefull = Astronomy.SearchRiseSet('Sun', observer, +1, startAstro, 1);
-    const sunsetfull = Astronomy.SearchRiseSet('Sun', observer, -1, startAstro, 1);
-    const sunrise = sunrisefull.date;
-    const sunset = sunsetfull.date;
+    const scriptURL = document.querySelector('script[src*="sun.js"]').src;
+    const params = new URLSearchParams(scriptURL.split('?')[1]);
+    const times = SunCalc.getTimes(now, LAT, LON);
+    const sunrise = times.sunrise;
+    const sunset = times.sunset;
     const noontime = times.solarNoon;
     function formatTime(date) {
         return date.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });

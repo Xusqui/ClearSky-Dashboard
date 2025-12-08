@@ -14,8 +14,8 @@ const ELEV = '" . addslashes($elev) . "';
 const now = new Date();
 const latitude = parseFloat(LAT);
 const longitude = parseFloat(LON);
-const elevation = parseFloat(ELEV);
-let observer = new Astronomy.Observer(latitude, longitude, elevation);
-let startAstro = Astronomy.MakeTime(now);
-";
+const elevation = parseFloat(ELEV);";
+//let observer = new Astronomy.Observer(latitude, longitude, elevation);
+//let startAstro = Astronomy.MakeTime(now);
+//";
 ?>
