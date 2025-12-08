@@ -136,7 +136,7 @@ include __DIR__ . "/static/config/config.php";
                         include_once './modal_sun.php';
                         include_once './modal_credits.php';
                         include_once './modal_ephemeris.php';
-                        include_once './modal_messier.php';
+                        include_once './modal_dso.php';
                         include_once './modal_sistema_solar.php';
                         include_once './modal_catalogo.php';
                         ?>
@@ -162,6 +162,7 @@ include __DIR__ . "/static/config/config.php";
         <!-- JS Varios -->
         <script src="https://unpkg.com/suncalc@1.9.0/suncalc.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+        <script src="./static/js/other/astronomy.browser.js"></script>
         <script src="./static/js/other/orb.v2.js"></script>
         <script src="./static/config/conf_to_js.php"></script>
         <script src="./static/js/moon.js?v<?= time() ?>"></script>

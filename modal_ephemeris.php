@@ -42,7 +42,7 @@
             </div>
             <div class="footer">
                 <p class="ephemeris-attribution">
-                    Cálculos de efemérides realizados localmente usando astro.xusqui.com api y datos del Catálogo Messier.
+                    Cálculos de efemérides realizados localmente usando orb.v2.js, la API propia astro.xusqui.com y datos del Catálogo del Sistema Solar, Messier y Caldwell.
                 </p>
             </div>
         </div>

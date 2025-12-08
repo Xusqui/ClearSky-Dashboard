@@ -116,7 +116,6 @@ function createHtmlCard(body) {
     // NUEVA: Extraer el número Caldwell
     const caldwellId = body.caldwellId || body.name.match(/^C(\d+)/)?.[1];
 
-
     if (messierId && body.type !== 'Planeta' && body.type !== 'Luna' && body.name !== 'Sol') {
         dataAttribute = `data-messier-id="${messierId}"`;
         // Clase para distinguir las tarjetas Messier clicables
@@ -154,6 +153,7 @@ function createHtmlCard(body) {
  * @param {object} details - Los datos 'raw' del objeto Messier cargados desde la API.
  */
 function showMessierDetailModal(messierId, details) {
+    console.log("details: ",details);
     const modal = document.getElementById('messierDetailModal');
     const content = document.getElementById('messierDetailContent');
 
@@ -161,6 +161,41 @@ function showMessierDetailModal(messierId, details) {
         console.error('Elementos DOM no encontrados o datos no disponibles.');
         return;
     }
+
+    // =========================================================================
+    // 💡 CORRECCIÓN DE NORMALIZACIÓN DE DATOS (Para Messier y Caldwell)
+    // =========================================================================
+
+    // 1. Determinar qué catálogo es
+    const isMessier = details.messier_number && details.messier_number.startsWith('M');
+
+    // 2. Normalizar el número de catálogo y el nombre común
+    const catalogNumber = isMessier
+        ? details.messier_number_full || details.messier_number
+        : details.caldwell_number;
+
+    const commonName = details.nombre_comun || 'Objeto de Cielo Profundo';
+    const classification = details.type || 'N/A';
+
+    // 3. Normalizar la URL de la imagen
+    let imageUrl;
+    // Usamos la ruta local del placeholder para un mejor fallback si las APIs fallan.
+    const fallbackImage = './static/messier/messier_images/placeholder.jpg';
+
+    // Determinar si es Messier o Caldwell y construir la URL de la API
+    if (isMessier) {
+        // Es un objeto Messier
+        imageUrl = `https://astro.xusqui.com/messier/image/${messierId}`;
+    } else if (details.caldwell_number && details.caldwell_number.startsWith('C')) {
+        // Es un objeto Caldwell
+        imageUrl = `https://astro.xusqui.com/caldwell/image/${messierId}`;
+    } else {
+        // Fallback si no se puede determinar
+        imageUrl = fallbackImage;
+    }
+
+    // =========================================================================
+
 
     // --- MAPEO DE ICONOS PARA VISIBILIDAD ---
     const visibilityMap = {
@@ -190,31 +225,28 @@ function showMessierDetailModal(messierId, details) {
         return `<p><strong>${icon} ${displayKey}:</strong> ${value}</p>`;
     }).join('');
 
-    // Ajustamos la URL de la imagen si necesitas que funcione localmente con el id
-    const imageUrl = `./static/messier/messier_images/messier${messierId}.jpg`;
-    // const coords = details.coordenadas_ecuatoriales || {};
-
+    console.log("imageURL: ",imageUrl);
     content.innerHTML = `
        <div class="messier-detail-header">
             <div>
-                <img src="${imageUrl}" alt="${details.nombre_comun}" class="messier-detail-image" onerror="this.onerror=null;this.src='./static/messier/messier_images/placeholder.jpg';">
+                <img src="${imageUrl}" alt="${commonName}" class="messier-detail-image" onerror="this.onerror=null;this.src='${fallbackImage}';">
             </div>
 
             <div>
-                <h2 class="messier-detail-title">${details.messier_number_full} (${details.nombre_comun})</h2>
+                <h2 class="messier-detail-title">${catalogNumber} (${commonName})</h2>
 
                 <div class="messier-detail-section">
                     <h3>Datos Clave</h3>
-                    <p><strong>Clasificación:</strong> ${details.type || 'N/A'}</p>
-                    <p><strong>Magnitud Aparente:</strong> ${details.magnitud_aparente}</p>
-                    <p><strong>Tamaño Aparente:</strong> ${details.tamano_aparente}</p>
-                    <p><strong>Distancia:</strong> ${details.distancia_al} años luz</p>
+                    <p><strong>Clasificación:</strong> ${classification}</p>
+                    <p><strong>Magnitud Aparente:</strong> ${details.magnitud_aparente || 'N/A'}</p>
+                    <p><strong>Tamaño Aparente:</strong> ${details.tamano_aparente || 'N/A'}</p>
+                    <p><strong>Distancia:</strong> ${details.distancia_al || 'N/A'} años luz</p>
                 </div>
 
                 <div class="messier-detail-section" style="margin-top: 20px;">
                     <h3>Coordenadas Ecuatoriales</h3>
-                    <p><strong>Ascensión Recta (RA):</strong> ${details.coordenadas_ecuatoriales.ascension_recta}</p>
-                    <p><strong>Declinación (Dec):</strong> ${details.coordenadas_ecuatoriales.declinacion}</p>
+                    <p><strong>Ascensión Recta (RA):</strong> ${details.coordenadas_ecuatoriales.ascension_recta || 'N/A'}</p>
+                    <p><strong>Declinación (Dec):</strong> ${details.coordenadas_ecuatoriales.declinacion || 'N/A'}</p>
                 </div>
             </div>
         </div>
@@ -228,14 +260,13 @@ function showMessierDetailModal(messierId, details) {
 
             <div class="messier-detail-section messier-detail-description">
                 <h3>📖 Descripción Detallada</h3>
-                <p>${details.descripcion}</p>
+                <p>${details.descripcion || 'Sin descripción disponible.'}</p>
             </div>
         </div>
     `;
 
     modal.style.display = 'flex';
 }
-
 /**
  * NUEVA FUNCIÓN: Muestra el modal de detalles del objeto del Sistema Solar.
  * @param {object} details - Los datos 'raw' del objeto SS cargados desde el JSON.
@@ -714,7 +745,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // 2.2 FETCH DE CALDWELL
         // ---------------------------------------------------------------------------------
         const caldwellEndpoint = `https://astro.xusqui.com/caldwell_visible_objects?lat=${apiLat}&lon=${apiLon}&datetime_str=${encodeURIComponent(datetime_str)}&min_alt=${minAlt}`;
-        console.log("caldwellEndpoint: ",caldwellEndpoint);
 
         if (caldwellContainer) { // Solo si el contenedor existe en el DOM
             try {
@@ -727,40 +757,40 @@ document.addEventListener('DOMContentLoaded', () => {
                 visibleCaldwellData = caldwellApiData
                     .filter(c => c.caldwell_number)
                     .map(c => {
-                        const caldwellId = c.caldwell_number.replace('C', '');
+                    const caldwellId = c.caldwell_number.replace('C', '');
 
-                        const rawType = c.raw.type || c.raw.clasificacion;
-                        let objectType;
+                    const rawType = c.raw.type || c.raw.clasificacion;
+                    let objectType;
 
-                        // Mapeo similar al de Messier para el tipo de objeto
-                        if (rawType) {
-                            const typeMap = {
-                                'Galaxia': 'Galaxia',
-                                'Cúmulo Abierto': 'Cúmulo Abierto',
-                                'Cúmulo Globular': 'Cúmulo Globular',
-                                'Nebulosa Difusa': 'Nebulosa',
-                                'Resto de Supernova': 'Resto Supernova',
-                                'Nebulosa Planetaria': 'Nebulosa Planetaria'
-                            };
-                            objectType = typeMap[rawType] || rawType;
-                        } else if (c.nombre_comun.includes('Galaxia')) {
-                            objectType = 'Galaxia';
-                        } else {
-                            objectType = 'Objeto de Cielo Profundo';
-                        }
-
-                        const isNakedEye = c.raw.visibilidad?.A_ojo_desnudo?.toLowerCase().includes('fácil') || c.raw.visibilidad?.A_ojo_desnudo?.toLowerCase().includes('sencillo');
-
-                        return {
-                            name: `${c.caldwell_number} (${c.nombre_comun.replace(/Ã¡/g, 'á').replace(/Ãº/g, 'ú').replace(/Ã©/g, 'é')})`,
-                            type: objectType,
-                            alt: c.altitude_deg,
-                            az: c.azimuth_deg,
-                            caldwellId: caldwellId, // <-- NUEVA PROPIEDAD
-                            nakedEye: isNakedEye,
-                            raw_details: c.raw
+                    // Mapeo similar al de Messier para el tipo de objeto
+                    if (rawType) {
+                        const typeMap = {
+                            'Galaxia': 'Galaxia',
+                            'Cúmulo Abierto': 'Cúmulo Abierto',
+                            'Cúmulo Globular': 'Cúmulo Globular',
+                            'Nebulosa Difusa': 'Nebulosa',
+                            'Resto de Supernova': 'Resto Supernova',
+                            'Nebulosa Planetaria': 'Nebulosa Planetaria'
                         };
-                    });
+                        objectType = typeMap[rawType] || rawType;
+                    } else if (c.nombre_comun.includes('Galaxia')) {
+                        objectType = 'Galaxia';
+                    } else {
+                        objectType = 'Objeto de Cielo Profundo';
+                    }
+
+                    const isNakedEye = c.raw.visibilidad?.A_ojo_desnudo?.toLowerCase().includes('fácil') || c.raw.visibilidad?.A_ojo_desnudo?.toLowerCase().includes('sencillo');
+
+                    return {
+                        name: `${c.caldwell_number} (${c.nombre_comun.replace(/Ã¡/g, 'á').replace(/Ãº/g, 'ú').replace(/Ã©/g, 'é')})`,
+                        type: objectType,
+                        alt: c.altitude_deg,
+                        az: c.azimuth_deg,
+                        caldwellId: caldwellId, // <-- NUEVA PROPIEDAD
+                        nakedEye: isNakedEye,
+                        raw_details: c.raw
+                    };
+                });
 
             } catch (error) {
                 console.error("Error al obtener objetos Caldwell visibles de la API:", error);

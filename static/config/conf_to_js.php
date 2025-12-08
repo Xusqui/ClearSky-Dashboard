@@ -20,8 +20,8 @@ const YOUR_LOCATION ={
     'longitude': longitude,
     'altitude': elevation
 }
-const minAlt = 15;";
-//let observer = new Astronomy.Observer(latitude, longitude, elevation);
-//let startAstro = Astronomy.MakeTime(now);
-//";
+const minAlt = 15;
+let observer = new Astronomy.Observer(latitude, longitude, elevation);
+let startAstro = Astronomy.MakeTime(now);
+";
 ?>
