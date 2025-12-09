@@ -152,7 +152,7 @@ function createHtmlCard(body) {
  * @param {string} messierId - El número del objeto Messier (ej: '1', '2', etc.).
  * @param {object} details - Los datos 'raw' del objeto Messier cargados desde la API.
  */
-function showMessierDetailModal(messierId, details) {
+function showDSODetailModal(messierId, details) {
     console.log("details: ",details);
     const modal = document.getElementById('messierDetailModal');
     const content = document.getElementById('messierDetailContent');
@@ -502,7 +502,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const dsoObject = visibleDSOData.find(dso => dso.messierId === messierId);
 
                     if (dsoObject && dsoObject.raw_details) {
-                        showMessierDetailModal(messierId, dsoObject.raw_details);
+                        showDSODetailModal(messierId, dsoObject.raw_details);
                     } else {
                         console.warn(`No se encontraron detalles para M${messierId} en la caché.`);
                     }
@@ -512,7 +512,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     if (caldwellObject && caldwellObject.raw_details) {
                         // REUTILIZAMOS EL MODAL DE MESSIER, ya que es genérico para DSO
-                        showMessierDetailModal(caldwellId, caldwellObject.raw_details);
+                        showDSODetailModal(caldwellId, caldwellObject.raw_details);
                     } else {
                         console.warn(`No se encontraron detalles para C${caldwellId} en la caché.`);
                     }
@@ -530,7 +530,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const caldwellObject = visibleCaldwellData.find(c => c.caldwellId === caldwellId);
 
                     if (caldwellObject && caldwellObject.raw_details) {
-                        showMessierDetailModal(caldwellId, caldwellObject.raw_details);
+                        showDSODetailModal(caldwellId, caldwellObject.raw_details);
                     } else {
                         console.warn(`No se encontraron detalles para C${caldwellId} en la caché.`);
                     }
