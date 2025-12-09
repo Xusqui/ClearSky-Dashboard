@@ -149,10 +149,10 @@ function createHtmlCard(body) {
 /**
  * Muestra el modal de detalles del objeto Messier. (Lógica Mantenida)
  * Se utiliza el objeto 'raw' del API directamente.
- * @param {string} messierId - El número del objeto Messier (ej: '1', '2', etc.).
+ * @param {string} Id - El número del objeto Messier o Caldwell (ej: '1', '2', etc.).
  * @param {object} details - Los datos 'raw' del objeto Messier cargados desde la API.
  */
-function showDSODetailModal(messierId, details) {
+function showDSODetailModal(Id, details) {
     console.log("details: ",details);
     const modal = document.getElementById('messierDetailModal');
     const content = document.getElementById('messierDetailContent');
@@ -185,10 +185,10 @@ function showDSODetailModal(messierId, details) {
     // Determinar si es Messier o Caldwell y construir la URL de la API
     if (isMessier) {
         // Es un objeto Messier
-        imageUrl = `https://astro.xusqui.com/messier/image/${messierId}`;
+        imageUrl = `https://astro.xusqui.com/messier/image/${Id}`;
     } else if (details.caldwell_number && details.caldwell_number.startsWith('C')) {
         // Es un objeto Caldwell
-        imageUrl = `https://astro.xusqui.com/caldwell/image/${messierId}`;
+        imageUrl = `https://astro.xusqui.com/caldwell/image/${Id}`;
     } else {
         // Fallback si no se puede determinar
         imageUrl = fallbackImage;
