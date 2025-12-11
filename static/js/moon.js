@@ -108,6 +108,7 @@ const phasePercentage = Math.round(window.phase * 101);
 // Obtener la referencia al <link> existente (si tiene un ID)
 let cssLink = document.getElementById('moon-phase-css');
 
+
 // Si no existe, lo creamos
 if (!cssLink) {
     cssLink = document.createElement('link');
