@@ -38,8 +38,7 @@ function formatTime(date) {
 // Obtener la hora de salida (siempre del día 'now')
 let moonRiseTime;
 if (moonTimes.rise) {
-    //Si la luna sale hoy, usamos la hora de hoy.
-    moonsetTime = formatTime(moonTimes.rise);
+    moonRiseTime = formatTime(moonTimes.rise);
 } else if (moonTimesTomorrow.rise) {
     // si no sale hoy, comprobamos si sale mañana.
     moonRiseTime = formatTime(moonTimesTomorrow.rise);
