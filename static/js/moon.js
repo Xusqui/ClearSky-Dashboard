@@ -3,7 +3,7 @@
 
 // Para probar la fase problemática, puedes usar esta fecha:
 // const now = new Date("2025-09-08T12:00:00"); // Debería ser Cuarto Menguante
-//const now = new Date();
+// const now = new Date(); // Desactivado porque está habilitado en conf_to_js.php
 
 // --- Obtener coordenadas del observador (usando las constantes de conf_to_js.php) ---
 // Convertir las constantes string a números de punto flotante
@@ -36,7 +36,16 @@ function formatTime(date) {
 }
 
 // Obtener la hora de salida (siempre del día 'now')
-const moonRiseTime = formatTime(moonTimes.rise);
+let moonRiseTime;
+if (moonTimes.rise) {
+    //Si la luna sale hoy, usamos la hora de hoy.
+    moonsetTime = formatTime(moonTimes.rise);
+} else if (moonTimesTomorrow.rise) {
+    // si no sale hoy, comprobamos si sale mañana.
+    moonRiseTime = formatTime(moonTimesTomorrow.rise);
+} else {
+    moonRiseTime = '—';
+}
 
 // Obtener la hora de puesta:
 let moonSetTime;
