@@ -46,6 +46,7 @@
 .moon-card {
     width: 100%; /* ancho de la tarjeta */
     height: auto; /* altura automática según contenido */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .moon-card:hover{
