@@ -190,7 +190,7 @@ include __DIR__ . "/static/config/config.php";
         <script type="module" src="./static/js/modals/modal_ephemeris.js?v=<?= time() ?>"></script>
         <script src="./static/js/modals/modal_catalogo.js?v=<?= time(); ?>"></script>
         <script src="./static/js/modals/modal_catalogo_detalle.js?v=<?= time(); ?>"></script>
-        <script src="./static/js/modals/modal_messier.js?v=<?= time(); ?>"></script>
+        <script src="./static/js/modals/modal_dso.js?v=<?= time(); ?>"></script>
         <!-- SCRIPT de depuración
         <script>
             (function() {

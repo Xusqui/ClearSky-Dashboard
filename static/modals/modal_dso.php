@@ -1,5 +1,5 @@
 <?php
-// modal_messier.php
+// modal_dso.php
 ?>
 <div id="messierCatalogModal" class="modal">
     <div class="modal-content-catalog">

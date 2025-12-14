@@ -1,5 +1,5 @@
 <?php
-//modal_messier_detalle.php
+//modal_dso_detalle.php
 ?>
 <div id="messierDetailModal" class="modal-full">
     <div class="modal-content-detail">
