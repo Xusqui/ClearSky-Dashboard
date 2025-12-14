@@ -8,6 +8,10 @@
     --black-or-white: 0, 0, 0;
     --wu-white: rgb(255, 255, 255);
     --wu-white-raw: 255, 255, 255;
+    --gray80: rgb(210, 210, 210);
+    --gray60: rgb(180, 180, 180);
+    --gray40: rgb(120, 120, 120);
+    --gray20: rgb(90, 90, 90);
     --wu-white20: rgb(243, 215, 214);
     --wu-white40: rgb(231, 174, 173);
     --wu-white60: rgb(220, 134, 133);

@@ -1,0 +1,229 @@
+/* modal-dso.css */
+/* --- Estilos Base del Proyecto (usando sus variables de color) --- */
+.catalogo-option-button {
+    padding: 15px 30px;
+    font-size: 1.2em;
+    cursor: pointer;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--wu-darkblue);
+    color: var(--wu-white);
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.catalogo-option-button:hover {
+    background-color: var(--wu-lightblue);
+    box-shadow: 0 0 10px rgba(var(--wu-lightblue-raw), 0.7);
+    color: var(--wu-black);
+}
+
+/* --- Estilos del Modal a Pantalla Completa (Fondo Transparente) --- */
+
+.modal-full {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    /* Fondo translúcido/difuminado */
+    background-color: rgba(var(--black-or-white), 0.7);
+    backdrop-filter: blur(8px);
+    padding: 0;
+}
+
+/* Contenido del Modal de Catálogo - ANCHO LIMITADO Y CENTRADO */
+.modal-content-catalog {
+    /* 🎯 CAMBIOS PARA EL ANCHO DEL 80% */
+    width: 80%;
+    max-width: 1600px; /* Límite máximo para pantallas muy grandes */
+    margin: 0 auto; /* Centra el modal */
+    min-height: 100%; /* Asegura que cubre la altura disponible */
+
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    background-color: var(--obs-bg-dark);
+    color: var(--font-color);
+    border: 3px solid var(--wu-darkblue);
+}
+
+.modal-header {
+    padding: 20px 40px;
+    background-color: rgba(var(--black-or-white), 0.1);
+    border-bottom: 2px solid var(--obs-neon-light);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.modal-header h2 {
+    color: var(--obs-neon-light);
+    text-shadow: 0 0 5px rgba(var(--obs-neon-shadow), 0.6);
+    margin: 0;
+}
+
+.modal-footer {
+    padding: 10px 20px;
+    background-color: rgba(var(--black-or-white), 0.1);
+    border-top: 1px solid var(--gray40);
+    text-align: center;
+    font-size: 0.8em;
+    color: var(--color-secondary-font);
+    margin-top: auto;
+}
+
+.close-button {
+    color: var(--obs-close-color);
+    font-size: 2.5em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.close-button:hover {
+    color: var(--wu-red);
+}
+
+/* --- Estilos de la Cuadrícula del Catálogo --- */
+
+#messierGrid {
+    flex-grow: 1;
+    padding: 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 20px;
+    max-width: 1600px;
+    margin: 20px auto;
+}
+
+.messier-card {
+    background-color: var(--color-box-bg);
+    border: 1px solid rgba(var(--obs-neon-shadow), 0.2);
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s, border 0.3s;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.messier-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 20px rgba(var(--obs-neon-shadow), 0.8);
+    background-color: var(--color-box-alternate-bg);
+    border: 1px solid var(--obs-accent-light);
+}
+
+.messier-card img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border: 2px solid var(--gray60);
+}
+
+.messier-card h3 {
+    margin: 5px 0 2px 0;
+    font-size: 1.2em;
+    color: var(--obs-accent-light);
+}
+
+.messier-card p {
+    margin: 0;
+    font-size: 0.9em;
+    color: var(--color-secondary-font);
+}
+
+/* --- Estilos del Modal de Detalle --- */
+
+.modal-content-detail {
+    width: 90%;
+    max-width: 800px;
+    margin: 5vh auto;
+    padding: 30px 40px;
+    background-color: var(--obs-bg-dark);
+    border-radius: 15px;
+    box-shadow: 0 0 50px rgba(var(--obs-neon-shadow), 0.9);
+    overflow-y: auto;
+    position: relative;
+    border: 4px solid var(--obs-neon-light);
+}
+
+.close-button-detail {
+    position: absolute;
+    top: 15px;
+    right: 30px;
+    color: var(--obs-close-color);
+    font-size: 2.8em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+#messierDetailContent h2 {
+    color: var(--obs-neon-light);
+    border-bottom: 2px solid var(--obs-accent-light);
+    padding-bottom: 10px;
+    margin-top: 0;
+    font-size: 2.2em;
+}
+
+#messierDetailContent h3 {
+    color: var(--obs-accent-light);
+    margin-top: 25px;
+    border-bottom: 1px solid var(--gray40);
+    padding-bottom: 5px;
+}
+
+#messierDetailContent img {
+    width: 100%;
+    max-height: 450px;
+    object-fit: contain;
+    border-radius: 10px;
+    margin: 20px 0;
+    border: 4px solid var(--gray40);
+    box-shadow: 0 0 15px rgba(var(--black-or-white), 0.5);
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.detail-item {
+    padding: 12px;
+    background-color: var(--obs-description-bg);
+    border-radius: 8px;
+    border-left: 5px solid var(--wu-lightblue);
+    display: flex;
+    flex-direction: column;
+}
+
+.detail-item strong {
+    display: block;
+    font-size: 0.9em;
+    color: var(--obs-accent-light);
+    margin-bottom: 3px;
+}
+
+.description-box {
+    background-color: var(--obs-description-bg);
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px dashed var(--gray40);
+}
+.description-box p {
+    line-height: 1.7;
+    text-align: justify;
+    margin-bottom: 15px;
+    color: var(--color-secondary-font);
+}
