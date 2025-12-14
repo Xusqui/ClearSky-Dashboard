@@ -156,6 +156,8 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('click', (event) => {
         if (event.target === catalogModal) {
             closeCatalogModal();
+        } else if (event.target === detailModal) {
+            closeDetailModal();
         }
     });
 

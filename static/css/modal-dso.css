@@ -40,8 +40,8 @@
 /* Contenido del Modal de Catálogo - ANCHO LIMITADO Y CENTRADO */
 .modal-content-catalog {
     /* 🎯 CAMBIOS PARA EL ANCHO DEL 80% */
-    width: 80%;
-    max-width: 800px; /* Límite máximo para pantallas muy grandes */
+    width: 100%;
+    max-width: 1000px; /* Límite máximo para pantallas muy grandes */
     margin: 0 auto; /* Centra el modal */
     min-height: 100%; /* Asegura que cubre la altura disponible */
 
@@ -55,7 +55,7 @@
 
 .modal-header {
     padding: 20px 40px;
-    background-color: var(--gray80);
+    background-color: var(--widget-empty);
     border-bottom: 2px solid var(--obs-neon-light);
     display: flex;
     justify-content: space-between;
@@ -82,15 +82,15 @@
 }
 
 .close-button {
-    color: var(--obs-close-color);
-    font-size: 2.5em;
-    font-weight: bold;
+    color: var(--color-secondary-font);
+    font-size: 2em;
+    font-weight: normal;
     cursor: pointer;
     transition: color 0.3s;
 }
 
 .close-button:hover {
-    color: var(--wu-red);
+    color: var(--obs-close-color);
 }
 
 /* --- Estilos de la Cuadrícula del Catálogo --- */
@@ -163,11 +163,15 @@
     position: absolute;
     top: 15px;
     right: 30px;
-    color: var(--obs-close-color);
-    font-size: 2.8em;
-    font-weight: bold;
+    color: var(--color-secondary-font);
+    font-size: 2em;
+    font-weight: normal;
     cursor: pointer;
     transition: color 0.3s;
+}
+
+.close-button-detail:hover {
+    color: var(--obs-close-color);
 }
 
 #messierDetailContent h2 {

@@ -61,58 +61,6 @@ function listMoons(moons) {
     const more = moons.length > 5 ? ` y ${moons.length - 5} más` : '';
     return `${moonNames}${more}`;
 }
-/*
-async function calculateNextObservationTime(targetKey) {
-    if (typeof Astro === 'undefined' || !Astro[targetKey] || !Astro.Search) {
-        return "ERROR: Librería de efemérides no disponible.";
-    }
-
-
-    try {
-        const target = Astro[targetKey];
-        const location = { lat: YOUR_LOCATION.latitude, lon: YOUR_LOCATION.longitude, elev: YOUR_LOCATION.altitude };
-
-        let date = new Date();
-        const start_time = date.getTime() / 1000;
-
-        // Búsqueda del Tránsito (Altitud Máxima) en los próximos 360 días
-        const transit = Astro.Search(target, location, start_time, 360,
-            (time_seconds) => {
-                const position = Astro.Equator(target, time_seconds, location);
-                const horizontal = Astro.Horizon(time_seconds, location, position.ra, position.dec, 'ecliptic');
-                return horizontal.alt; // Buscamos el máximo de altitud
-            },
-            Astro.SearchMax);
-
-        if (transit && transit.time) {
-            const transitTime = new Date(transit.time * 1000);
-
-            const formattedDate = transitTime.toLocaleString('es-ES', {
-                day: '2-digit',
-                month: 'short',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-
-            // Cálculo de Altitud Máxima en ese tiempo
-            const positionAtTransit = Astro.Equator(target, transit.time, location);
-            const horizontalAtTransit = Astro.Horizon(transit.time, location, positionAtTransit.ra, positionAtTransit.dec, 'ecliptic');
-            const alt = horizontalAtTransit.alt.toFixed(1);
-
-            const isVisible = parseFloat(alt) >= MIN_OBSERVING_ALTITUDE;
-
-            return `${formattedDate} (Altitud Máx: ${alt}°)${!isVisible ? ' - 🛑 Bajo horizonte' : ''}`;
-        } else {
-            return "No se encontró un tránsito en el próximo año.";
-        }
-
-    } catch (error) {
-        console.error("Error al calcular el tiempo de observación:", error);
-        return "Error en el cálculo de visibilidad.";
-    }
-}
-*/
 
 // -----------------------------------------------------
 // 3. LÓGICA DE CARGA Y RENDERIZADO DEL CATÁLOGO SOLAR

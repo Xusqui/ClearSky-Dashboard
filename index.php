@@ -139,8 +139,8 @@ include __DIR__ . "/static/config/config.php";
                         include_once './static/modals/modal_ephemeris.php';
                         include_once './static/modals/modal_sistema_solar.php';
                         include_once './static/modals/modal_catalogo.php';
-                        include_once './static/modals/modal_messier.php';
-                        include_once './static/modals/modal_messier_detalle.php';
+                        include_once './static/modals/modal_dso.php';
+                        include_once './static/modals/modal_dso_detalle.php';
                         ?>
                         <!-- ############################################################
                              ############## FIN DE LAS GRÁFICAS MODALES #################
