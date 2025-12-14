@@ -1,7 +1,7 @@
 <?php
 // modal_messier.php
 ?>
-<div id="messierCatalogModal" class="modal-full">
+<div id="messierCatalogModal" class="modal">
     <div class="modal-content-catalog">
         <header class="modal-header">
             <h2>Catálogo Messier Completo</h2>

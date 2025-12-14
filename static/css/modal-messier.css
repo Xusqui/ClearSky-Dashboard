@@ -1,5 +1,9 @@
 /* modal-messier.css - Diseño "Tarjeta de Datos de Observatorio" */
 
+#messierDetailModal {
+    z-index: 1040;
+}
+
 /* ------------------------------------------------------------- */
 /* 1. Estructura General del Modal (Clase .modal-content)        */
 /* ------------------------------------------------------------- */
