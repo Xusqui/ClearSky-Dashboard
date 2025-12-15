@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Referencias a elementos del DOM ---
     const messierGrid = document.getElementById('messierGrid');
+    const messiername = document.getElementById('catalogo_nombre');
     // Botones de activación
     const catalogoMessierButton = document.getElementById('catalogoMessierButton');
     const catalogoCaldwellButton = document.getElementById('catalogoCaldwellButton');
@@ -59,6 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (loadingMessage) loadingMessage.textContent = `Cargando datos del Catálogo ${catalogId === 'MESS' ? 'Messier' : 'Caldwell'}... 🌌`;
         messierGrid.innerHTML = ''; // Limpia la cuadrícula
+        messiername.innerHTML = `Catálogo ${catalogId === 'MESS' ? 'Messier' : 'Caldwell'} completo`;
 
         try {
             const response = await fetch(DATA_URL);
