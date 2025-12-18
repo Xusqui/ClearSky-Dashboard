@@ -4,32 +4,9 @@
     transition: transform 0.3s ease;
 }
 
-.widget::after {
-    content: "";
-    position: absolute;
-    top: -5px;
-    left: -5px;
-    right: -5px;
-    bottom: -5px;
-    border-radius: inherit;
-    background: radial-gradient(
-        circle,
-        rgba(106, 149, 248, 0.25),
-        rgba(106, 149, 248, 0)
-    );
-    filter: blur(12px);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.4s ease;
-    animation: glow-move 3s ease-in-out infinite;
-}
 
 .widget:hover {
-    transform: translateY(-3px);
-}
-
-.widget:hover::after {
-    opacity: 1;
+    transform: translateY(-5px);
 }
 
 @keyframes glow-move {
@@ -307,7 +284,7 @@
 }
 
 .close:hover svg {
-    stroke: var(--wu-red); /* rojo de la paleta al pasar el ratón */
+    stroke: var(--red); /* rojo de la paleta al pasar el ratón */
 }
 
 .modal-content h2 {

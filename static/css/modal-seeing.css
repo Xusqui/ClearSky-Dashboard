@@ -129,7 +129,7 @@
 /* Estilo para la línea principal del "Seeing" */
 .footer .seeing-result {
     font-size: 1em; /* 1em (relativo al 1.3em del .footer) */
-    color: var(--wu-orange-raw);
+    color: var(--orange-raw);
     margin: 0;
 }
 

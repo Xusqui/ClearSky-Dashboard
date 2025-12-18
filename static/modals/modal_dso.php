@@ -4,7 +4,7 @@
 <div id="messierCatalogModal" class="modal">
     <div class="modal-content-catalog">
         <header class="modal-header">
-            <h2 id="catalogo_nombre">Catálogo Messier Completo</h2>
+            <h2 id="catalogo_nombre">Catálogo Completo</h2>
             <span class="close-button" onclick="closeCatalogModal()">&times;</span>
         </header>
         <div id="messierGrid" class="messier-grid">

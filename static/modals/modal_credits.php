@@ -27,8 +27,8 @@
             <div class="credits-grid">
                 <!-- 1. Weather Underground (Diseño/Estilo) -->
                 <a class="credits-card" href="https://www.wunderground.com/" target="_blank" rel="noopener noreferrer">
-                    <!-- Icono Wu-Logo -->
-                    <span class="credits-card-icon wu-logo"></span>
+                    <!-- Icono weather-underground-logo -->
+                    <span class="credits-card-icon weather-underground-logo"></span>
                     <h3 class="credits-card-title">Diseño Infográfico</h3>
                     <p class="credits-card-value">La mayoría de iconos y gráficos son originales de **Weather Underground**</p>
                     <span class="credits-card-source">wunderground.com</span>

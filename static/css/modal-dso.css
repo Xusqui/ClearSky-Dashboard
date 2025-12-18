@@ -9,15 +9,15 @@
     cursor: pointer;
     border: none;
     border-radius: 8px;
-    background-color: var(--wu-darkblue);
-    color: var(--wu-white);
+    background-color: var(--darkblue);
+    color: var(--white);
     transition: background-color 0.3s, box-shadow 0.3s;
 }
 
 .catalogo-option-button:hover {
-    background-color: var(--wu-lightblue);
-    box-shadow: 0 0 10px rgba(var(--wu-lightblue-raw), 0.7);
-    color: var(--wu-black);
+    background-color: var(--lightblue);
+    box-shadow: 0 0 10px rgba(var(--lightblue-raw), 0.7);
+    color: var(--black);
 }
 
 /* --- Estilos del Modal a Pantalla Completa (Fondo Transparente) --- */
@@ -50,7 +50,7 @@
     box-sizing: border-box;
     background-color: var(--obs-bg-dark);
     color: var(--font-color);
-    border: 3px solid var(--wu-darkblue);
+    border: 3px solid var(--darkblue);
 }
 
 .modal-header {
@@ -210,7 +210,7 @@
     padding: 12px;
     background-color: var(--obs-description-bg);
     border-radius: 8px;
-    border-left: 5px solid var(--wu-lightblue);
+    border-left: 5px solid var(--lightblue);
     display: flex;
     flex-direction: column;
 }

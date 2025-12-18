@@ -155,10 +155,10 @@ Estilos del Modal (Créditos) modal-credits.css
 }
 
 /* Regla especial para el logo WU que puede necesitar un tamaño diferente si es grande */
-.credits-card-icon.wu-logo {
+.credits-card-icon.weather-underground-logo {
     width: 50px;
     height: 50px;
-    background-image: var(--icon-wu-logo);
+    background-image: var(--icon-weather-underground-logo);
 }
 
 /* Reglas individuales para los iconos utilizados, si no vienen del .icon general */

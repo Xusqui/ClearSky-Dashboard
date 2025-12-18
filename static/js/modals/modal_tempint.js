@@ -90,7 +90,7 @@ function loadTempIntChart(startDate, endDate) {
     var rootStyle = getComputedStyle(document.documentElement);
     var fontColor = rootStyle.getPropertyValue("--font-color").trim();
     var bgColor = rootStyle.getPropertyValue("--bg-color").trim();
-    var redColor = rootStyle.getPropertyValue("--wu-red").trim();
+    var redColor = rootStyle.getPropertyValue("--red").trim();
     // (Omitido el resto de colores por brevedad, ya los tienes)
 
     // --- MODIFICADO: Construir la URL de fetch dinámicamente ---

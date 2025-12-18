@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // 4. Mostrar "Cargando"
         const rootStyle = getComputedStyle(document.documentElement); // Necesitamos esto para los colores
         const fontColor = rootStyle.getPropertyValue('--font-color').trim();
-        const wuOrange = rootStyle.getPropertyValue('--wu-orange').trim();
+        const wuOrange = rootStyle.getPropertyValue('--orange').trim();
 
         speedChart.showLoading({
             text: 'Cargando datos...',
@@ -84,9 +84,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 // 7. Obtener colores (ya tenemos fontColor y wuOrange)
                 const bgColor = rootStyle.getPropertyValue('--bg-color').trim();
-                const wuRed = rootStyle.getPropertyValue('--wu-red').trim();
-                const wuGreen = rootStyle.getPropertyValue('--wu-green').trim();
-                const wuBlue = rootStyle.getPropertyValue('--wu-lightblue').trim();
+                const wuRed = rootStyle.getPropertyValue('--red').trim();
+                const wuGreen = rootStyle.getPropertyValue('--green').trim();
+                const wuBlue = rootStyle.getPropertyValue('--lightblue').trim();
 
                 // ------------------------
                 // Gráfico de velocidad y rachas (MODIFICADO con dataZoom)

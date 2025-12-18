@@ -71,13 +71,13 @@ document.addEventListener('DOMContentLoaded', () => {
             createCatalogCards(currentData, catalogId);
         } catch (error) {
             console.error(`Fallo en la carga de datos de la API (${catalogId}):`, error);
-            messierGrid.innerHTML = `<p style="color:var(--wu-red);">Error de Conexión: ${error.message}. Intenta recargar la página.</p>`;
+            messierGrid.innerHTML = `<p style="color:var(--red);">Error de Conexión: ${error.message}. Intenta recargar la página.</p>`;
         }
     }
 
     function createCatalogCards(data, catalogId) {
         if (data.length === 0) {
-            messierGrid.innerHTML = '<p style="color:var(--wu-yellow);">El catálogo está vacío.</p>';
+            messierGrid.innerHTML = '<p style="color:var(--yellow);">El catálogo está vacío.</p>';
             return;
         }
 

@@ -221,11 +221,11 @@ dashboard-header-view pws-info dialog li span:first-of-type {
 
     /* Animación de pulsación con el color verde */
     animation: pulse 1.5s infinite;
-    --pulse-color: var(--wu-green, #4caf50);
+    --pulse-color: var(--green, #4caf50);
     box-shadow: 0 0 0 0 var(--pulse-color);
 }
 .pws-status-container.pws-online .pws-status-text {
-    color: var(--wu-green, #4caf50);
+    color: var(--green, #4caf50);
 }
 
 /* --- ESTADO OFFLINE (ROJO) --- */
@@ -235,19 +235,19 @@ dashboard-header-view pws-info dialog li span:first-of-type {
 
     /* Animación de pulsación con el color rojo */
     animation: pulse 1.5s infinite;
-    --pulse-color: var(--wu-red, #f44336);
+    --pulse-color: var(--red, #f44336);
     box-shadow: 0 0 0 0 var(--pulse-color);
 }
 .pws-status-container.pws-offline .pws-status-text {
-    color: var(--wu-red, #f44336);
+    color: var(--red, #f44336);
 }
 
 /* Aplicar la variable de color al box-shadow de la animación */
 .pws-status-container.pws-online pws-info {
-    box-shadow: 0 0 0 0 var(--wu-green, #4caf50);
+    box-shadow: 0 0 0 0 var(--green, #4caf50);
 }
 .pws-status-container.pws-offline pws-info {
-    box-shadow: 0 0 0 0 var(--wu-red, #f44336);
+    box-shadow: 0 0 0 0 var(--red, #f44336);
 }
 
 .pws-status-container.pws-online pws-info,

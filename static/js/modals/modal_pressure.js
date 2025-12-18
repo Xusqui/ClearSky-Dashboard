@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const rootStyle = getComputedStyle(document.documentElement);
         const fontColor = rootStyle.getPropertyValue('--font-color').trim();
         const bgColor = rootStyle.getPropertyValue('--bg-color').trim();
-        const greenColor = rootStyle.getPropertyValue('--wu-green') || 'green'; // Usar variable CSS si existe
+        const greenColor = rootStyle.getPropertyValue('--green') || 'green'; // Usar variable CSS si existe
 
         // Mostrar "cargando"
         pressureChart.showLoading({

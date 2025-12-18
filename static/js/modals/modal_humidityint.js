@@ -94,9 +94,9 @@ function loadHumIntChart(startDate, endDate) {
     var rootStyle = getComputedStyle(document.documentElement);
     var fontColor = rootStyle.getPropertyValue("--font-color").trim();
     var bgColor = rootStyle.getPropertyValue("--bg-color").trim();
-    var blueColor = rootStyle.getPropertyValue("--wu-purple").trim();
-    var blueLight = rootStyle.getPropertyValue("--wu-lightblue").trim();
-    var darkBlue = rootStyle.getPropertyValue("--wu-darkblue").trim();
+    var blueColor = rootStyle.getPropertyValue("--purple").trim();
+    var blueLight = rootStyle.getPropertyValue("--lightblue").trim();
+    var darkBlue = rootStyle.getPropertyValue("--darkblue").trim();
 
     // --- MODIFICADO: Construir la URL de fetch dinámicamente ---
     var fetchUrl = "./static/modules/modals/get_humint_historic.php";

@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // 4. Obtener colores y mostrar "Cargando"
         const rootStyle = getComputedStyle(document.documentElement);
         const fontColor = rootStyle.getPropertyValue('--font-color').trim();
-        const highColor = rootStyle.getPropertyValue('--wu-red').trim();
+        const highColor = rootStyle.getPropertyValue('--red').trim();
 
         uvChart.showLoading({
             text: 'Cargando datos...',
@@ -88,7 +88,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 // 7. Obtener más colores
                 const bgColor = rootStyle.getPropertyValue('--bg-color').trim();
-                const lowColor = rootStyle.getPropertyValue('--wu-lightblue').trim();
+                const lowColor = rootStyle.getPropertyValue('--lightblue').trim();
 
                 // 8. Opciones de Gráficos
 

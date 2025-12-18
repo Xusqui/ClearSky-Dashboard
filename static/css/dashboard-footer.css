@@ -39,7 +39,7 @@ dashboard-footer-view .footer-text {
 }
 
 #link-credits:hover {
-    background-color: rgba(var(--wu-white-raw), 0.1); /* Ligero resaltado al pasar el ratón */
+    background-color: rgba(var(--white-raw), 0.1); /* Ligero resaltado al pasar el ratón */
     color: var(--black-or-white); /* Asegura que el color se mantenga claro en hover */
 }
 

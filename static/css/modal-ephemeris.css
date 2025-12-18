@@ -40,7 +40,7 @@
 
 .ephemeris-item-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 12px var(--dashboard-widget-box-shadow-color), 0 0 10px var(--wu-green80);
+    box-shadow: 0 6px 12px var(--dashboard-widget-box-shadow-color), 0 0 10px var(--green80);
 }
 
 /* --- Elementos de la Tarjeta --- */
@@ -60,7 +60,7 @@
 .ephemeris-item-value {
     font-size: 2.0em; /* Tamaño grande para el dato principal */
     font-weight: 900;
-    color: var(--wu-green80); /* Color brillante para destacar */
+    color: var(--green80); /* Color brillante para destacar */
     margin: 5px 0 10px 0;
     line-height: 1;
 }

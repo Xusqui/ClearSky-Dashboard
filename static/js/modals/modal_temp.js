@@ -96,10 +96,10 @@ function loadTempChart(startDate, endDate) {
     var rootStyle = getComputedStyle(document.documentElement);
     var fontColor = rootStyle.getPropertyValue("--font-color").trim();
     var bgColor = rootStyle.getPropertyValue("--bg-color").trim();
-    var redColor = rootStyle.getPropertyValue("--wu-red").trim();
-    var greenColor = rootStyle.getPropertyValue("--wu-green").trim();
-    var lightBlue = rootStyle.getPropertyValue("--wu-lightblue").trim();
-    var lightBlue80 = rootStyle.getPropertyValue("--wu-lightblue80").trim();
+    var redColor = rootStyle.getPropertyValue("--red").trim();
+    var greenColor = rootStyle.getPropertyValue("--green").trim();
+    var lightBlue = rootStyle.getPropertyValue("--lightblue").trim();
+    var lightBlue80 = rootStyle.getPropertyValue("--lightblue80").trim();
 
     // --- MODIFICADO: Construir la URL de fetch dinámicamente ---
     var fetchUrl = "./static/modules/modals/get_temp_historic.php";

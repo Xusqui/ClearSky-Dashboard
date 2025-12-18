@@ -88,9 +88,9 @@ $water_start = $h_max - $heigh;
 
 // Colores del pluviómetro (Misma lógica anterior)
 if ($daily_rain != 0) {
-    $stroke_bucket_top = "var(--wu-lightblue20)";
-    $fill_bucket_top = "var(--wu-lightblue)";
-    $fill_bucket_bottom = "var(--wu-lightblue20)";
+    $stroke_bucket_top = "var(--lightblue20)";
+    $fill_bucket_top = "var(--lightblue)";
+    $fill_bucket_bottom = "var(--lightblue20)";
 } else {
     $stroke_bucket_top = "transparent";
     $fill_bucket_top = "transparent";

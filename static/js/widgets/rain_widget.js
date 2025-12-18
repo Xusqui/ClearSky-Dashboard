@@ -11,7 +11,7 @@ function updateRainWidget() {
                 return;
             }
             // Actualizar valores numéricos
-            document.getElementById('rain-widget-main-display').textContent = data.daily_rain;
+            document.getElementById('rain-widget-main-display').textContent = data.rain_event;
             document.getElementById('rain-widget-secondary-display').textContent = data.rain_rate;
             document.getElementById('widget_de_lluvia').setAttribute("data-precip-rate", data.rain_rate);
 
@@ -31,7 +31,7 @@ function updateRainWidget() {
 
             // Determinar intervalo dinámico
             if (data.daily_rain > 0 || data.rain_rate > 0) {
-                scheduleNextUpdate(20000); // 20 segundos si llueve
+                scheduleNextUpdate(65000); // 65 segundos si llueve
             } else {
                 scheduleNextUpdate(300000); // 5 minutos si no llueve
             }

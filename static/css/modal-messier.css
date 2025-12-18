@@ -57,7 +57,7 @@
 /* Título Principal */
 .messier-detail-title {
     font-size: 2.5em;
-    color: var(--wu-white); /* Título en blanco puro */
+    color: var(--white); /* Título en blanco puro */
     text-shadow: 0 0 5px var(--obs-neon-light); /* Efecto de brillo sutil */
     border-bottom: 2px solid var(--obs-neon-light);
     padding-bottom: 10px;
@@ -155,5 +155,5 @@
 
 .clickable-dso:hover {
     transform: translateY(-3px);
-    box-shadow: 0 6px 15px rgba(var(--wu-black-raw), 0.3); /* Sombra estándar */
+    box-shadow: 0 6px 15px rgba(var(--black-raw), 0.3); /* Sombra estándar */
 }

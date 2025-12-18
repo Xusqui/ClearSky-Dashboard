@@ -42,6 +42,18 @@ dashboard-body-view .widget .title {
     text-align: center;
 }
 
+dashboard-body-view .widget .subtitle {
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: var(--color-secondary-font);
+    opacity: 0.5;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 1rem;
+    margin-top: -1forecatrem;
+    text-align: center;
+}
+
 sun-moon-forecast {
     display: flex;
     align-items: center;
@@ -209,28 +221,6 @@ sun-moon-forecast .big-card-moon > * {
     z-index: 1; /* contenido por encima de la imagen */
 }
 
-/* --- Previsión meteorológica ocupa todo el ancho --- */
-#forecast.forecast-container {
-    grid-column: 1 / 4; /* Se extiende a través de las dos columnas */
-    display: grid;
-    grid-template-columns: repeat(6, 1fr); /* 6 tarjetas */
-    gap: 8px;
-    width: 100%;
-    margin-top: 1rem;
-}
-
-#forecast.forecast-container .forecast-card {
-    background: var(--sun-moon-forecast-bg-color);
-    border-radius: 16px;
-    border: 1px solid var(--sun-moon-forecast-border-color);
-    padding: 8px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-}
-
 /* --- Historia, Gráficos y resto --- */
 dashboard-body-view .history {
     display: flex;
@@ -268,7 +258,7 @@ dashboard-body-view pws-history-dates input[type="date"] {
     color: var(--font-color);
     width: 105px;
     background-color: var(--bg-color);
-    border: 1px solid var(--wu-lightblue);
+    border: 1px solid var(--lightblue);
     border-radius: 8px;
     padding: 8px;
 }
@@ -331,6 +321,35 @@ dashboard-body-view .pws-chart.no-data .no-data {
 
 dashboard-body-view .pws-chart.hide {
     display: none;
+}
+
+.section-title {
+    margin: 2.5rem 0 1.2rem 0;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.section-title::before {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--obs-accent-light));
+}
+
+.section-title::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to left, transparent, var(--obs-accent-light));
+}
+
+.section-title-text {
+    font-size: 1rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-secondary-font);
+    white-space: nowrap;
 }
 
 @keyframes pulse {

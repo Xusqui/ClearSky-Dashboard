@@ -95,6 +95,11 @@ include __DIR__ . "/static/config/config.php";
                                 </div>
                             </div>
                         </sun-moon-forecast>
+                        <!-- Título sección meteorología actual -->
+                        <div class="section-title">
+                            <span class="section-title-text">Situación Meteorológica Actual</span>
+                        </div>
+
                         <!--############################################################
                             ######################## WIDGETS ###########################
                             ############################################################-->

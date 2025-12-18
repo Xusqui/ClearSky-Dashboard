@@ -24,7 +24,7 @@ pressure-widget-view .pressure-needle {
     transition: all .7s ease;
     height: 44%;
     width: 2px;
-    background: var(--wu-red);
+    background: var(--red);
     border-radius: 8px;
     opacity:0
 }
@@ -47,7 +47,7 @@ pressure-widget-view .pressure-needle:before {
     transform: translateX(-50%);
     width: 12px;
     height: 12px;
-    background: var(--wu-red);
+    background: var(--red);
     border-radius: 50%;
     box-shadow: 0 0 15px rgba(0, 0, 0, .6)
 }

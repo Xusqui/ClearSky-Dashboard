@@ -39,7 +39,7 @@ if ($mysqli->connect_error) {
 }
 
 // Consulta SQL para obtener el último valor de 'punto_rocio'
-$sql = "SELECT punto_rocio
+$sql = "SELECT punto_rocio, temperatura
         FROM meteo
         ORDER BY timestamp DESC
         LIMIT 1";
@@ -62,6 +62,7 @@ if ($result->num_rows === 0) {
 // 2. Obtener el valor
 $row = $result->fetch_assoc();
 $dew = $row['punto_rocio'];
+$temp = $row['temperatura'];
 
 $result->free();
 $mysqli->close();
@@ -75,13 +76,21 @@ $mysqli->close();
 $dew = is_numeric($dew) ? (float)$dew : null;
 $dew = round ($dew, 1);
 
+$temp = is_numeric($temp) ? (float)$temp : null;
+$temp = round ($temp, 1);
+
 if ($dew === null) {
     // Usar 0 para el porcentaje si el valor no es válido o está ausente
     $inner_percent = 0;
 } else {
     // Calcular porcentaje de la gota: $dew / 49, limitado entre 0 y 100
-    $inner_percent = 100 * $dew / $dew_max_value;
-    $inner_percent = min(max($inner_percent, 0), 100);
+    $ratio = $dew / $temp;
+    if ($ratio > 1) {
+        $ratio = 1;
+    }
+
+    $inner_percent = 60 * $ratio;
+    $inner_percent = min(max($inner_percent, 0), 60);
 }
 
 // ----------------------------------------------------

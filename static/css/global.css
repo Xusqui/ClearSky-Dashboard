@@ -125,7 +125,7 @@ long-load-view .loader {
 }
 
 .switch-label .ios-switch input:checked + .slider {
-    background-color:var(--wu-lightblue)
+    background-color:var(--lightblue)
 }
 
 .switch-label .ios-switch input:checked + .slider::before {

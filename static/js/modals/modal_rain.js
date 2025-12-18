@@ -44,8 +44,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Colores globales (obtener del CSS)
     const rootStyle = getComputedStyle(document.documentElement);
-    const primaryColor = rootStyle.getPropertyValue('--wu-lightblue').trim() || '#007bff';
-    const secondaryColor = rootStyle.getPropertyValue('--wu-lightgreen').trim() || '#00bfa5';
+    const primaryColor = rootStyle.getPropertyValue('--lightblue').trim() || '#007bff';
+    const secondaryColor = rootStyle.getPropertyValue('--lightgreen').trim() || '#00bfa5';
     const fontColor = rootStyle.getPropertyValue('--font-color').trim() || '#333';
     const bgColor = rootStyle.getPropertyValue('--bg-color').trim() || '#fff';
 

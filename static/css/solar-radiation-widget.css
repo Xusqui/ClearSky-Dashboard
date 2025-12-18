@@ -17,9 +17,9 @@ solar-radiation-widget-view .inner-circle {
     width: 0%;
     aspect-ratio: 1/1;
     border-radius: 50%;
-    background: var(--wu-yellow);
-    background: linear-gradient(45deg, var(--wu-yellow), var(--wu-orange));
-    box-shadow: 0 0 20px rgba(var(--wu-yellow-raw), .5);
+    background: var(--yellow);
+    background: linear-gradient(45deg, var(--yellow), var(--orange));
+    box-shadow: 0 0 20px rgba(var(--yellow-raw), .5);
     transition:all 3s ease
 }
 
@@ -32,7 +32,7 @@ solar-radiation-widget-view .circle-ring {
     aspect-ratio: 1/1;
     border-radius: 50%;
     background: 0 0;
-    border: .5px solid var(--wu-yellow);
+    border: .5px solid var(--yellow);
     animation: radiation-pulse 5s linear infinite;
     animation-delay: 1s;
     visibility: hidden;

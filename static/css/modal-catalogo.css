@@ -111,3 +111,68 @@
     font-size: 0.75em;
     font-weight: bold;
 }
+
+/* Contenedor colapsable */
+.seccion-colapsable {
+  margin: 1.5rem 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  background-color: #fafafa;
+}
+
+/* Título (summary) */
+.seccion-colapsable summary {
+  font-size: 1.3rem;
+  font-weight: bold;
+  cursor: pointer;
+  list-style: none; /* elimina el triángulo por defecto */
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Oculta el marcador por defecto en Firefox */
+.seccion-colapsable summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Icono personalizado */
+.seccion-colapsable .icono::before {
+  content: "➕";
+  font-size: 1.2rem;
+  transition: transform 0.2s ease;
+}
+
+/* Cambia el icono cuando está abierto */
+.seccion-colapsable[open] .icono::before {
+  content: "➖";
+}
+
+/* Estilo del contenido */
+.seccion-colapsable section {
+  margin-top: 1rem;
+  text-align: justify;
+  line-height: 1.6;
+}
+
+/* Espaciado interno de listas */
+.seccion-colapsable ul {
+  padding-left: 1.5rem;
+}
+
+/* Animación suave (opcional) */
+.seccion-colapsable section {
+  animation: fadeIn 0.25s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
