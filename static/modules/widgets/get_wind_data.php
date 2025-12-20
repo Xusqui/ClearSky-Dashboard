@@ -100,5 +100,5 @@ echo json_encode([
     "gust_max" => $gust_max,
     "wind_dir" => $wind_dir,
     "wind_direction" => $wind_direction
-]);
+], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 ?>

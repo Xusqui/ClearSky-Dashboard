@@ -89,5 +89,5 @@ header('Content-Type: application/json');
 echo json_encode([
     "pressure"   => $pressure,
     "pres_angle" => $pres_angle
-]);
+], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 ?>

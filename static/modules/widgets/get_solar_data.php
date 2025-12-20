@@ -89,5 +89,5 @@ header('Content-Type: application/json');
 echo json_encode([
     "solar"      => $solar,
     "percentage" => $percentage
-]);
+], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 ?>

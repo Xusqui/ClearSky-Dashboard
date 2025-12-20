@@ -91,5 +91,5 @@ echo json_encode([
     "temp" => $temp,
     "feels_like" => $feels_like,
     "angle" => $temp_angle
-]);
+], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 ?>

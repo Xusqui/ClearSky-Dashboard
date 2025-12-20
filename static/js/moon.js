@@ -14,6 +14,14 @@ window.moon = SunCalc.getMoonIllumination(now);
 window.fraction = window.moon.fraction;
 window.phase = window.moon.phase;
 
+// --- Calcular la altura de la luna
+const moonPos = SunCalc.getMoonPosition(now, latitude, longitude);
+const moonAltitudeRad = moonPos.altitude;
+const moonAltitudeDeg = moonAltitudeRad * 180 / Math.PI;
+
+window.moonAltitude = moonAltitudeDeg;
+
+
 // --- Calcular la salida y puesta de la Luna ---
 
 // 1. Obtener la salida y puesta para el día de 'now'

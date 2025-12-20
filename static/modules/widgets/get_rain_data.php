@@ -110,5 +110,5 @@ echo json_encode([
     "stroke_bucket_top" => $stroke_bucket_top,
     "fill_bucket_top"   => $fill_bucket_top,
     "fill_bucket_bottom"=> $fill_bucket_bottom
-]);
+], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 ?>

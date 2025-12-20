@@ -106,7 +106,7 @@ try {
         'status_message' => $status_message,
         'local_timestamp' => $local_datetime->getTimestamp(),
         'station_interval_sec' => $station_interval_seconds
-    ]);
+    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
 } catch (Exception $e) {
     http_response_code(500); // Internal Server Error

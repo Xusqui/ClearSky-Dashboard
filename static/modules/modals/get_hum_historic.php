@@ -6,7 +6,7 @@ require_once __DIR__ . "/../../config/config.php";
 $mysqli = new mysqli($db_url, $db_user, $db_pass, $db_database);
 
 if ($mysqli->connect_errno) {
-    echo json_encode(["error" => true, "message" => "Error de conexión a la BD"]);
+    echo json_encode(["error" => true, "message" => "Error de conexión a la BD"], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit();
 }
 
@@ -109,7 +109,7 @@ if ($result) {
 }
 
 // Devolvemos solo el array de datos
-echo json_encode($data, JSON_UNESCAPED_UNICODE);
+echo json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 $stmt->close();
 $mysqli->close();
 ?>

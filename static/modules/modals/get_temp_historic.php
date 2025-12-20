@@ -107,7 +107,7 @@ if ($result) {
     }
 }
 
-echo json_encode($data, JSON_UNESCAPED_UNICODE);
+echo json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 $stmt->close();
 $mysqli->close();
 ?>

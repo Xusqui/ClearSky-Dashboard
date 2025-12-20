@@ -77,7 +77,7 @@ if (empty($data)) {
 // Guardar JSON crudo
 // Una vez compruebes que todo funciona bien, puedes comentar la línea siguiente para que
 // El archivo weather_data.log no se haga gigantesco
-file_put_contents($LOG_FILE, json_encode($data) . "\n", FILE_APPEND);
+file_put_contents($LOG_FILE, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n", FILE_APPEND);
 
 
 // -------------------------------------------

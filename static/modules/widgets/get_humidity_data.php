@@ -147,5 +147,5 @@ echo json_encode([
     "legend" => $humid_legend,
     "color" => $humidity_color,
     "state" => $humid_state
-]);
+], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 ?>

@@ -71,7 +71,7 @@ if ($mode === 'stats') {
         "rain_weekly"   => floatval($row['lluvia_semana'] ?? 0.0),
         "rain_yearly"   => floatval($row['lluvia_ano'] ?? 0.0),
     ];
-    echo json_encode($data);
+    echo json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit();
 }
 
@@ -117,7 +117,7 @@ if ($mode === 'monthly') {
     }
 
     $mysqli->close();
-    echo json_encode(['labels' => $labels, 'data' => $data]);
+    echo json_encode(['labels' => $labels, 'data' => $data], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit();
 }
 
@@ -175,7 +175,7 @@ if ($mode === 'detailed') {
         ['name' => 'Lluvia Evento', 'data' => $evento_data],
     ];
 
-    echo json_encode(['labels' => $labels, 'series' => $series]);
+    echo json_encode(['labels' => $labels, 'series' => $series], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit();
 }
 
