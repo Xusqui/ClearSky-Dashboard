@@ -3,11 +3,11 @@
 header('Content-Type: application/json; charset=utf-8');
 
 // ================= CONFIG =================
-$CACHE_FILE = __DIR__ . '/cache_astronomy.json';
+$CACHE_FILE = __DIR__ . '/../../cache/cache_astronomy.json';
 $CACHE_TTL  = 300; // 5 minutos
 
 // ================= CONFIG ESTACIÓN =================
-require_once '../../config/config.php';
+require_once __DIR__ . '/../../config/config.php';
 
 if (!isset($lat, $lon, $tz)) {
     echo json_encode([
