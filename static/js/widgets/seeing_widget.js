@@ -1,56 +1,67 @@
 /* seeing_widget.js */
 
+function visQualityToText(value) {
+  if (value <= 5) return "Nulo";
+  if (value <= 15) return "Prácticamente imposible";
+  if (value <= 30) return "Muy pobre";
+  if (value <= 45) return "Pobre";
+  if (value <= 60) return "Aceptable";
+  if (value <= 75) return "Buena";
+  if (value <= 90) return "Muy buena";
+  if (value <= 97) return "Excelente";
+  return "Inmejorable";
+}
+
 function actualizarSeeing() {
-  fetch('./static/modules/widgets/get_seeing.php')
-    .then(response => response.json())
+  fetch('./static/modules/widgets/get_astronomy_quality.php')
+    .then(r => r.json())
     .then(data => {
-    if (data.error) {
-      console.error("Error Home Assistant:", data.message);
+
+    if (!data.seeing || !data.seeing.planetario) {
+      console.warn("Datos de seeing incompletos");
       return;
     }
 
-    const intensity = parseInt(data.IEAL); // extraer valor IEAL
-    const texto = data.seeing;
-    const multiplicador = data.estrellas;
-    if (isNaN(intensity)) {
-      console.warn("Valor IEAL inválido:", data.IEAL);
-      return;
-    }
+    const seeingArcsec = data.seeing.planetario.arcsec;
+    const visQuality = data.calidad.visual;
+    const visQualityText = "";
 
     const svg = document.querySelector('#seeing svg');
-    const starLayer = svg.querySelector('#stars');
+    const starLayer = svg?.querySelector('#stars');
     if (!svg || !starLayer) return;
 
     starLayer.innerHTML = '';
-    const count = Math.min(Math.max(intensity, 1), 30) * multiplicador; // escala: 10 a 300 estrellas
 
-    const colors = ['orange', 'yellow'];
+    // Escala razonable: 0–200 estrellas
+    const starCount = Math.round(
+      Math.min(Math.max(visQuality, 0), 100) * 2
+    );
 
-    for (let i = 0; i < count; i++) {
-      const x = Math.random() * 1190;
-      const y = Math.random() * 1706;
-      const r = 15;
-      const duration = (Math.random() * 4 + 4).toFixed(2);
-      const color = colors[Math.floor(Math.random() * colors.length)];
+    for (let i = 0; i < starCount; i++) {
+      const star = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "circle"
+      );
 
-      const star = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-      star.setAttribute("cx", x);
-      star.setAttribute("cy", y);
-      star.setAttribute("r", r);
-      star.setAttribute("fill", color);
+      star.setAttribute("cx", Math.random() * 1190);
+      star.setAttribute("cy", Math.random() * 1706);
+
+      // Peor seeing → estrellas más grandes
+      const radius = Math.min(Math.max(seeingArcsec, 0.6), 3.5) * 3;
+      star.setAttribute("r", radius);
+
+      star.setAttribute("fill", "white");
       star.setAttribute("class", "star");
-      star.style.animationDuration = `${duration}s`;
 
       starLayer.appendChild(star);
     }
+
+    const visText = visQualityToText(visQuality);
+
     document.getElementById("seeing-description").textContent =
-      "Vis: " + texto + " (" + intensity + ")";
+      `Vis: ${visText} (${visQuality}%)`;
   })
-    .catch(err => console.error('Error al obtener datos astronómicos:', err));
+    .catch(e => console.error("Error viendo seeing:", e));
 }
 
-// Llamada inicial
 actualizarSeeing();
-
-// Repetir cada 60 segundos (60000 ms). Se actualiza desde update_status.js
-//setInterval(actualizarSeeing, 60000);

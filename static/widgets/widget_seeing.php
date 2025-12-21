@@ -5,7 +5,7 @@
         **************** WIDGET DE SEEING ******************
         ***************************************************** -->
 <div class="widget" id="seeing">
-    <div class="title">Seeing</div>
+    <div class="title">Calidad del cielo</div>
     <seeing-widget-view id="seeing-widget-view" data-pws-id="<?= $observatorio ?>" data-status="connected" data-unit="" class="widget-view loaded show-wind">
         <div class="graphic-container">
             <div class="svg-container">
