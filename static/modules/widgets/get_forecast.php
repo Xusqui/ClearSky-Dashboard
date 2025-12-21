@@ -1,12 +1,5 @@
 <?php
 /* get_forecast.php */
-
-// ─────────────────────────────────────────────
-// DEBUG (quítalo en producción)
-// ─────────────────────────────────────────────
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-
 // ─────────────────────────────────────────────
 // CONFIG
 // ─────────────────────────────────────────────
@@ -127,7 +120,7 @@ ftruncate($fp, 0);
 fwrite($fp, json_encode([
     "timestamp" => $now,
     "data" => $data
-]));
+], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
 
 flock($fp, LOCK_UN);
 fclose($fp);
