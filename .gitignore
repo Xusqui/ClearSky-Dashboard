@@ -11,12 +11,9 @@
 # Archivos de Sistema Operativo
 *.DS_Store
 /.phcode.json
-/error.log
 /weather_data.log
 /debug.log
-/api_data.php
 /api_data_87493479023.php
-/import_meteo_4752905479849785.php
 /test.html
 /@eaDir/
 /static/@eaDir/
@@ -38,8 +35,7 @@
 /static/images/icons/moons/@eaDir/
 /static/solar_system/images/@eaDir/
 /static/modules/widgets/._get_astronomy_quality.php
-/static/modules/widgets/cache_astronomy.json
-/static/cache/cache_astronomy.json
 /static/modules/widgets/._get_forecast.php
+/static/cache/cache_astronomy.json
 /static/cache/cache_forecast.json
 /static/config/sensors.php
