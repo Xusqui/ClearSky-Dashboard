@@ -50,6 +50,8 @@ $send_LOCAL = (int)($config['send_local'] ?? 0);
 $send_HA = (int)($config['send_ha'] ?? 0);
 $send_METEOCLIMATIC = (int)($config['send_meteoclimatic'] ?? 0);
 
+$send_LOG = (int)($config['log_weather'] ?? 0);
+
 // Zona horaria
 $TIMEZONE = $config['tz'] ?? "UTC";
 date_default_timezone_set($TIMEZONE);
@@ -75,10 +77,12 @@ if (empty($data)) {
 }
 
 // Guardar JSON crudo
-// Una vez compruebes que todo funciona bien, puedes comentar la línea siguiente para que
-// El archivo weather_data.log no se haga gigantesco
-file_put_contents($LOG_FILE, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n", FILE_APPEND);
-
+// Una vez compruebes que todo funciona bien, puedes desactivar el log en el setup de la web para que
+// el archivo weather_data.log no se haga gigantesco
+if ($send_LOG === 1) {
+    file_put_contents($LOG_FILE, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n", FILE_APPEND);
+    write_debug($DEBUG_FILE, "SE ESTÁN ESCRIBIENDO LOS DATOS CRUDOS EN weather_data.log");
+}
 
 // -------------------------------------------
 // VALIDACIÓN DE DATOS CRÍTICOS
