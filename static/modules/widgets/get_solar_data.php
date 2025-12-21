@@ -3,7 +3,7 @@
 
 // Incluir el archivo de configuración que debe contener las variables de conexión a MariaDB:
 // $db_user, $db_pass, $db_url, $db_database
-include '../../config/config.php';
+include __DIR__ . '/../../config/config.php';
 
 // Definición de variables
 $SOLAR_MAX_REF = 1100; // Valor máximo de referencia para 100% de la barra

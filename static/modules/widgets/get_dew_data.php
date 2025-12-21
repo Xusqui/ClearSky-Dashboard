@@ -3,7 +3,7 @@
 
 // Incluir el archivo de configuración que debe contener las variables de conexión a MariaDB:
 // $db_user, $db_pass, $db_url, $db_database
-include '../../config/config.php';
+include __DIR__ . '/../../config/config.php';
 
 // Parámetros para el cálculo del porcentaje de la gota
 // $inner_percent = min(max(100 * $dew / 49, 0), 100);

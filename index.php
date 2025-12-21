@@ -85,13 +85,13 @@ include __DIR__ . "/static/config/config.php";
                             <!-- Contenedor general de tarjetas -->
                             <div class="cards-grid">
                                 <?php
-                                    require_once './static/widgets/widget_sun.php';
-                                    require_once './static/widgets/widget_ephemeris.php';
-                                    require_once './static/widgets/widget_moon.php';
+                                    require_once __DIR__ . '/static/widgets/widget_sun.php';
+                                    require_once __DIR__ . '/static/widgets/widget_ephemeris.php';
+                                    require_once __DIR__ . '/static/widgets/widget_moon.php';
                                 ?>
                                 <!-- Tarjeta Previsión -->
                                 <div id="forecast" class="forecast-container">
-                                    <!-- Previsión meteorológica 6h -->
+                                    <!-- Previsión meteorológica 8h -->
                                 </div>
                             </div>
                         </sun-moon-forecast>
@@ -105,17 +105,17 @@ include __DIR__ . "/static/config/config.php";
                             ############################################################-->
                         <div class="widgets">
                             <?php
-                            require_once './static/widgets/widget_temp_ext.php';
-                            require_once './static/widgets/widget_dew.php';
-                            require_once './static/widgets/widget_hum_ext.php';
-                            require_once './static/widgets/widget_wind.php';
-                            require_once './static/widgets/widget_rain.php';
-                            require_once './static/widgets/widget_press.php';
-                            require_once './static/widgets/widget_uv.php';
-                            require_once './static/widgets/widget_radiation.php';
-                            require_once './static/widgets/widget_temp_int.php';
-                            require_once './static/widgets/widget_hum_int.php';
-                            require_once './static/widgets/widget_seeing.php';
+                            require_once __DIR__ . '/static/widgets/widget_temp_ext.php';
+                            require_once __DIR__ . '/static/widgets/widget_dew.php';
+                            require_once __DIR__ . '/static/widgets/widget_hum_ext.php';
+                            require_once __DIR__ . '/static/widgets/widget_wind.php';
+                            require_once __DIR__ . '/static/widgets/widget_rain.php';
+                            require_once __DIR__ . '/static/widgets/widget_press.php';
+                            require_once __DIR__ . '/static/widgets/widget_uv.php';
+                            require_once __DIR__ . '/static/widgets/widget_radiation.php';
+                            require_once __DIR__ . '/static/widgets/widget_temp_int.php';
+                            require_once __DIR__ . '/static/widgets/widget_hum_int.php';
+                            require_once __DIR__ . '/static/widgets/widget_seeing.php';
                             ?>
                         </div>
                         <!--############################################################
@@ -126,26 +126,26 @@ include __DIR__ . "/static/config/config.php";
                             ################### GRÁFICAS MODALES #######################
                             ############################################################-->
                         <?php
-                        include_once './static/modals/modal_temp_ext.php';
-                        include_once './static/modals/modal_hum_ext.php';
-                        include_once './static/modals/modal_wind.php';
-                        include_once './static/modals/modal_rain.php';
-                        include_once './static/modals/modal_press.php';
-                        include_once './static/modals/modal_uv.php';
-                        include_once './static/modals/modal_temp_int.php';
-                        include_once './static/modals/modal_hum_int.php';
-                        include_once './static/modals/modal_seeing.php';
-                        include_once './static/modals/modal_info.php';
-                        include_once './static/modals/modal_moon.php';
-                        include_once './static/modals/modal_moon_l100.php';
-                        include_once './static/modals/modal_moon_zoom.php';
-                        include_once './static/modals/modal_sun.php';
-                        include_once './static/modals/modal_credits.php';
-                        include_once './static/modals/modal_ephemeris.php';
-                        include_once './static/modals/modal_sistema_solar.php';
-                        include_once './static/modals/modal_catalogo.php';
-                        include_once './static/modals/modal_dso.php';
-                        include_once './static/modals/modal_dso_detalle.php';
+                        include_once __DIR__ . '/static/modals/modal_temp_ext.php';
+                        include_once __DIR__ . '/static/modals/modal_hum_ext.php';
+                        include_once __DIR__ . '/static/modals/modal_wind.php';
+                        include_once __DIR__ . '/static/modals/modal_rain.php';
+                        include_once __DIR__ . '/static/modals/modal_press.php';
+                        include_once __DIR__ . '/static/modals/modal_uv.php';
+                        include_once __DIR__ . '/static/modals/modal_temp_int.php';
+                        include_once __DIR__ . '/static/modals/modal_hum_int.php';
+                        include_once __DIR__ . '/static/modals/modal_seeing.php';
+                        include_once __DIR__ . '/static/modals/modal_info.php';
+                        include_once __DIR__ . '/static/modals/modal_moon.php';
+                        include_once __DIR__ . '/static/modals/modal_moon_l100.php';
+                        include_once __DIR__ . '/static/modals/modal_moon_zoom.php';
+                        include_once __DIR__ . '/static/modals/modal_sun.php';
+                        include_once __DIR__ . '/static/modals/modal_credits.php';
+                        include_once __DIR__ . '/static/modals/modal_ephemeris.php';
+                        include_once __DIR__ . '/static/modals/modal_sistema_solar.php';
+                        include_once __DIR__ . '/static/modals/modal_catalogo.php';
+                        include_once __DIR__ . '/static/modals/modal_dso.php';
+                        include_once __DIR__ . '/static/modals/modal_dso_detalle.php';
                         ?>
                         <!-- ############################################################
                              ############## FIN DE LAS GRÁFICAS MODALES #################

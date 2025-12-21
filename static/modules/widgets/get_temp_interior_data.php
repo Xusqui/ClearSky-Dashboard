@@ -2,7 +2,7 @@
 // temp_interior_data.php
 
 // Cargar configuración
-include '../../config/config.php';
+include __DIR__ . '/../../config/config.php';
 /*
 //Entidad de temperatura interior en Home Assistant
 $entity   = "sensor.ws2900_v2_02_03_indoor_temperature"; // Ajusta al nombre real de tu sensor

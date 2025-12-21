@@ -1,6 +1,6 @@
 <?php
 // get_temp_data.php
-include '../../config/config.php';
+include __DIR__ . '/../../config/config.php';
 
 // Parámetros para el cálculo del ángulo
 $minTemp = -20;

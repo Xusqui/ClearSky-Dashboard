@@ -3,7 +3,7 @@
 
 // Incluir el archivo de configuración que debe contener las variables de conexión a MariaDB:
 // $db_user, $db_pass, $db_url, $db_database
-include '../../config/config.php';
+include __DIR__ . '/../../config/config.php';
 
 /**
  * Función para devolver un error en formato JSON y terminar el script.
