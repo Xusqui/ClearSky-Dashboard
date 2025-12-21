@@ -95,7 +95,7 @@ foreach ($requiredMeteoFields as $field) {
 // === COMPROBAR SI LOS CAMPOS TIENEN VALORES (Mínima Configuración) ===
 // Excluimos 'id' y 'password' de la comprobación de valores vacíos
 $fields_to_check_values = array_diff($requiredFields, [
-    'id', 'password', 'send_local', 'send_ha', 'send_meteoclimatic', 'ha_token', 'meteoclimatic_code', 'meteoclimatic_token'
+    'id', 'password', 'send_local', 'send_ha', 'send_meteoclimatic', 'ha_token', 'meteoclimatic_code', 'meteoclimatic_token', 'log_weather'
 ]);
 
 $query = "SELECT " . implode(",", $fields_to_check_values) . " FROM config LIMIT 1";
@@ -127,6 +127,7 @@ $observatorio = $row['observatorio'];
 $city = $row['city'];
 $country = $row['country'];
 $tz = $row['tz'];
+$log_weather = $row['log_weather'];
 
 // Conversión de formato de Latitud/Longitud para visualización
 if ($lat > 0) {

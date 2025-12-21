@@ -25,6 +25,8 @@ $config_schema = [
 
     'send_meteoclimatic' => 'BOOLEAN NOT NULL DEFAULT FALSE',
     'meteoclimatic_code' => 'VARCHAR(50)',
-    'meteoclimatic_token' => 'VARCHAR(255)'
+    'meteoclimatic_token' => 'VARCHAR(255)',
+
+    'log_weather' => 'BOOLEAN NOT NULL DEFAULT FALSE',
 ];
 ?>

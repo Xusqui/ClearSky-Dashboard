@@ -258,6 +258,7 @@ $ha_token = $config['ha_token'] ?? '';
 $send_meteoclimatic = $config['send_meteoclimatic'] ?? false;
 $meteoclimatic_code = $config['meteoclimatic_code'] ?? '';
 $meteoclimatic_token = $config['meteoclimatic_token'] ?? '';
+$log_weather = $config['log_weather'] ?? '';
 
 // Variables de token truncado (Solo para mostrar si hay valor)
 $text_in_local_token = ($local_token && strlen($local_token) > 12) ? substr($local_token, 0, 6) . '(...)' . substr($local_token, -6) : 'set/unset';
@@ -312,7 +313,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 	$send_meteoclimatic_post = (int)($_POST['send_meteoclimatic'] ?? 0);
 	$meteoclimatic_code_post = trim($_POST['meteoclimatic_code'] ?? '');
 	$meteoclimatic_token_post = trim($_POST['meteoclimatic_token'] ?? '');
-
+	$log_weather_post = (int)($_POST['log_weather'] ?? 0);
 
 	// Validar campos obligatorios
 	$missing_field = '';
@@ -353,6 +354,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 		$send_meteoclimatic = $send_meteoclimatic_post;
 		$meteoclimatic_code = $meteoclimatic_code_post;
 		$meteoclimatic_token = $meteoclimatic_token_post;
+		$log_weather = $log_weather_post;
 
 		$setup_warning .= "Falta o el formato es incorrecto para el campo **$missing_field** o el token está vacío. ";
 	} else {
@@ -429,10 +431,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 		// Hash de nueva contraseña si se ingresó
 		$password_final = $password_new ? password_hash($password_new, PASSWORD_DEFAULT) : $password_hash;
 
-		// --- PREPARACIÓN DE LA CONSULTA SQL (17 parámetros) ---
+		// --- PREPARACIÓN DE LA CONSULTA SQL (18 parámetros) ---
 		$sql = "
-			INSERT INTO config (id, observatorio, latitud, longitud, elevacion, hardware, software, city, country, tz, password, send_local, local_token, send_ha, ha_token, send_meteoclimatic, meteoclimatic_code, meteoclimatic_token)
-			VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+			INSERT INTO config (id, observatorio, latitud, longitud, elevacion, hardware, software, city, country, tz, password, send_local, local_token, send_ha, ha_token, send_meteoclimatic, meteoclimatic_code, meteoclimatic_token, log_weather)
+			VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)
 			ON DUPLICATE KEY UPDATE
 				observatorio = VALUES(observatorio),
 				latitud = VALUES(latitud),
@@ -450,7 +452,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 				ha_token = VALUES(ha_token),
 				send_meteoclimatic = VALUES(send_meteoclimatic),
 				meteoclimatic_code = VALUES(meteoclimatic_code),
-				meteoclimatic_token = VALUES(meteoclimatic_token)
+				meteoclimatic_token = VALUES(meteoclimatic_token),
+				log_weather = VALUES(log_weather)
 		";
 
 		$stmt = $conn->prepare($sql);
@@ -458,7 +461,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 			$setup_warning .= "Error al preparar la consulta: " . $conn->error;
 		} else {
 			// Tipos: s d d i s s s s s s i s i s i s s (17 parámetros)
-			$stmt->bind_param("sddissssssisssiss",
+			$stmt->bind_param("sddissssssisssissi",
 							 $observatorio,
 							 $latitud_post_saneada,
 							 $longitud_post_saneada,
@@ -475,7 +478,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 							 $ha_token_post,
 							 $send_meteoclimatic_post,
 							 $meteoclimatic_code_post,
-							 $meteoclimatic_token_post
+							 $meteoclimatic_token_post,
+							 $log_weather_post
 							 );
 
 			if (!$stmt->execute()) {
@@ -540,7 +544,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 				<label for="password">Cambiar contraseña (opcional)</label>
 				<input type="password" name="password" id="password" placeholder="Dejar vacío para no cambiar">
 
-
 				<div style="margin-top: 1.5rem; border-top: 1px solid #ccc; padding-top: 1.5rem;">
 					<h2>Seguridad de Acceso a la API</h2>
 					<label for="local_token">Token de Acceso a la API (API Key)</label>
@@ -550,6 +553,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 					<p style="font-size: 0.8em; color: #555; margin-top: 0.5rem;">Este token es **obligatorio** para que la estación meteorológica pueda enviar datos a `api_data.php`.</p>
 				</div>
 				<div style="margin-top: 1.5rem; border-top: 1px solid #ccc; padding-top: 1.5rem;">
+				    <h2>Utilizar Logs</h2>
+				    <h3>Usar weather_data.log</h3>
+				    <label for="log_weather">Guardar los datos en la bitácora local (Activarlo sólo para pruebas, puede crear un archivo muy grande)</label>
+				    <select name="log_weather" id="log_weather">
+				        <option value="1" <?= $log_weather == 1 ? 'selected' : '' ?>>Sí</option>
+				        <option value="0" <?= $log_weather == 0 ? 'selected' : '' ?>>No</option>
+				    </select>
+
 					<h2>Opciones de Envío de Datos</h2>
 
 					<h3 style="margin-top: 1rem;">1. Base de Datos Local</h3>
@@ -597,7 +608,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 				<button type="submit" style="margin-top: 2rem;">Guardar configuración</button>
 			</form>
 
-			<footer>Weather Setup · v3.1</footer>
+			<footer>Weather Setup · v4.0</footer>
 		</div>
 
 		<script>
