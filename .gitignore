@@ -42,3 +42,4 @@
 /static/cache/cache_astronomy.json
 /static/modules/widgets/._get_forecast.php
 /static/cache/cache_forecast.json
+/static/config/sensors.php
