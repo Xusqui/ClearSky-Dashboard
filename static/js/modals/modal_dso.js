@@ -5,13 +5,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Endpoints de la API ---
     const ENDPOINTS = {
         MESS: {
-            DATA_URL: 'https://astro.xusqui.com/messier_objects',
-            IMAGE_BASE_URL: 'https://astro.xusqui.com/messier/image/',
+            DATA_URL: './static/modules/astro_api_proxy.php?send=messier_objects',
+            IMAGE_BASE_URL: './static/modules/astro_api_proxy.php?send=messier/image/',
             PREFIX: 'M' // Usado para identificar el tipo de objeto en la lógica
         },
         CALD: {
-            DATA_URL: 'https://astro.xusqui.com/caldwell_objects',
-            IMAGE_BASE_URL: 'https://astro.xusqui.com/caldwell/image/',
+            DATA_URL: './static/modules/astro_api_proxy.php?send=caldwell_objects',
+            IMAGE_BASE_URL: './static/modules/astro_api_proxy.php?send=caldwell/image/',
             PREFIX: 'C'
         }
     };
