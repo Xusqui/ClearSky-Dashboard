@@ -185,10 +185,10 @@ function showDSODetailModal(Id, details) {
     // Determinar si es Messier o Caldwell y construir la URL de la API
     if (isMessier) {
         // Es un objeto Messier
-        imageUrl = `./static/modules/astro_api_proxy.php?send=messier/image/${Id}`;
+        imageUrl = `https://astro.xusqui.com/messier/image/${Id}`;
     } else if (details.caldwell_number && details.caldwell_number.startsWith('C')) {
         // Es un objeto Caldwell
-        imageUrl = `./static/modules/astro_api_proxy.php?send=caldwell/image/${Id}`;
+        imageUrl = `https://astro.xusqui.com/caldwell/image/${Id}`;
     } else {
         // Fallback si no se puede determinar
         imageUrl = fallbackImage;
@@ -682,7 +682,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // 2.1 FETCH DE MESSIER (Mantenido)
         // ---------------------------------------------------------------------------------
 
-        const apiEndpoint = `./static/modules/astro_api_proxy.php?send=messier_visible_objects&lat=${apiLat}&lon=${apiLon}&datetime_str=${encodeURIComponent(datetime_str)}&min_alt=${minAlt}`;
+        const apiEndpoint = `https://astro.xusqui.com/messier_visible_objects?lat=${apiLat}&lon=${apiLon}&datetime_str=${encodeURIComponent(datetime_str)}&min_alt=${minAlt}`;
         try {
             const response = await fetch(apiEndpoint);
             if (!response.ok) {
@@ -744,7 +744,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // ---------------------------------------------------------------------------------
         // 2.2 FETCH DE CALDWELL
         // ---------------------------------------------------------------------------------
-        const caldwellEndpoint = `./static/modules/astro_api_proxy.php?send=caldwell_visible_objects&lat=${apiLat}&lon=${apiLon}&datetime_str=${encodeURIComponent(datetime_str)}&min_alt=${minAlt}`;
+        const caldwellEndpoint = `https://astro.xusqui.com/caldwell_visible_objects?lat=${apiLat}&lon=${apiLon}&datetime_str=${encodeURIComponent(datetime_str)}&min_alt=${minAlt}`;
 
         if (caldwellContainer) { // Solo si el contenedor existe en el DOM
             try {
