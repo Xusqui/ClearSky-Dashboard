@@ -524,7 +524,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 				<input type="number" step="0.000001" name="longitud" id="longitud" value="<?= htmlspecialchars($longitud) ?>" required>
 
 				<label for="elevacion">Elevación (m)</label>
-				<input type="number" name="elevacion" id="elevacion" value="<?= htmlspecialchars($elevacion) ?>" required>
+				<label for="elevacion">Elevación (m)</label>
+					<div class="input-group-horizontal">
+    					<input type="number" name="elevacion" id="elevacion" value="<?= htmlspecialchars($elevacion) ?>" required>
+    					<button type="button" id="calcElevation" class="btn-inline">Calcular</button>
+					</div>
 
 				<label for="hardware">Hardware</label>
 				<input type="text" name="hardware" id="hardware" value="<?= htmlspecialchars($hardware) ?>" required>
@@ -649,5 +653,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 				});
 			});
 		</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // ... (aquí ya tienes el código de toggleTokenGroup y los selects) ...
+
+    const btnCalc = document.getElementById('calcElevation');
+    const inputLat = document.getElementById('latitud');
+    const inputLon = document.getElementById('longitud');
+    const inputElev = document.getElementById('elevacion');
+
+    if (btnCalc) {
+        btnCalc.addEventListener('click', async () => {
+            const lat = inputLat.value;
+            const lon = inputLon.value;
+
+            if (!lat || !lon) {
+                alert("Introduce latitud y longitud primero");
+                return;
+            }
+
+            btnCalc.disabled = true;
+            btnCalc.textContent = 'Calculando...';
+
+            try {
+                // He simplificado la ruta para asegurar que no falle por carpetas absolutas
+                const response = await fetch(`get_elevation.php?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`);
+
+                if (!response.ok) throw new Error("Error en el servidor");
+
+                const data = await response.json();
+
+                if (data.error) {
+                    alert("Error: " + data.error);
+                } else {
+                    inputElev.value = data.elevation;
+                }
+
+            } catch (e) {
+                alert("Error de red: No se pudo conectar con get_elevation.php");
+                console.error(e);
+            } finally {
+                btnCalc.disabled = false;
+                btnCalc.textContent = 'Calcular';
+            }
+        });
+    }
+});
+</script>
+
 	</body>
 </html>

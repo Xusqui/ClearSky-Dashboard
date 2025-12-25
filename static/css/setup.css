@@ -120,3 +120,24 @@ footer {
 #copyTokenBtn:hover {
     background: #26735c;
 }
+/* Contenedor para alinear input y botón */
+.input-group-horizontal {
+    display: flex;
+    gap: 10px;          /* Espacio entre el input y el botón */
+    align-items: center;
+    margin-bottom: 1rem; /* Margen inferior para separar del siguiente campo */
+}
+
+/* Ajuste del input para que ocupe el espacio sobrante */
+.input-group-horizontal input {
+    flex: 1;            /* El input se expande */
+    margin-top: 0;      /* Quitamos márgenes superiores que puedan descuadrar */
+}
+
+/* Ajuste del botón para que no se deforme */
+.btn-inline {
+    margin-top: 0 !important; /* Anula el margin-top general de los botones si existe */
+    width: auto !important;   /* Evita que el botón ocupe el 100% */
+    padding: 0.6rem 1rem;
+    white-space: nowrap;      /* Evita que el texto "Calcular" se parta */
+}
