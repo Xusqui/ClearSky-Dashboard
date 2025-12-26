@@ -208,30 +208,5 @@ include __DIR__ . "/static/config/config.php";
         <script src="./static/js/modals/modal_catalogo.js?v=<?= time(); ?>"></script>
         <script src="./static/js/modals/modal_catalogo_detalle.js?v=<?= time(); ?>"></script>
         <script src="./static/js/modals/modal_dso.js?v=<?= time(); ?>"></script>
-        <!-- SCRIPT de depuración
-        <script>
-            (function() {
-                // Captura errores de carga de recursos (img, script, link)
-                window.addEventListener('error', function(event) {
-                    let target = event.target || event.srcElement;
-                    if (target && (target.src || target.href)) {
-                        let url = target.src || target.href;
-                        let tipo = target.tagName.toLowerCase();
-                        console.log(`❌ Recurso fallido: [${tipo}] ${url}`);
-
-                        // Intento de stack trace
-                        if (event.error && event.error.stack) {
-                            console.log('Stack trace:', event.error.stack);
-                        } else {
-                            console.trace();
-                        }
-                    } else {
-                        // Errores JS normales
-                        console.log('💥 Error JS:', event.message);
-                        console.trace();
-                    }
-                }, true);
-            })();
-        </script> -->
     </body>
 </html>
