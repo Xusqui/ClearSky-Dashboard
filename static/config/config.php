@@ -95,7 +95,7 @@ foreach ($requiredMeteoFields as $field) {
 // === COMPROBAR SI LOS CAMPOS TIENEN VALORES (Mínima Configuración) ===
 // Excluimos 'id' y 'password' de la comprobación de valores vacíos
 $fields_to_check_values = array_diff($requiredFields, [
-    'id', 'password', 'send_local', 'send_ha', 'send_meteoclimatic', 'ha_token', 'meteoclimatic_code', 'meteoclimatic_token', 'log_weather'
+    'id', 'password', 'send_local', 'send_ha', 'send_meteoclimatic', 'ha_token', 'meteoclimatic_code', 'meteoclimatic_token',
 ]);
 
 $query = "SELECT " . implode(",", $fields_to_check_values) . " FROM config LIMIT 1";
@@ -107,10 +107,9 @@ if (!$res || $res->num_rows == 0) {
 }
 
 $row = $res->fetch_assoc();
+
 foreach ($fields_to_check_values as $field) {
-    // La comprobación 'empty' fallará si el campo es un booleano (0), pero aquí solo están los strings/números.
-    if (empty($row[$field])) {
-        // Redireccionar si algún campo crucial (Latitud, Observatorio, Token Local, etc.) está vacío.
+    if (!array_key_exists($field, $row) || $row[$field] === null) {
         header("Location: ./static/config/setup.php");
         exit;
     }
@@ -128,6 +127,12 @@ $city = $row['city'];
 $country = $row['country'];
 $tz = $row['tz'];
 $log_weather = $row['log_weather'];
+$show_in_temp = $row['show_in_temp'];
+$show_in_hum = $row['show_in_hum'];
+$show_uv =$row['show_UV'];
+$show_solar = $row['show_solar'];
+$show_dew = $row['show_dew'];
+$show_sky = $row['show_sky'];
 
 // Conversión de formato de Latitud/Longitud para visualización
 if ($lat > 0) {

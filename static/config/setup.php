@@ -70,40 +70,40 @@ foreach ($desired_config_columns as $col => $definition) {
 // === CREAR TABLA 'meteo' SI NO EXISTE ===
 $meteo_table_exists = $conn->query("SHOW TABLES LIKE 'meteo'")->num_rows > 0;
 if (!$meteo_table_exists) {
-    // 1. Construir la definición de columnas
-    $definitions = [];
+	// 1. Construir la definición de columnas
+	$definitions = [];
 
-    // Llenar la matriz con todas las definiciones de columna (usando backticks)
-    foreach ($desired_meteo_columns as $col => $definition) {
-        // Usamos backticks para la columna, ya que la exportación lo usa.
-        $definitions[] = "`$col` $definition";
-    }
+	// Llenar la matriz con todas las definiciones de columna (usando backticks)
+	foreach ($desired_meteo_columns as $col => $definition) {
+		// Usamos backticks para la columna, ya que la exportación lo usa.
+		$definitions[] = "`$col` $definition";
+	}
 
-    // 3. Crear la consulta final sin la definición de PK redundante
-    $create_table_sql = "CREATE TABLE `meteo` (" . implode(', ', $definitions) . ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci";
+	// 3. Crear la consulta final sin la definición de PK redundante
+	$create_table_sql = "CREATE TABLE `meteo` (" . implode(', ', $definitions) . ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci";
 
-    if ($conn->query($create_table_sql) === false) {
-        // Este error solo debería saltar si falla la conexión o hay un tipo de dato que no existe.
-        die("FATAL ERROR CREATING METEO TABLE: " . $conn->error);
-    } else {
-        $setup_warning .= "Se creó la tabla 'meteo'. ";
+	if ($conn->query($create_table_sql) === false) {
+		// Este error solo debería saltar si falla la conexión o hay un tipo de dato que no existe.
+		die("FATAL ERROR CREATING METEO TABLE: " . $conn->error);
+	} else {
+		$setup_warning .= "Se creó la tabla 'meteo'. ";
 
-        // 4. Añadir índices adicionales (solo KEY_TIMESTAMP, si es necesario)
-        if (isset($meteo_indexes_to_add['KEY_TIMESTAMP'])) {
-            $key_cols = implode(', ', $meteo_indexes_to_add['KEY_TIMESTAMP']);
-            $index_name = 'idx_' . implode('_', $meteo_indexes_to_add['KEY_TIMESTAMP']);
+		// 4. Añadir índices adicionales (solo KEY_TIMESTAMP, si es necesario)
+		if (isset($meteo_indexes_to_add['KEY_TIMESTAMP'])) {
+			$key_cols = implode(', ', $meteo_indexes_to_add['KEY_TIMESTAMP']);
+			$index_name = 'idx_' . implode('_', $meteo_indexes_to_add['KEY_TIMESTAMP']);
 
-            $check_index_query = $conn->query("SHOW INDEX FROM meteo WHERE Key_name = '$index_name'");
+			$check_index_query = $conn->query("SHOW INDEX FROM meteo WHERE Key_name = '$index_name'");
 
-            if (!$check_index_query || $check_index_query->num_rows === 0) {
-                 if ($conn->query("CREATE INDEX `$index_name` ON `meteo` (`$key_cols`)") === false) {
-                    $setup_warning .= "No se pudo crear el índice '$index_name' en 'meteo'. ERROR SQL: " . $conn->error . ". ";
-                 } else {
-                    $setup_warning .= "Se creó el índice '$index_name' en 'meteo'. ";
-                 }
-            }
-        }
-    }
+			if (!$check_index_query || $check_index_query->num_rows === 0) {
+				if ($conn->query("CREATE INDEX `$index_name` ON `meteo` (`$key_cols`)") === false) {
+					$setup_warning .= "No se pudo crear el índice '$index_name' en 'meteo'. ERROR SQL: " . $conn->error . ". ";
+				} else {
+					$setup_warning .= "Se creó el índice '$index_name' en 'meteo'. ";
+				}
+			}
+		}
+	}
 }
 
 // === AÑADIR COLUMNAS FALTANTES en 'meteo' ===
@@ -260,6 +260,14 @@ $meteoclimatic_code = $config['meteoclimatic_code'] ?? '';
 $meteoclimatic_token = $config['meteoclimatic_token'] ?? '';
 $log_weather = $config['log_weather'] ?? '';
 
+// Variables para la presentacion gráfica
+$show_dew = $config['show_dew'];
+$show_UV = $config['show_UV'];
+$show_solar = $config['show_solar'];
+$show_in_temp =$config['show_in_temp'];
+$show_in_hum = $config['show_in_hum'];
+$show_sky = $config['show_sky'];
+
 // Variables de token truncado (Solo para mostrar si hay valor)
 $text_in_local_token = ($local_token && strlen($local_token) > 12) ? substr($local_token, 0, 6) . '(...)' . substr($local_token, -6) : 'set/unset';
 $text_in_ha_token = ($ha_token && strlen($ha_token) > 12) ? substr($ha_token, 0, 6) . '(...)' . substr($ha_token, -6) : 'set/unset';
@@ -314,6 +322,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 	$meteoclimatic_code_post = trim($_POST['meteoclimatic_code'] ?? '');
 	$meteoclimatic_token_post = trim($_POST['meteoclimatic_token'] ?? '');
 	$log_weather_post = (int)($_POST['log_weather'] ?? 0);
+	$show_dew_post = (int)($_POST['show_dew'] ?? 0);
+	$show_UV_post = (int)($_POST['show_UV'] ?? 0);
+	$show_solar_post = (int)($_POST['show_solar'] ?? 0);
+	$show_in_temp_post = (int)($_POST['show_in_temp'] ?? 0);
+	$show_in_hum_post = (int)($_POST['show_in_hum'] ?? 0);
+	$show_sky_post = (int)($_POST['show_sky'] ?? 0);
 
 	// Validar campos obligatorios
 	$missing_field = '';
@@ -355,6 +369,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 		$meteoclimatic_code = $meteoclimatic_code_post;
 		$meteoclimatic_token = $meteoclimatic_token_post;
 		$log_weather = $log_weather_post;
+		$show_dew = $show_dew_post;
+		$show_UV = $show_UV_post;
+		$show_solar = $show_solar_post;
+		$show_in_temp = $show_in_temp_post;
+		$show_in_hum = $show_in_hum_post;
+		$show_sky = $show_sky_post;
 
 		$setup_warning .= "Falta o el formato es incorrecto para el campo **$missing_field** o el token está vacío. ";
 	} else {
@@ -390,9 +410,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 			abs($longitud_post_saneada - $original_lon_num) > $epsilon;
 
 		if ($coords_changed) {
-		    // Reiniciar valores si las coordenadas cambiaron
-		    $city_to_save = 'Desconocida';
-		    $country_to_save = 'Desconocido';
+			// Reiniciar valores si las coordenadas cambiaron
+			$city_to_save = 'Desconocida';
+			$country_to_save = 'Desconocido';
 
 			if (is_numeric($latitud_post_saneada) && is_numeric($longitud_post_saneada)) {
 				// 4. Ejecutar cURL solo si las coordenadas cambiaron
@@ -431,10 +451,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 		// Hash de nueva contraseña si se ingresó
 		$password_final = $password_new ? password_hash($password_new, PASSWORD_DEFAULT) : $password_hash;
 
-		// --- PREPARACIÓN DE LA CONSULTA SQL (18 parámetros) ---
+		// --- PREPARACIÓN DE LA CONSULTA SQL (24 parámetros) ---
 		$sql = "
-			INSERT INTO config (id, observatorio, latitud, longitud, elevacion, hardware, software, city, country, tz, password, send_local, local_token, send_ha, ha_token, send_meteoclimatic, meteoclimatic_code, meteoclimatic_token, log_weather)
-			VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)
+			INSERT INTO config (id, observatorio, latitud, longitud, elevacion, hardware, software, city, country, tz, password, send_local, local_token, send_ha, ha_token, send_meteoclimatic, meteoclimatic_code, meteoclimatic_token, log_weather, show_in_temp, show_in_hum, show_UV, show_solar, show_dew, show_sky)
+			VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 			ON DUPLICATE KEY UPDATE
 				observatorio = VALUES(observatorio),
 				latitud = VALUES(latitud),
@@ -453,33 +473,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 				send_meteoclimatic = VALUES(send_meteoclimatic),
 				meteoclimatic_code = VALUES(meteoclimatic_code),
 				meteoclimatic_token = VALUES(meteoclimatic_token),
-				log_weather = VALUES(log_weather)
+				log_weather = VALUES(log_weather),
+				show_in_temp = VALUES(show_in_temp),
+				show_in_hum = VALUES(show_in_hum),
+				show_UV = VALUES(show_UV),
+				show_solar = VALUES(show_solar),
+				show_dew = VALUES(show_dew),
+				show_sky = VALUES(show_sky)
 		";
 
 		$stmt = $conn->prepare($sql);
 		if (!$stmt) {
 			$setup_warning .= "Error al preparar la consulta: " . $conn->error;
 		} else {
-			// Tipos: s d d i s s s s s s i s i s i s s (17 parámetros)
-			$stmt->bind_param("sddissssssisssissi",
-							 $observatorio,
-							 $latitud_post_saneada,
-							 $longitud_post_saneada,
-							 $elevacion,
-							 $hardware,
-							 $software,
-							 $city_to_save,
-							 $country_to_save,
-							 $tz,
-							 $password_final,
-							 $send_local_post,
-							 $local_token_post,
-							 $send_ha_post,
-							 $ha_token_post,
-							 $send_meteoclimatic_post,
-							 $meteoclimatic_code_post,
-							 $meteoclimatic_token_post,
-							 $log_weather_post
+			// Tipos: s d d i s s s s s s i s i s i s s i i i i i i i (24 parámetros)
+			$stmt->bind_param("sddissssssisssissiiiiiii",
+							  $observatorio,
+							  $latitud_post_saneada,
+							  $longitud_post_saneada,
+							  $elevacion,
+							  $hardware,
+							  $software,
+							  $city_to_save,
+							  $country_to_save,
+							  $tz,
+							  $password_final,
+							  $send_local_post,
+							  $local_token_post,
+							  $send_ha_post,
+							  $ha_token_post,
+							  $send_meteoclimatic_post,
+							  $meteoclimatic_code_post,
+							  $meteoclimatic_token_post,
+							  $log_weather_post,
+							  $show_in_temp_post,
+							  $show_in_hum_post,
+							  $show_UV_post,
+							  $show_solar_post,
+							  $show_dew_post,
+							  $show_sky_post
 							 );
 
 			if (!$stmt->execute()) {
@@ -525,10 +557,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 
 				<label for="elevacion">Elevación (m)</label>
 				<label for="elevacion">Elevación (m)</label>
-					<div class="input-group-horizontal">
-    					<input type="number" name="elevacion" id="elevacion" value="<?= htmlspecialchars($elevacion) ?>" required>
-    					<button type="button" id="calcElevation" class="btn-inline">Calcular</button>
-					</div>
+				<div class="input-group-horizontal">
+					<input type="number" name="elevacion" id="elevacion" value="<?= htmlspecialchars($elevacion) ?>" required>
+					<button type="button" id="calcElevation" class="btn-inline">Calcular</button>
+				</div>
 
 				<label for="hardware">Hardware</label>
 				<input type="text" name="hardware" id="hardware" value="<?= htmlspecialchars($hardware) ?>" required>
@@ -557,13 +589,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 					<p style="font-size: 0.8em; color: #555; margin-top: 0.5rem;">Este token es **obligatorio** para que la estación meteorológica pueda enviar datos a `api_data.php`.</p>
 				</div>
 				<div style="margin-top: 1.5rem; border-top: 1px solid #ccc; padding-top: 1.5rem;">
-				    <h2>Utilizar Logs</h2>
-				    <h3>Usar weather_data.log</h3>
-				    <label for="log_weather">Guardar los datos en la bitácora local (Activarlo sólo para pruebas, puede crear un archivo muy grande)</label>
-				    <select name="log_weather" id="log_weather">
-				        <option value="1" <?= $log_weather == 1 ? 'selected' : '' ?>>Sí</option>
-				        <option value="0" <?= $log_weather == 0 ? 'selected' : '' ?>>No</option>
-				    </select>
+					<h2>Utilizar Logs</h2>
+					<h3>Usar weather_data.log</h3>
+					<label for="log_weather">Guardar los datos en la bitácora local (Activarlo sólo para pruebas, puede crear un archivo muy grande)</label>
+					<select name="log_weather" id="log_weather">
+						<option value="1" <?= $log_weather == 1 ? 'selected' : '' ?>>Sí</option>
+						<option value="0" <?= $log_weather == 0 ? 'selected' : '' ?>>No</option>
+					</select>
 
 					<h2>Opciones de Envío de Datos</h2>
 
@@ -607,12 +639,94 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 							<input type="text" name="meteoclimatic_token" id="meteoclimatic_token" value="<?= htmlspecialchars($meteoclimatic_token) ?>" <?= $send_meteoclimatic == 1 ? 'required' : '' ?>>
 						</div>
 					</div>
+
+					<h2>Configuracion Visual</h2>
+
+					<div class="setup-row-highlight">
+						<div class="setup-icon-container">
+							<img src="../images/setup/dew.png" alt="Punto de Rocío">
+						</div>
+						<div class="setup-controls">
+							<h3>Widget: Punto de Rocío</h3>
+							<label for="show_dew">¿Deseas mostrar el Punto de Rocío en la interfaz?</label>
+							<select name="show_dew" id="show_dew">
+								<option value="1" <?= $show_dew == 1 ? 'selected' : '' ?>>Sí, mostrar</option>
+								<option value="0" <?= $show_dew == 0 ? 'selected' : '' ?>>No, ocultar</option>
+							</select>
+						</div>
+					</div>
+					<div class="setup-row-highlight">
+						<div class="setup-icon-container">
+							<img src="../images/setup/uv.png" alt="Índicd UV">
+						</div>
+						<div class="setup-controls">
+							<h3>Widget: Índice UV</h3>
+							<label for="show_UV">¿Deseas mostrar el Índice de Radiación UV en la interfaz?</label>
+							<select name="show_UV" id="show_UV">
+								<option value="1" <?= $show_UV == 1 ? 'selected' : '' ?>>Sí, mostrar</option>
+								<option value="0" <?= $show_UV == 0 ? 'selected' : '' ?>>No, ocultar</option>
+							</select>
+						</div>
+					</div>
+					<div class="setup-row-highlight">
+						<div class="setup-icon-container">
+							<img src="../images/setup/solar.png" alt="Radiacion Solar">
+						</div>
+						<div class="setup-controls">
+							<h3>Widget: Radiación Solar</h3>
+							<label for="show_solar">¿Deseas mostrar la Radiación Solar en la interfaz?</label>
+							<select name="show_solar" id="show_solar">
+								<option value="1" <?= $show_solar == 1 ? 'selected' : '' ?>>Sí, mostrar</option>
+								<option value="0" <?= $show_solar == 0 ? 'selected' : '' ?>>No, ocultar</option>
+							</select>
+						</div>
+					</div>
+					<div class="setup-row-highlight">
+						<div class="setup-icon-container">
+							<img src="../images/setup/temp.png" alt="Índicd UV">
+						</div>
+						<div class="setup-controls">
+							<h3>Widget: Temperatura Interior</h3>
+							<label for="show_in_temp">¿Deseas mostrar la Temperatura Interior en la interfaz?</label>
+							<select name="show_in_temp" id="show_in_temp">
+								<option value="1" <?= $show_in_temp == 1 ? 'selected' : '' ?>>Sí, mostrar</option>
+								<option value="0" <?= $show_in_temp == 0 ? 'selected' : '' ?>>No, ocultar</option>
+							</select>
+						</div>
+					</div>
+					<div class="setup-row-highlight">
+						<div class="setup-icon-container">
+							<img src="../images/setup/hum.png" alt="Índicd UV">
+						</div>
+						<div class="setup-controls">
+							<h3>Widget: Humedad Interior</h3>
+							<label for="show_in_hum">¿Deseas mostrar la Humedad Interior en la interfaz?</label>
+							<select name="show_in_hum" id="show_in_hum">
+								<option value="1" <?= $show_in_hum == 1 ? 'selected' : '' ?>>Sí, mostrar</option>
+								<option value="0" <?= $show_in_hum == 0 ? 'selected' : '' ?>>No, ocultar</option>
+							</select>
+						</div>
+					</div>
+					<div class="setup-row-highlight">
+						<div class="setup-icon-container">
+							<img src="../images/setup/seeing.png" alt="Índicd UV">
+						</div>
+						<div class="setup-controls">
+							<h3>Widget: Calidad del Cielo</h3>
+							<label for="show_sky">¿Deseas mostrar la Calidad del Cielo en la interfaz?</label>
+							<select name="show_sky" id="show_sky">
+								<option value="1" <?= $show_sky == 1 ? 'selected' : '' ?>>Sí, mostrar</option>
+								<option value="0" <?= $show_sky == 0 ? 'selected' : '' ?>>No, ocultar</option>
+							</select>
+						</div>
+					</div>
+
 				</div>
 
 				<button type="submit" style="margin-top: 2rem;">Guardar configuración</button>
 			</form>
 
-			<footer>Weather Setup · v4.0</footer>
+			<footer>Weather Setup · v5.0</footer>
 		</div>
 
 		<script>
@@ -653,53 +767,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 				});
 			});
 		</script>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    // ... (aquí ya tienes el código de toggleTokenGroup y los selects) ...
+		<script>
+			document.addEventListener('DOMContentLoaded', function () {
+				// ... (aquí ya tienes el código de toggleTokenGroup y los selects) ...
 
-    const btnCalc = document.getElementById('calcElevation');
-    const inputLat = document.getElementById('latitud');
-    const inputLon = document.getElementById('longitud');
-    const inputElev = document.getElementById('elevacion');
+				const btnCalc = document.getElementById('calcElevation');
+				const inputLat = document.getElementById('latitud');
+				const inputLon = document.getElementById('longitud');
+				const inputElev = document.getElementById('elevacion');
 
-    if (btnCalc) {
-        btnCalc.addEventListener('click', async () => {
-            const lat = inputLat.value;
-            const lon = inputLon.value;
+				if (btnCalc) {
+					btnCalc.addEventListener('click', async () => {
+						const lat = inputLat.value;
+						const lon = inputLon.value;
 
-            if (!lat || !lon) {
-                alert("Introduce latitud y longitud primero");
-                return;
-            }
+						if (!lat || !lon) {
+							alert("Introduce latitud y longitud primero");
+							return;
+						}
 
-            btnCalc.disabled = true;
-            btnCalc.textContent = 'Calculando...';
+						btnCalc.disabled = true;
+						btnCalc.textContent = 'Calculando...';
 
-            try {
-                // He simplificado la ruta para asegurar que no falle por carpetas absolutas
-                const response = await fetch(`get_elevation.php?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`);
+						try {
+							// He simplificado la ruta para asegurar que no falle por carpetas absolutas
+							const response = await fetch(`get_elevation.php?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`);
 
-                if (!response.ok) throw new Error("Error en el servidor");
+							if (!response.ok) throw new Error("Error en el servidor");
 
-                const data = await response.json();
+							const data = await response.json();
 
-                if (data.error) {
-                    alert("Error: " + data.error);
-                } else {
-                    inputElev.value = data.elevation;
-                }
+							if (data.error) {
+								alert("Error: " + data.error);
+							} else {
+								inputElev.value = data.elevation;
+							}
 
-            } catch (e) {
-                alert("Error de red: No se pudo conectar con get_elevation.php");
-                console.error(e);
-            } finally {
-                btnCalc.disabled = false;
-                btnCalc.textContent = 'Calcular';
-            }
-        });
-    }
-});
-</script>
+						} catch (e) {
+							alert("Error de red: No se pudo conectar con get_elevation.php");
+							console.error(e);Fatal error: Uncaught ArgumentCountError: The number of elements in the type definition string must match the number of bind variables in /volume1/web/weather/static/config/setup.php:140 Stack trace: #0 /volume1/web/weather/static/config/setup.php(140): mysqli_stmt->bind_param('sddissssssisssi...', 'El Patio', 36.565675, -4.60372, 33, 'Ambient Weather...', 'EasyWeatherPro_...', 'Fuengirola', 'ESPA\xC3\x91A', 'Europe/Madrid', '$2y$10$tRTUlMbM...', 1, 'u7985438u953gfi...', 1, 'db45d132b3c9b8d...', 1, 'ESAND2900000029...', 'd0f45582-bda0-1...', 0, 0, 0) #1 {main} thrown in /volume1/web/weather/static/config/setup.php on line 140
+						} finally {
+							btnCalc.disabled = false;
+							btnCalc.textContent = 'Calcular';
+						}
+					});
+				}
+			});
+		</script>
 
 	</body>
 </html>

@@ -106,16 +106,28 @@ include __DIR__ . "/static/config/config.php";
                         <div class="widgets">
                             <?php
                             require_once __DIR__ . '/static/widgets/widget_temp_ext.php';
-                            require_once __DIR__ . '/static/widgets/widget_dew.php';
+                            if ($show_dew == 1) {
+                                require_once __DIR__ . '/static/widgets/widget_dew.php';
+                            }
                             require_once __DIR__ . '/static/widgets/widget_hum_ext.php';
                             require_once __DIR__ . '/static/widgets/widget_wind.php';
                             require_once __DIR__ . '/static/widgets/widget_rain.php';
                             require_once __DIR__ . '/static/widgets/widget_press.php';
-                            require_once __DIR__ . '/static/widgets/widget_uv.php';
-                            require_once __DIR__ . '/static/widgets/widget_radiation.php';
-                            require_once __DIR__ . '/static/widgets/widget_temp_int.php';
-                            require_once __DIR__ . '/static/widgets/widget_hum_int.php';
-                            require_once __DIR__ . '/static/widgets/widget_seeing.php';
+                            if ($show_uv == 1) {
+                                require_once __DIR__ . '/static/widgets/widget_uv.php';
+                            }
+                            if ($show_solar == 1) {
+                                require_once __DIR__ . '/static/widgets/widget_radiation.php';
+                            }
+                            if ($show_in_temp == 1) {
+                                require_once __DIR__ . '/static/widgets/widget_temp_int.php';
+                            }
+                            if ($show_in_hum == 1) {
+                                require_once __DIR__ . '/static/widgets/widget_hum_int.php';
+                            }
+                            if ($show_sky == 1) {
+                                require_once __DIR__ . '/static/widgets/widget_seeing.php';
+                            }
                             ?>
                         </div>
                         <!--############################################################

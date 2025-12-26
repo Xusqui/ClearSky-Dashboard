@@ -28,5 +28,11 @@ $config_schema = [
     'meteoclimatic_token' => 'VARCHAR(255)',
 
     'log_weather' => 'BOOLEAN NOT NULL DEFAULT FALSE',
+    'show_in_temp' => 'BOOLEAN NOT NULL DEFAULT TRUE',
+    'show_in_hum' => 'BOOLEAN NOT NULL DEFAULT TRUE',
+    'show_UV' => 'BOOLEAN NOT NULL DEFAULT TRUE',
+    'show_solar' => 'BOOLEAN NOT NULL DEFAULT TRUE',
+    'show_dew' => 'BOOLEAN NOT NULL DEFAULT TRUE',
+    'show_sky' => 'BOOLEAN NOT NULL DEFAULT TRUE'
 ];
 ?>
