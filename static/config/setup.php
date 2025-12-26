@@ -556,7 +556,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 				<input type="number" step="0.000001" name="longitud" id="longitud" value="<?= htmlspecialchars($longitud) ?>" required>
 
 				<label for="elevacion">Elevación (m)</label>
-				<label for="elevacion">Elevación (m)</label>
 				<div class="input-group-horizontal">
 					<input type="number" name="elevacion" id="elevacion" value="<?= htmlspecialchars($elevacion) ?>" required>
 					<button type="button" id="calcElevation" class="btn-inline">Calcular</button>
@@ -805,7 +804,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 
 						} catch (e) {
 							alert("Error de red: No se pudo conectar con get_elevation.php");
-							console.error(e);Fatal error: Uncaught ArgumentCountError: The number of elements in the type definition string must match the number of bind variables in /volume1/web/weather/static/config/setup.php:140 Stack trace: #0 /volume1/web/weather/static/config/setup.php(140): mysqli_stmt->bind_param('sddissssssisssi...', 'El Patio', 36.565675, -4.60372, 33, 'Ambient Weather...', 'EasyWeatherPro_...', 'Fuengirola', 'ESPA\xC3\x91A', 'Europe/Madrid', '$2y$10$tRTUlMbM...', 1, 'u7985438u953gfi...', 1, 'db45d132b3c9b8d...', 1, 'ESAND2900000029...', 'd0f45582-bda0-1...', 0, 0, 0) #1 {main} thrown in /volume1/web/weather/static/config/setup.php on line 140
+							console.error(e);
 						} finally {
 							btnCalc.disabled = false;
 							btnCalc.textContent = 'Calcular';
