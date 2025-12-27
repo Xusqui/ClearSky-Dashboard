@@ -122,3 +122,19 @@ Estilos para las Tarjetas de Información (PWS)
     margin: 0;
     word-wrap: break-word; /* Asegura que el texto largo no se salga */
 }
+/* Estilos para los estados de batería */
+.status-ok {
+    color: var(--green); /* Usando la variable de colors.css */
+    font-weight: 800;
+}
+
+.status-low {
+    color: var(--red); /* Usando la variable de colors.css */
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+/* Opcional: Si quieres que la sección de "Estado" use el mismo grid que "Ubicación" */
+.pws-info-details-wrapper h3 {
+    margin-top: 20px; /* Separación extra entre secciones de títulos */
+}

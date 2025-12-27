@@ -4,6 +4,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const dialog = document.getElementById("pws-info-dialog");
     const closeBtn = document.getElementById("pws-info-dialog-close");
 
+    // Selectores para los nuevos datos
+    const freqDisplay = document.getElementById("pws-update-frequency");
+    const battDisplay = document.getElementById("pws-battery-status");
+
     // --- Variables para guardar el estado del mapa ---
     let pwsMap = null;      // La instancia del mapa
     let pwsMarker = null;   // La instancia del marcador
@@ -12,6 +16,34 @@ document.addEventListener("DOMContentLoaded", function () {
     // --- Media Query para detectar el modo oscuro ---
     // Lo creamos una sola vez aquí
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+    pwsInfo.addEventListener("click", function () {
+        dialog.style.display = "block";
+
+        // --- NUEVO: Cargar datos dinámicos del estado ---
+        fetch('./static/modules/modals/get_pws_status.php') // Ajusta la ruta a tu archivo
+            .then(response => response.json())
+            .then(data => {
+            if (!data.error) {
+                freqDisplay.textContent = `${data.interval_sec} Segundos`;
+
+                if (data.wh65batt === 0) {
+                    battDisplay.innerHTML = '<span class="status-ok">OK</span>';
+                } else {
+                    battDisplay.innerHTML = '<span class="status-low">Baja</span>';
+                }
+            } else {
+                console.error("Error en datos:", data.message);
+            }
+        })
+            .catch(err => console.error("Error fetch:", err));
+
+        // --- Lógica del mapa (se mantiene igual) ---
+        if (!pwsMap) {
+            // ... (resto del código del mapa) ...
+        }
+    });
+
 
     /**
      * Función simple para obtener la URL del estilo correcto.

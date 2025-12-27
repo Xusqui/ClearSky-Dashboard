@@ -54,6 +54,17 @@
                         <p><?= $software ?></p>
                     </div>
                 </div>
+                <h3>📡 Estado del Sistema</h3>
+                <div class="pws-info-card-grid">
+                    <div class="pws-info-card">
+                        <h4>Frecuencia de actualización</h4>
+                        <p id="pws-update-frequency">Cargando...</p>
+                    </div>
+                    <div class="pws-info-card">
+                        <h4>Batería</h4>
+                        <p id="pws-battery-status">Cargando...</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
