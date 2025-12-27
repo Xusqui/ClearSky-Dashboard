@@ -13,7 +13,7 @@
 
         <div class="infografia ephemeris-infografia">
             <h1 class="seeing-modal-title">🔭 Objetos Visibles Hoy</h1>
-            <button id="openCatalogoButton" class="catalog-button" title="Explorar Catálogo">
+            <button id="openCatalogoButton" class="catalogo-option-button" title="Explorar Catálogo">
                 Consultar Catálogo Astronómico
             </button>
 

@@ -3,22 +3,6 @@
 #messierCatalogModal {
     z-index: 1020;
 }
-.catalogo-option-button {
-    padding: 15px 30px;
-    font-size: 1.2em;
-    cursor: pointer;
-    border: none;
-    border-radius: 8px;
-    background-color: var(--darkblue);
-    color: var(--white);
-    transition: background-color 0.3s, box-shadow 0.3s;
-}
-
-.catalogo-option-button:hover {
-    background-color: var(--lightblue);
-    box-shadow: 0 0 10px rgba(var(--lightblue-raw), 0.7);
-    color: var(--black);
-}
 
 /* --- Estilos del Modal a Pantalla Completa (Fondo Transparente) --- */
 
