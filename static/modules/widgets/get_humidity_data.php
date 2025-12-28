@@ -4,6 +4,9 @@
 // Incluir el archivo de configuración que debe contener las variables de conexión a MariaDB:
 // $db_user, $db_pass, $db_url, $db_database
 include __DIR__ . '/../../config/config.php';
+include __DIR__ . '/math_utils.php';
+$HUMIDITY_TREND_CACHE = __DIR__ . '/../../cache/humidity_trend.json';
+$HUMIDITY_TREND_TTL   = 15 * 60; // 15 minutos
 
 /**
  * Función para devolver un error en formato JSON y terminar el script.
@@ -32,6 +35,41 @@ function humidex ($temp, $dew){
 
     return $humidex;
 }
+
+// Cálculo de la tendencia de la humedad Exterior:
+function computeHumidityTrend(mysqli $db) {
+    $stmt = $db->prepare("
+        SELECT humedad
+        FROM meteo
+        WHERE timestamp >= NOW() - INTERVAL 8 HOUR
+          AND humedad IS NOT NULL
+        ORDER BY timestamp ASC
+    ");
+    $stmt->execute();
+    $res = $stmt->get_result();
+
+    $values = [];
+    while ($r = $res->fetch_assoc()) {
+        $values[] = floatval($r['humedad']);
+    }
+
+    if (count($values) < 300) return null;
+
+    $ema = ema($values, 0.03);
+    $slope = linearTrend($ema);
+
+    if ($slope > 0.0125) $trend = 'up';
+    elseif ($slope < -0.0125) $trend = 'down';
+    else $trend = 'stable';
+
+    return [
+        'trend' => $trend,
+        'slope' => round($slope,5),
+        'computed_at' => date('Y-m-d H:i:s')
+    ];
+}
+
+
 
 // ----------------------------------------------------
 // 1. Conexión a la base de datos y obtención de datos
@@ -76,6 +114,29 @@ if ($result->num_rows === 0) {
 // 2. Obtener los valores y sanitizarlos
 $row = $result->fetch_assoc();
 
+// ----------------------------
+//  CACHÉ DE TENDENCIA DE HUMEDAD EXTERIOR
+// ----------------------------
+$trendData = null;
+$now = time();
+
+if (file_exists($HUMIDITY_TREND_CACHE)) {
+    $cache = json_decode(file_get_contents($HUMIDITY_TREND_CACHE), true);
+    if ($cache && isset($cache['computed_at'])) {
+        if ($now - strtotime($cache['computed_at']) < $HUMIDITY_TREND_TTL) {
+            $trendData = $cache;
+        }
+    }
+}
+
+if ($trendData === null) {
+    $newTrend = computeHumidityTrend($mysqli);
+    if ($newTrend !== null) {
+        file_put_contents($HUMIDITY_TREND_CACHE, json_encode($newTrend, JSON_PRETTY_PRINT));
+        $trendData = $newTrend;
+    }
+}
+
 // Aseguramos que los valores sean flotantes o 0 si son nulos/inválidos.
 $humidity = isset($row['humedad']) && is_numeric($row['humedad']) ? floatval($row['humedad']) : 0;
 $temp = isset($row['temperatura']) && is_numeric($row['temperatura']) ? floatval($row['temperatura']) : 0;
@@ -83,7 +144,6 @@ $dew = isset($row['punto_rocio']) && is_numeric($row['punto_rocio']) ? floatval(
 
 $result->free();
 $mysqli->close();
-
 
 // ----------------------------------------------------
 // 3. Cálculos y Lógica de Estado (Lógica de Weather Underground)
@@ -146,6 +206,7 @@ echo json_encode([
     "angle" => round($angle_humidity, 1), // Redondea el ángulo
     "legend" => $humid_legend,
     "color" => $humidity_color,
-    "state" => $humid_state
+    "state" => $humid_state,
+    "trend" => $trendData['trend'] ?? null,
 ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 ?>

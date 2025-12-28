@@ -51,3 +51,20 @@ pressure-widget-view .pressure-needle:before {
     border-radius: 50%;
     box-shadow: 0 0 15px rgba(0, 0, 0, .6)
 }
+.pressure-trend {
+    margin-top: 4px;
+    font-size: 0.85em;
+    opacity: 0.85;
+}
+
+.trend-high {
+    color: var(--red); /* rojo = sube presión */
+}
+
+.trend-stable {
+    color: var(--green); /* verde */
+}
+
+.trend-low {
+    color: var(--lightblue); /* azul = baja presión */
+}

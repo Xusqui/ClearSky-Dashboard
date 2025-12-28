@@ -3,18 +3,40 @@ function updateTempWidget() {
     fetch('./static/modules/widgets/get_temp_data.php')
         .then(response => response.json())
         .then(data => {
-            if (data.error) {
-                console.error("Error Home Assistant:", data.message);
-                return;
+        if (data.error) {
+            console.error("Error Home Assistant:", data.message);
+            return;
+        }
+
+        // Valores principales
+        document.getElementById('temp-widget-main-display').textContent = data.temp;
+        document.getElementById('temp-widget-feel-display').textContent = `Sensación: ${data.feels_like}`;
+
+        // Rotar aguja
+        document.getElementById('temp-widget-needle').style.transform = `translate(-50%, -100%) rotate(${data.angle}deg)`;
+        const trendEl = document.getElementById('temp-widget-trend');
+        if (trendEl && data.trend) {
+            let text = '';
+            let cls  = '';
+
+            if (data.trend === 'up') {
+                text = 'Subiendo';
+                icon = '↗';
+                cls  = 'trend-hot';
+            } else if (data.trend === 'down') {
+                text = 'Bajando';
+                icon = '↘';
+                cls  = 'trend-cold';
+            } else {
+                text = 'Estable';
+                icon = '●';
+                cls  = 'trend-stable';
             }
 
-            // Valores principales
-            document.getElementById('temp-widget-main-display').textContent = data.temp;
-            document.getElementById('temp-widget-feel-display').textContent = `Sensación: ${data.feels_like}`;
-
-            // Rotar aguja
-            document.getElementById('temp-widget-needle').style.transform = `translate(-50%, -100%) rotate(${data.angle}deg)`;
-        })
+            trendEl.textContent = `${text} ${icon}`;
+            trendEl.className = `temp-trend ${cls}`;
+        }
+    })
         .catch(err => console.error('Error al actualizar temperatura:', err));
 }
 

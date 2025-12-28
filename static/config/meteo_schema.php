@@ -19,7 +19,7 @@ $meteo_schema = [
     'presion_absoluta' => 'DECIMAL(6,2) DEFAULT NULL',
     'punto_rocio' => 'DECIMAL(5,2) DEFAULT NULL',
     'viento_velocidad' => 'DECIMAL(5,2) DEFAULT NULL',
-    'viento_direccion' => 'SMALLINT(6) DEFAULT NULL', // ⬅️ VUELVE A SER smallint(6)
+    'viento_direccion' => 'SMALLINT(6) DEFAULT NULL',
     'viento_racha' => 'DECIMAL(5,2) DEFAULT NULL',
     'lluvia_diaria' => 'DECIMAL(6,2) DEFAULT NULL',
     'indice_uv' => 'DECIMAL(4,2) DEFAULT NULL',
@@ -38,9 +38,9 @@ $meteo_schema = [
 
     // METADATOS DE LA ESTACIÓN
     'stationtype' => 'VARCHAR(50) DEFAULT NULL',
-    'runtime' => 'INT(11) DEFAULT NULL', // ⬅️ VUELVE A SER int(11)
-    'heap' => 'INT(11) DEFAULT NULL', // ⬅️ VUELVE A SER int(11)
-    'wh65batt' => 'TINYINT(4) DEFAULT NULL', // ⬅️ VUELVE A SER tinyint(4)
+    'runtime' => 'INT(11) DEFAULT NULL',
+    'heap' => 'INT(11) DEFAULT NULL',
+    'wh65batt' => 'TINYINT(4) DEFAULT NULL',
     'freq' => 'VARCHAR(10) DEFAULT NULL',
     'model' => 'VARCHAR(50) DEFAULT NULL',
     'passkey' => 'CHAR(32) DEFAULT NULL',

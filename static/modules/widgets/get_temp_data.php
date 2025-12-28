@@ -1,6 +1,10 @@
 <?php
 // get_temp_data.php
 include __DIR__ . '/../../config/config.php';
+include __DIR__ . '/math_utils.php';
+$TEMP_TREND_CACHE = __DIR__ . '/../../cache/temp_trend.json';
+$TEMP_TREND_TTL   = 10 * 60; // 10 minutos
+
 
 // Parámetros para el cálculo del ángulo
 $minTemp = -20;
@@ -31,6 +35,46 @@ if ($mysqli->connect_error) {
     die_with_error("Error al conectar con la base de datos.");
 }
 
+// FUNCIÓN PARA CALCULAR LA TENDENCIA TÉRMICA EXTERIOR:
+function computeTempTrend(mysqli $db) {
+    $stmt = $db->prepare("
+        SELECT UNIX_TIMESTAMP(timestamp) AS t, temperatura
+        FROM meteo
+        WHERE timestamp >= NOW() - INTERVAL 6 HOUR
+          AND temperatura IS NOT NULL
+        ORDER BY timestamp ASC
+    ");
+    $stmt->execute();
+    $res = $stmt->get_result();
+
+    $times = [];
+    $values = [];
+
+    while ($r = $res->fetch_assoc()) {
+        $times[]  = intval($r['t']);
+        $values[] = floatval($r['temperatura']);
+    }
+
+    if (count($values) < 50) return null;
+
+    $emaVals = ema($values, 0.05);
+    $slope   = linearTrend($times, $emaVals); // °C por segundo
+
+    // Normalizamos a °C / hora
+    $slopeHour = $slope * 3600;
+
+    if ($slopeHour > 0.2)      $trend = 'up';
+    elseif ($slopeHour < -0.2) $trend = 'down';
+    else                       $trend = 'stable';
+
+    return [
+        'trend' => $trend,
+        'slope_hour' => round($slopeHour, 3),
+        'computed_at' => date('Y-m-d H:i:s')
+    ];
+}
+
+
 // Consulta SQL para obtener la última temperatura y la sensación térmica (feels_like)
 // Asumo que la columna de sensación térmica se llama 'feels_like' o similar.
 // Usaremos 'temperatura' (temperatura exterior) y 'sensacion_termica' (un nombre lógico para la BD)
@@ -53,6 +97,28 @@ if ($result->num_rows === 0) {
     $mysqli->close();
     die_with_error("No se encontraron datos en la tabla 'meteo'.");
 }
+
+// CÁLCULO DE TENDENCIAS:
+$trendData = null;
+$now = time();
+
+if (file_exists($TEMP_TREND_CACHE)) {
+    $cache = json_decode(file_get_contents($TEMP_TREND_CACHE), true);
+    if ($cache && isset($cache['computed_at'])) {
+        if ($now - strtotime($cache['computed_at']) < $TEMP_TREND_TTL) {
+            $trendData = $cache;
+        }
+    }
+}
+
+if ($trendData === null) {
+    $newTrend = computeTempTrend($mysqli);
+    if ($newTrend !== null) {
+        file_put_contents($TEMP_TREND_CACHE, json_encode($newTrend, JSON_PRETTY_PRINT));
+        $trendData = $newTrend;
+    }
+}
+
 
 // 2. Obtener los valores
 $row = $result->fetch_assoc();
@@ -90,6 +156,7 @@ header('Content-Type: application/json');
 echo json_encode([
     "temp" => $temp,
     "feels_like" => $feels_like,
-    "angle" => $temp_angle
+    "angle" => $temp_angle,
+    "trend" => $trendData['trend'] ?? null
 ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 ?>

@@ -3,10 +3,10 @@ function updateHumidityWidget() {
     fetch('./static/modules/widgets/get_humidity_data.php')
         .then(response => response.json())
         .then(data => {
-            if (data.error) {
-                console.error("Error Home Assistant:", data.message);
-                return;
-            }
+        if (data.error) {
+            console.error("Error Home Assistant:", data.message);
+            return;
+        }
 
         // Actualizar valor numérico y leyenda
         document.getElementById('humidity-widget-main-display').textContent = data.humidity;
@@ -24,12 +24,35 @@ function updateHumidityWidget() {
         // Actualizar clase del widget según estado
         const widgetView = document.querySelector('humidity-widget-view');
         if (widgetView) {
-                widgetView.setAttribute('data-humidity', data.humidity);
-                widgetView.setAttribute('data-humidity-string', data.legend);
-                widgetView.setAttribute('data-main-value', data.humidity);
-                widgetView.setAttribute('aria-valuenow', data.humidity);
-                widgetView.setAttribute('data-secondary-value', data.legend);
-                widgetView.className = `widget-view ${data.state} loaded`;
+            widgetView.setAttribute('data-humidity', data.humidity);
+            widgetView.setAttribute('data-humidity-string', data.legend);
+            widgetView.setAttribute('data-main-value', data.humidity);
+            widgetView.setAttribute('aria-valuenow', data.humidity);
+            widgetView.setAttribute('data-secondary-value', data.legend);
+            widgetView.className = `widget-view ${data.state} loaded`;
+        }
+        const trendEl = document.getElementById('humidity-widget-trend');
+        if (trendEl && data.trend) {
+            let text = '';
+            let icon = '';
+            let cls = '';
+
+            if (data.trend === 'up') {
+                text = 'Subiendo';
+                icon = '↗';
+                cls = 'color-lightblue';
+            } else if (data.trend === 'down') {
+                text = 'Bajando';
+                icon = '↘';
+                cls = 'color-orange';
+            } else {
+                text = 'Estable';
+                icon = '●';
+                cls = 'color-green';
+            }
+
+            trendEl.textContent = `${text} ${icon}`;
+            trendEl.className = `humidity-trend ${cls}`;
         }
     })
         .catch(err => console.error('Error al actualizar humedad:', err));

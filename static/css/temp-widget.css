@@ -133,3 +133,20 @@ temp-widget-view .temp-needle::after {
         opacity: 1
     }
 }
+.temp-trend {
+    margin-top: 4px;
+    font-size: 0.85em;
+    opacity: 0.85;
+}
+
+.trend-hot {
+    color: var(--red); /* rojo */
+}
+
+.trend-stable {
+    color: var(--green); /* verde */
+}
+
+.trend-cold {
+    color: var(--lightblue); /* azul */
+}

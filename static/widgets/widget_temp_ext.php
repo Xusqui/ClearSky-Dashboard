@@ -32,6 +32,7 @@
                                     <div class="value-container">
                                         <div class="main-value value-unit degrees" id="temp-widget-main-display"><?= $temp ?></div>
                                         <div class="tertiary-value uppercase Value-unit degrees" id="temp-widget-feel-display">Sensación: <?= $feels_like ?></div>
+                                        <div id="temp-widget-trend" class="temp-trend"></div>
                                     </div>
                                 </temp-widget-view>
                             </div>

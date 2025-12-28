@@ -39,3 +39,6 @@
 /static/cache/cache_astronomy.json
 /static/cache/cache_forecast.json
 /static/config/sensors.php
+/static/cache/humidity_trend.json
+/static/cache/temp_trend.json
+/static/cache/pressure_trend.json

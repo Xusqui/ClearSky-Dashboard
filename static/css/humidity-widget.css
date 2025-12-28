@@ -245,3 +245,9 @@ humidity-widget-view .humidity-vapor-particle:nth-child(6) {
         opacity: .6
     }
 }
+
+.humidity-trend {
+    margin-top: 4px;
+    font-size: 0.85em;
+    opacity: 0.85;
+}
