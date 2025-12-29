@@ -1,27 +1,41 @@
-/* dew_widget.js */
+/* /static/js/widgets/dew_widget.js */
 function updateDewWidget() {
     fetch('./static/modules/widgets/get_dew_data.php')
-        .then(response => response.json())
-        .then(data => {
-            if (data.error) {
-                console.error("Error Home Assistant:", data.message);
-                return;
-            }
+        .then(r => r.json())
+        .then(d => {
+            if (d.error) return console.error(d.message);
 
-            // Actualizar valor del punto de rocío
-            document.getElementById('dewpoint-widget-main-display').textContent = data.dew;
+            const main = document.getElementById('dewpoint-widget-main-display');
+            if (main) main.textContent = d.dew.toFixed(1);
 
-            // Actualizar tamaño de la gota
             const dewWidget = document.querySelector('dew-point-widget-view');
             if (dewWidget) {
-                dewWidget.style.setProperty('--dewpoint-droplet-width', `${data.percent}%`);
+                dewWidget.style.setProperty('--dewpoint-droplet-width', `${d.percent}%`);
             }
+
+            const trend = document.getElementById('dew-trend');
+            if (trend) {
+                trend.className = 'dew-trend'; // reset
+
+                if (d.trend === 'up') {
+                    trend.textContent = '▲';
+                    trend.classList.add('up');
+                } else if (d.trend === 'down') {
+                    trend.textContent = '▼';
+                    trend.classList.add('down');
+                } else {
+                    trend.textContent = '●';
+                    trend.classList.add('flat');
+                }
+            }
+
+            const dewProb = document.getElementById('dew-prob');
+            if (dewProb) dewProb.textContent = `💧 ${d.dew_probability}%`;
+
+            const fogProb = document.getElementById('fog-prob');
+            if (fogProb) fogProb.textContent = `🌫 ${d.fog_probability}%`;
         })
-        .catch(err => console.error('Error al actualizar punto de rocío:', err));
+        .catch(e => console.error("Dew error:", e));
 }
 
-// Primera actualización inmediata
 updateDewWidget();
-
-// Actualizar cada 1 minuto (60000 ms). Se actualiza desde update_status.js
-//setInterval(updateDewWidget, 60000);

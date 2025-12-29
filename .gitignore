@@ -42,3 +42,4 @@
 /static/cache/humidity_trend.json
 /static/cache/temp_trend.json
 /static/cache/pressure_trend.json
+/static/cache/dew_cache.json

@@ -1,4 +1,4 @@
-/* humidity_widget.js */
+/* /static/js/widgets/humidity_widget.js */
 function updateHumidityWidget() {
     fetch('./static/modules/widgets/get_humidity_data.php')
         .then(response => response.json())
@@ -39,11 +39,11 @@ function updateHumidityWidget() {
 
             if (data.trend === 'up') {
                 text = 'Subiendo';
-                icon = '↗';
+                icon = '▲';
                 cls = 'color-lightblue';
             } else if (data.trend === 'down') {
                 text = 'Bajando';
-                icon = '↘';
+                icon = '▼';
                 cls = 'color-orange';
             } else {
                 text = 'Estable';
@@ -61,5 +61,3 @@ function updateHumidityWidget() {
 // Primera actualización inmediata
 updateHumidityWidget();
 
-// Actualizar cada minuto (60000 ms). Se actualiza desde update_status.js
-//setInterval(updateHumidityWidget, 60000);

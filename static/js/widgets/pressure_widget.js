@@ -1,4 +1,4 @@
-/* pressure_widget.js */
+/* /static/js/widgets/pressure_widget.js */
 function fetchPressureData() {
     fetch("./static/modules/widgets/get_pressure_data.php")
         .then(response => response.json())
@@ -31,11 +31,11 @@ function fetchPressureData() {
 
             if (data.trend === 'up') {
                 text = 'TSubiendo';
-                icon = '↗';
+                icon = '▲';
                 cls  = 'trend-high';
             } else if (data.trend === 'down') {
                 text = 'TBajando';
-                icon = '↘';
+                icon = '▼';
                 cls  = 'trend-low';
             } else {
                 text = 'Estable';

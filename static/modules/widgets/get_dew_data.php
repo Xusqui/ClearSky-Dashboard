@@ -1,104 +1,173 @@
 <?php
-// get_dew_data.php
+// /static/modules/widgets/get_dew_data.php
 
-// Incluir el archivo de configuración que debe contener las variables de conexión a MariaDB:
-// $db_user, $db_pass, $db_url, $db_database
 include __DIR__ . '/../../config/config.php';
 
-// Parámetros para el cálculo del porcentaje de la gota
-// $inner_percent = min(max(100 * $dew / 49, 0), 100);
-$dew_max_value = 49;
+$windowMinutes = 30;
+$epsilon = 0.0005;
+$cache_file = __DIR__ . '/../../cache/dew_cache.json';
+$cache_ttl = 180; // Segundos: 3 minutos
 
 /**
- * Función para devolver un error en formato JSON y terminar el script.
- * @param string $message Mensaje de error a devolver.
+ * Devuelve error JSON y termina
  */
-function die_with_error($message) {
+function die_with_error($msg) {
     header('Content-Type: application/json');
-    die(json_encode([
-        "error" => true,
-        "message" => $message
-    ]));
+    die(json_encode(["error" => true, "message" => $msg]));
+}
+
+/**
+ * Calcula pendiente por regresión lineal (y respecto al tiempo real)
+ */
+function linearTrend(array $points) {
+    $n = count($points);
+    if ($n < 2) return 0.0;
+
+    $sumX = $sumY = $sumXY = $sumXX = 0.0;
+
+    foreach ($points as [$x, $y]) {
+        $sumX  += $x;
+        $sumY  += $y;
+        $sumXY += $x * $y;
+        $sumXX += $x * $x;
+    }
+
+    $den = $n * $sumXX - $sumX * $sumX;
+    if (abs($den) < 1e-9) return 0.0;
+
+    return ($n * $sumXY - $sumX * $sumY) / $den;
+}
+
+/**
+ * Clasifica la pendiente y devuelve símbolo y variable CSS
+ */
+function classifyTrend(float $slope, float $epsilon) {
+    if ($slope > $epsilon)  return ['up', '▲', '--red'];
+    if ($slope < -$epsilon) return ['down', '▼', '--lightblue'];
+    return ['stable', '■', '--green'];
 }
 
 // ----------------------------------------------------
-// 1. Conexión a la base de datos y obtención de datos
+// Conexión a DB
 // ----------------------------------------------------
-
-// Verificar si las variables de conexión están definidas después de la inclusión
 if (!isset($db_url, $db_user, $db_pass, $db_database)) {
-    die_with_error("Error: Las credenciales de la base de datos no están definidas en config.php.");
+    die_with_error("Credenciales no definidas.");
 }
 
 $mysqli = new mysqli($db_url, $db_user, $db_pass, $db_database);
-
-if ($mysqli->connect_error) {
-    // Error de conexión
-    error_log("Error de conexión a la BD: " . $mysqli->connect_error);
-    die_with_error("Error al conectar con la base de datos.");
-}
-
-// Consulta SQL para obtener el último valor de 'punto_rocio'
-$sql = "SELECT punto_rocio, temperatura
-        FROM meteo
-        ORDER BY timestamp DESC
-        LIMIT 1";
-
-$result = $mysqli->query($sql);
-
-if ($result === false) {
-    // Error en la consulta
-    error_log("Error en la consulta SQL: " . $mysqli->error);
-    $mysqli->close();
-    die_with_error("Error al ejecutar la consulta de punto de rocío.");
-}
-
-if ($result->num_rows === 0) {
-    // No hay datos
-    $mysqli->close();
-    die_with_error("No se encontraron datos en la tabla 'meteo'.");
-}
-
-// 2. Obtener el valor
-$row = $result->fetch_assoc();
-$dew = $row['punto_rocio'];
-$temp = $row['temperatura'];
-
-$result->free();
-$mysqli->close();
-
+if ($mysqli->connect_error) die_with_error("Error de conexión.");
 
 // ----------------------------------------------------
-// 3. Cálculo del porcentaje (Misma lógica anterior)
+// Último valor actual
 // ----------------------------------------------------
+$sqlCurrent = "
+SELECT punto_rocio, temperatura, viento_velocidad
+FROM meteo
+ORDER BY timestamp DESC
+LIMIT 1
+";
 
-// Asegurar que el valor es numérico y manejar null/errores
-$dew = is_numeric($dew) ? (float)$dew : null;
-$dew = round ($dew, 1);
+$res = $mysqli->query($sqlCurrent);
+if (!$res || $res->num_rows === 0) die_with_error("Sin datos actuales.");
 
-$temp = is_numeric($temp) ? (float)$temp : null;
-$temp = round ($temp, 1);
+$cur = $res->fetch_assoc();
+$dew   = is_numeric($cur['punto_rocio']) ? (float)$cur['punto_rocio'] : null;
+$temp  = is_numeric($cur['temperatura']) ? (float)$cur['temperatura'] : null;
+$wind  = is_numeric($cur['viento_velocidad']) ? (float)$cur['viento_velocidad'] : 0.0;
+$res->free();
 
-if ($dew === null) {
-    // Usar 0 para el porcentaje si el valor no es válido o está ausente
-    $inner_percent = 0;
+// ----------------------------------------------------
+// Leer cache si existe y no caducada
+// ----------------------------------------------------
+$cachedTrend = null;
+if (file_exists($cache_file)) {
+    $cacheData = json_decode(file_get_contents($cache_file), true);
+    if ($cacheData && isset($cacheData['timestamp']) && time() - $cacheData['timestamp'] < $cache_ttl) {
+        $cachedTrend = $cacheData;
+    }
+}
+
+// ----------------------------------------------------
+// Calcular tendencia solo si no hay cache válida
+// ----------------------------------------------------
+if ($cachedTrend) {
+    [$trendState, $trendSymbol, $trendColor] = [$cachedTrend['trend_state'], $cachedTrend['trend_symbol'], $cachedTrend['trend_color']];
+    $dewProb = $cachedTrend['dew_probability'];
+    $fogProb = $cachedTrend['fog_probability'];
 } else {
-    // Calcular porcentaje de la gota: $dew / 49, limitado entre 0 y 100
-    $ratio = $dew / $temp;
-    if ($ratio > 1) {
-        $ratio = 1;
+    // Historial últimos 30 minutos
+    $sqlHist = "
+    SELECT UNIX_TIMESTAMP(timestamp) AS t, punto_rocio
+    FROM meteo
+    WHERE timestamp >= NOW() - INTERVAL $windowMinutes MINUTE
+      AND punto_rocio IS NOT NULL
+    ORDER BY timestamp ASC
+    ";
+
+    $res = $mysqli->query($sqlHist);
+    $points = [];
+    if ($res) {
+        while ($r = $res->fetch_assoc()) {
+            $points[] = [(float)$r['t'], (float)$r['punto_rocio']];
+        }
+        $res->free();
     }
 
-    $inner_percent = 60 * $ratio;
-    $inner_percent = min(max($inner_percent, 0), 60);
+    $slope = linearTrend($points);
+    [$trendState, $trendSymbol, $trendColor] = classifyTrend($slope, $epsilon);
+
+    // Probabilidad de rocío
+    $dewProb = 0;
+    if ($temp !== null && $dew !== null) {
+        $spread = $temp - $dew;
+        if ($spread < 1)      $dewProb = 90;
+        elseif ($spread < 2) $dewProb = 70;
+        elseif ($spread < 3) $dewProb = 50;
+        elseif ($spread < 5) $dewProb = 25;
+        else                 $dewProb = 5;
+    }
+
+    // Probabilidad de niebla
+    $fogProb = 0;
+    if ($dewProb > 50 && $wind < 2)      $fogProb = 80;
+    elseif ($dewProb > 40 && $wind < 3)  $fogProb = 60;
+    elseif ($dewProb > 30 && $wind < 4)  $fogProb = 40;
+    else                                  $fogProb = 10;
+
+    // Guardar en cache
+    $cacheData = [
+        'timestamp' => time(),
+        'trend_state' => $trendState,
+        'trend_symbol' => $trendSymbol,
+        'trend_color' => $trendColor,
+        'dew_probability' => $dewProb,
+        'fog_probability' => $fogProb
+    ];
+    file_put_contents($cache_file, json_encode($cacheData, JSON_PRETTY_PRINT));
+}
+
+$mysqli->close();
+
+// ----------------------------------------------------
+// Porcentaje gota
+// ----------------------------------------------------
+if ($dew !== null && $temp !== null && $temp > 0) {
+    $ratio = min(max($dew / $temp, 0), 1);
+    $percent = 60 * $ratio;
+} else {
+    $percent = 0;
 }
 
 // ----------------------------------------------------
-// 4. Devolver JSON (Mismo formato anterior)
+// Devolver JSON
 // ----------------------------------------------------
 header('Content-Type: application/json');
 echo json_encode([
-    "dew" => $dew,
-    "percent" => $inner_percent
-], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-?>
+    "dew" => $dew !== null ? round($dew, 1) : null,
+    "percent" => round($percent, 1),
+    "trend" => $trendSymbol,
+    "trend_state" => $trendState,
+    "trend_color" => $trendColor,
+    "dew_probability" => $dewProb,
+    "fog_probability" => $fogProb
+], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);

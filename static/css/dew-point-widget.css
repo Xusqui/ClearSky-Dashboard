@@ -1,4 +1,4 @@
-/*dew-point-widget.css*/
+/* /static/css/dew-point-widget.css*/
 dew-point-widget-view {
     --dewpoint-droplet-width:0
 }
@@ -100,4 +100,25 @@ dew-point-widget-view .mini-drop:nth-child(3) {
         transform: translateY(40px);
         opacity: 0
     }
+}
+.dew-indicators {
+    margin-top: 4px;
+    font-size: 0.75em;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    opacity: 0.85;
+}
+
+.dew-trend {
+    font-size: 1em;
+    font-weight: bold;
+}
+
+.dew-trend.up    { color: var(--red); }  /* rojo */
+.dew-trend.down  { color: var(--lightblue); } /* azul */
+.dew-trend.flat  { color: var(--green); } /* verde */
+
+.dew-prob, .fog-prob {
+    color: var(--gray80);
 }

@@ -1,5 +1,9 @@
 <?php
-// get_humidity_data.php
+// /static/modules/widgets/get_humidity_data.php
+
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 // Incluir el archivo de configuración que debe contener las variables de conexión a MariaDB:
 // $db_user, $db_pass, $db_url, $db_database
@@ -39,7 +43,7 @@ function humidex ($temp, $dew){
 // Cálculo de la tendencia de la humedad Exterior:
 function computeHumidityTrend(mysqli $db) {
     $stmt = $db->prepare("
-        SELECT humedad
+        SELECT UNIX_TIMESTAMP(timestamp) AS t, humedad
         FROM meteo
         WHERE timestamp >= NOW() - INTERVAL 8 HOUR
           AND humedad IS NOT NULL
@@ -48,15 +52,18 @@ function computeHumidityTrend(mysqli $db) {
     $stmt->execute();
     $res = $stmt->get_result();
 
+    $times = [];
     $values = [];
+
     while ($r = $res->fetch_assoc()) {
+        $times[]  = intval($r['t']);
         $values[] = floatval($r['humedad']);
     }
 
     if (count($values) < 300) return null;
 
     $ema = ema($values, 0.03);
-    $slope = linearTrend($ema);
+    $slope = linearTrend($times, $ema);
 
     if ($slope > 0.0125) $trend = 'up';
     elseif ($slope < -0.0125) $trend = 'down';

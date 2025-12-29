@@ -1,4 +1,4 @@
-/* temp_widget.js */
+/* /static/js/widgets/temp_widget.js */
 function updateTempWidget() {
     fetch('./static/modules/widgets/get_temp_data.php')
         .then(response => response.json())
@@ -21,11 +21,11 @@ function updateTempWidget() {
 
             if (data.trend === 'up') {
                 text = 'Subiendo';
-                icon = '↗';
+                icon = '▲';
                 cls  = 'trend-hot';
             } else if (data.trend === 'down') {
                 text = 'Bajando';
-                icon = '↘';
+                icon = '▼';
                 cls  = 'trend-cold';
             } else {
                 text = 'Estable';
@@ -42,6 +42,3 @@ function updateTempWidget() {
 
 // Primera actualización inmediata
 updateTempWidget();
-
-// Actualizar cada minutos (60000 ms). Se actualiza desde update_status.js
-//setInterval(updateTempWidget, 1 * 60 * 1000);
