@@ -65,11 +65,16 @@ if ($mode === 'stats') {
         "rate"          => floatval($row['lluvia_rate'] ?? 0.0),
         "event"         => floatval($row['lluvia_evento'] ?? 0.0),
         "hourly"        => floatval($row['lluvia_hora'] ?? 0.0),
-        "monthly"       => floatval($row['lluvia_mes'] ?? 0.0),
+        // Despues de enero-2026 cambiar a
+        // "monthly"       => floatval($row['lluvia_mes'] ?? 0.0),
+        "monthly"       => (floatval($row['lluvia_mes'] ?? 0.0)) + floatval($rain_offset),
         "total"         => floatval($row['lluvia_total'] ?? 0.0),
         "rain_daily"    => floatval($row['lluvia_diaria'] ?? 0.0),
-        "rain_weekly"   => floatval($row['lluvia_semana'] ?? 0.0),
-        "rain_yearly"   => floatval($row['lluvia_ano'] ?? 0.0),
+        // Despues del 7-1-2026 cambiar a
+        // "rain_weekly"   => floatval($row['lluvia_semana'] ?? 0.0),
+        "rain_weekly"   => (floatval($row['lluvia_semana'] ?? 0.0)) + floatval($rain_offset),
+        // Cuando llegue el 2027 cambiar el valor de rain_offset.
+        "rain_yearly"   => (floatval($row['lluvia_ano'] ?? 0.0)) + floatval($rain_offset),
     ];
     echo json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit();
@@ -112,7 +117,9 @@ if ($mode === 'monthly') {
     if ($result) {
         while ($row = $result->fetch_assoc()) {
             $labels[] = $row['anio_mes'];
-            $data[] = round(floatval($row['total_mes'] ?? 0.0), 2);
+            // Despues de Enero-2026 cambiar a:
+            //$data[] = round(floatval($row['total_mes'] ?? 0.0), 2);
+            $data[] = (round(floatval($row['total_mes'] ?? 0.0), 2))  + floatval($rain_offset);
         }
     }
 

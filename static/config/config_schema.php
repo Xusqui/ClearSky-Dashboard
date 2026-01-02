@@ -33,6 +33,7 @@ $config_schema = [
     'show_UV' => 'BOOLEAN NOT NULL DEFAULT TRUE',
     'show_solar' => 'BOOLEAN NOT NULL DEFAULT TRUE',
     'show_dew' => 'BOOLEAN NOT NULL DEFAULT TRUE',
-    'show_sky' => 'BOOLEAN NOT NULL DEFAULT TRUE'
+    'show_sky' => 'BOOLEAN NOT NULL DEFAULT TRUE',
+    'rain_offset' => 'DECIMAL(10,3) NOT NULL DEFAULT 0.000'
 ];
 ?>

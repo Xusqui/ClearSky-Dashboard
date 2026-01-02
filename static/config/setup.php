@@ -268,6 +268,9 @@ $show_in_temp =$config['show_in_temp'];
 $show_in_hum = $config['show_in_hum'];
 $show_sky = $config['show_sky'];
 
+// Variables de corrección:
+$rain_offset = $config['rain_offset'];
+
 // Variables de token truncado (Solo para mostrar si hay valor)
 $text_in_local_token = ($local_token && strlen($local_token) > 12) ? substr($local_token, 0, 6) . '(...)' . substr($local_token, -6) : 'set/unset';
 $text_in_ha_token = ($ha_token && strlen($ha_token) > 12) ? substr($ha_token, 0, 6) . '(...)' . substr($ha_token, -6) : 'set/unset';
@@ -328,6 +331,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 	$show_in_temp_post = (int)($_POST['show_in_temp'] ?? 0);
 	$show_in_hum_post = (int)($_POST['show_in_hum'] ?? 0);
 	$show_sky_post = (int)($_POST['show_sky'] ?? 0);
+	$rain_offset_post = filter_var($_POST['rain_offset'] ?? 0.0, FILTER_VALIDATE_FLOAT);
 
 	// Validar campos obligatorios
 	$missing_field = '';
@@ -375,6 +379,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 		$show_in_temp = $show_in_temp_post;
 		$show_in_hum = $show_in_hum_post;
 		$show_sky = $show_sky_post;
+		$rain_offset = $rain_offset_post;
 
 		$setup_warning .= "Falta o el formato es incorrecto para el campo **$missing_field** o el token está vacío. ";
 	} else {
@@ -453,8 +458,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 
 		// --- PREPARACIÓN DE LA CONSULTA SQL (24 parámetros) ---
 		$sql = "
-			INSERT INTO config (id, observatorio, latitud, longitud, elevacion, hardware, software, city, country, tz, password, send_local, local_token, send_ha, ha_token, send_meteoclimatic, meteoclimatic_code, meteoclimatic_token, log_weather, show_in_temp, show_in_hum, show_UV, show_solar, show_dew, show_sky)
-			VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+			INSERT INTO config (id, observatorio, latitud, longitud, elevacion, hardware, software, city, country, tz, password, send_local, local_token, send_ha, ha_token, send_meteoclimatic, meteoclimatic_code, meteoclimatic_token, log_weather, show_in_temp, show_in_hum, show_UV, show_solar, show_dew, show_sky, rain_offset)
+			VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 			ON DUPLICATE KEY UPDATE
 				observatorio = VALUES(observatorio),
 				latitud = VALUES(latitud),
@@ -479,15 +484,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 				show_UV = VALUES(show_UV),
 				show_solar = VALUES(show_solar),
 				show_dew = VALUES(show_dew),
-				show_sky = VALUES(show_sky)
+				show_sky = VALUES(show_sky),
+				rain_offset = VALUES(rain_offset)
 		";
 
 		$stmt = $conn->prepare($sql);
 		if (!$stmt) {
 			$setup_warning .= "Error al preparar la consulta: " . $conn->error;
 		} else {
-			// Tipos: s d d i s s s s s s i s i s i s s i i i i i i i (24 parámetros)
-			$stmt->bind_param("sddissssssisssissiiiiiii",
+			// Tipos: s d d i s s s s s s i s i s i s s i i i i i i i d (25 parámetros)
+			$stmt->bind_param("sddissssssisssissiiiiiiid",
 							  $observatorio,
 							  $latitud_post_saneada,
 							  $longitud_post_saneada,
@@ -511,7 +517,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 							  $show_UV_post,
 							  $show_solar_post,
 							  $show_dew_post,
-							  $show_sky_post
+							  $show_sky_post,
+							  $rain_offset_post
 							 );
 
 			if (!$stmt->execute()) {
@@ -595,6 +602,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 						<option value="1" <?= $log_weather == 1 ? 'selected' : '' ?>>Sí</option>
 						<option value="0" <?= $log_weather == 0 ? 'selected' : '' ?>>No</option>
 					</select>
+
+					<h2>Rain Offset</h2>
+					<h3>Valor positivo o negativo</h3>
+					<label for="rain_offset">En caso de que la lectura de lluvia anual sea errónea, sumar o restar este valor</label>
+					<input type="number" step="0.001" name="rain_offset" id="rain_offset" value="<?= htmlspecialchars($rain_offset) ?>" required>
 
 					<h2>Opciones de Envío de Datos</h2>
 
