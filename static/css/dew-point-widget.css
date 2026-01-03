@@ -102,17 +102,17 @@ dew-point-widget-view .mini-drop:nth-child(3) {
     }
 }
 .dew-indicators {
-    margin-top: 4px;
-    font-size: 0.75em;
-    display: flex;
+    margin-top: 12px;
+    font-size: 0.8em;
+    display: absolute;
     gap: 10px;
     align-items: center;
     opacity: 0.85;
 }
 
 .dew-trend {
-    font-size: 1em;
-    font-weight: bold;
+    font-size: 1.1em;
+    font-weight: normal;
 }
 
 .dew-trend.up    { color: var(--red); }  /* rojo */
@@ -120,5 +120,5 @@ dew-point-widget-view .mini-drop:nth-child(3) {
 .dew-trend.flat  { color: var(--green); } /* verde */
 
 .dew-prob, .fog-prob {
-    color: var(--gray80);
+    color: var(--color-secondary-font);
 }

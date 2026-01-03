@@ -16,15 +16,14 @@ function updateDewWidget() {
             const trend = document.getElementById('dew-trend');
             if (trend) {
                 trend.className = 'dew-trend'; // reset
-
                 if (d.trend === 'up') {
-                    trend.textContent = '▲';
+                    trend.textContent = 'Subiendo ▲';
                     trend.classList.add('up');
                 } else if (d.trend === 'down') {
-                    trend.textContent = '▼';
+                    trend.textContent = 'Bajando ▼';
                     trend.classList.add('down');
                 } else {
-                    trend.textContent = '●';
+                    trend.textContent = 'Estable ●';
                     trend.classList.add('flat');
                 }
             }

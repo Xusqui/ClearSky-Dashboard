@@ -20,9 +20,11 @@
         <div class="value-container">
             <div class="main-value value-unit degrees" id="dewpoint-widget-main-display"><?= $dew ?></div>
             <div class="dew-indicators">
-                <span id="dew-trend" class="dew-trend">■</span>
                 <span id="dew-prob" class="dew-prob">💧 0%</span>
                 <span id="fog-prob" class="fog-prob">🌫 0%</span>
+            </div>
+            <div class="dew-indicators">
+                <span id="dew-trend" class="dew-trend">■</span>
             </div>
         </div>
     </dew-point-widget-view>
