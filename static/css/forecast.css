@@ -55,8 +55,8 @@ sun-moon-forecast {
 }
 
 .forecast-card:hover {
-  transform: translateY(-3px); /* Levanta un poco la tarjeta al pasar el ratón */
-  box-shadow: 0 8px 16px var(--dashboard-widget-box-shadow-color); /* Sombra más intensa */
+    transform: translateY(+3px);
+    box-shadow: 0 8px 5px rgba(0, 0, 0, 0.3);
 }
 
 /* Ya no necesitamos img dentro de forecast-card para los iconos */

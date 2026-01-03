@@ -50,9 +50,8 @@
 }
 
 .moon-card:hover{
-    transform: translateY(-3px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.7);
-    border-color: #6a95f8;
+    transform: translateY(+3px);
+    box-shadow: 0 8px 5px rgba(0, 0, 0, 0.3);
 }
 
 .moon-card .moon-icon {

@@ -6,7 +6,8 @@
 
 
 .widget:hover {
-    transform: translateY(-5px);
+    transform: translateY(+3px);
+    box-shadow: 0 8px 5px rgba(0, 0, 0, 0.3);
 }
 
 @keyframes glow-move {
