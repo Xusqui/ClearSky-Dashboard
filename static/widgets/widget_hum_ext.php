@@ -28,7 +28,7 @@
         <div class="value-container">
             <div class="main-value value-unit percent" id="humidity-widget-main-display"><?= $humidity ?></div>
             <div class="secondary-value uppercase" id="humidity-widget-text-display"><?= $humid_legend ?></div>
-            <div class="secondary-value uppercase" id="humidity-widget-humidex"><?= $humidex ?></div>
+            <div class="tertiary-value uppercase" id="humidity-widget-humidex"><?= $humidex ?></div>
             <div id="humidity-widget-trend" class="humidity-trend"></div>
         </div>
     </humidity-widget-view>

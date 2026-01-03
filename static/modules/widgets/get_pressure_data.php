@@ -77,7 +77,7 @@ if ($mysqli->connect_error) {
 }
 
 // Consulta SQL para obtener la última presión relativa
-$sql = "SELECT presion_relativa
+$sql = "SELECT presion_relativa, presion_absoluta
         FROM meteo
         ORDER BY timestamp DESC
         LIMIT 1";
@@ -100,9 +100,14 @@ if ($result->num_rows === 0) {
 // 2. Obtener el valor y sanitizar
 $row = $result->fetch_assoc();
 
-// Valor de la presión (usamos 1013 como valor por defecto si es nulo, como en el original)
-$pressure = isset($row['presion_relativa']) && is_numeric($row['presion_relativa']) ? floatval($row['presion_relativa']) : 1013.0;
-$pressure = round($pressure, 1);
+// Valor de la presión
+$pressure_rel = isset($row['presion_relativa']) && is_numeric($row['presion_relativa']) ? floatval($row['presion_relativa']) : null;
+$pressure_rel = round($pressure_rel, 1);
+
+// Valor de presión absoluta
+$pressure_abs = isset($row['presion_absoluta']) && is_numeric($row['presion_absoluta']) ? floatval($row['presion_absoluta']) : null;
+$pressure_abs = round($pressure_abs, 1);
+
 
 $trendData = null;
 $now = time();
@@ -130,7 +135,7 @@ $mysqli->close();
 
 
 // ----------------------------------------------------
-// 3. Cálculo del ángulo del manómetro (Misma lógica anterior)
+// 3. Cálculo del ángulo del manómetro
 // ----------------------------------------------------
 $minPres = 950;
 $maxPres = 1050;
@@ -138,7 +143,7 @@ $minAnglePres = -134;
 $maxAnglePres = 134;
 
 // Mapeo lineal de la presión al ángulo
-$pres_angle = ($pressure - $minPres) * ($maxAnglePres - $minAnglePres) / ($maxPres - $minPres) + $minAnglePres;
+$pres_angle = ($pressure_rel - $minPres) * ($maxAnglePres - $minAnglePres) / ($maxPres - $minPres) + $minAnglePres;
 
 // Limitar ángulo a extremos
 if ($pres_angle < $minAnglePres) $pres_angle = $minAnglePres;
@@ -150,7 +155,8 @@ if ($pres_angle > $maxAnglePres) $pres_angle = $maxAnglePres;
 // ----------------------------------------------------
 header('Content-Type: application/json');
 echo json_encode([
-    "pressure"   => $pressure,
+    "pressure"   => $pressure_rel,
+    "pressure_abs" => $pressure_abs,
     "pres_angle" => $pres_angle,
     "trend"      => $trendData['trend'] ?? null
 ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);

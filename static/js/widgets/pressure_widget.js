@@ -4,17 +4,12 @@ function fetchPressureData() {
         .then(response => response.json())
         .then(data => {
         const pressure = parseFloat(data.pressure);
+        const press_abs = parseFloat(data.pressure_abs);
 
         // Actualizar el valor absoluto
         document.getElementById("pressure-widget-main-display").textContent = pressure;
 
-        // Calcular el ángulo de la aguja
-        const minPres = 950;
-        const maxPres = 1050;
-        const minAnglePres = -134;
-        const maxAnglePres = 134;
-
-        const pressureAngle = (pressure - minPres) * (maxAnglePres - minAnglePres) / (maxPres - minPres) + minAnglePres;
+        const pressureAngle = data.pres_angle;
 
         // Actualizar la aguja
         document.getElementById("pressure-widget-needle").style.transform =
@@ -23,6 +18,9 @@ function fetchPressureData() {
         // Actualizar data-pressure-angle en el widget
         document.querySelector("pressure-widget-view").setAttribute("data-pressure-angle", pressureAngle);
 
+        // Actualizar presión absoluta
+        document.getElementById("pressure-widget-secondary-display").textContent = `Abs: ${press_abs}`;
+
         const trendEl = document.getElementById("pressure-widget-trend");
 
         if (trendEl && data.trend) {
@@ -30,11 +28,11 @@ function fetchPressureData() {
             let cls  = '';
 
             if (data.trend === 'up') {
-                text = 'TSubiendo';
+                text = 'Subiendo';
                 icon = '▲';
                 cls  = 'trend-high';
             } else if (data.trend === 'down') {
-                text = 'TBajando';
+                text = 'Bajando';
                 icon = '▼';
                 cls  = 'trend-low';
             } else {
