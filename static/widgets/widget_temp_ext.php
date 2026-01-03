@@ -21,7 +21,7 @@
                                     }
                                 ?>
                                 <div class="title">Temperatura Exterior</div>
-                                <temp-widget-view data-pws-id="<?= $observatorio ?>" data-status="connected" data-unit="m" data-temp="<?= $temp ?>" data-temp-angle="<?= $temp_angle ?>" data-main-value="<?= $temp ?>" aria-valuenow="<?= $temp ?>" class="widget-view loaded">
+                                <temp-widget-view data-pws-id="<?= $observatorio ?>" data-status="connected" data-unit="m" data-temp="" data-temp-angle="" data-main-value="" aria-valuenow="" class="widget-view loaded">
                                     <div class="graphic-container">
                                         <div class="temp-gauge-container">
                                             <div class="temp-gauge-bg"></div>

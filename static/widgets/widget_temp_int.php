@@ -21,7 +21,7 @@
         }
     ?>
     <div class="title">Temperatura Interior</div>
-    <temp-widget-view data-pws-id="<?= $observatorio ?>" data-status="connected" data-unit="m" data-temp="<?= $in_temp ?>" data-temp-angle="<?= $in_temp_angle ?>" data-main-value="<?= $in_temp ?>" aria-valuenow="<?= $in_temp ?>" class="widget-view loaded">
+    <temp-int-widget-view data-pws-id="<?= $observatorio ?>" data-status="connected" data-unit="m" data-temp="<?= $in_temp ?>" data-temp-angle="<?= $in_temp_angle ?>" data-main-value="<?= $in_temp ?>" aria-valuenow="<?= $in_temp ?>" class="widget-view loaded">
         <div class="graphic-container">
             <div class="temp-gauge-container">
                 <div class="temp-gauge-bg"></div>
@@ -32,5 +32,5 @@
         <div class="value-container">
             <div class="main-value value-unit degrees" id="temp-int-widget-main-display"><?= $in_temp ?></div>
         </div>
-    </temp-widget-view>
+    </temp-int-widget-view>
 </div>

@@ -29,6 +29,7 @@ include __DIR__ . "/static/config/config.php";
         <link rel="stylesheet" type="text/css" href="./static/css/rain-widget.css?v=<?= time(); ?>" />
         <link rel="stylesheet" type="text/css" href="./static/css/solar-radiation-widget.css?v=<?= time(); ?>" />
         <link rel="stylesheet" type="text/css" href="./static/css/temp-widget.css?v=<?= time(); ?>" />
+        <link rel="stylesheet" type="text/css" href="./static/css/temp-int-widget.css?v=<?= time(); ?>" />
         <link rel="stylesheet" type="text/css" href="./static/css/uv-widget.css?v=<?= time(); ?>" />
         <link rel="stylesheet" type="text/css" href="./static/css/widget-base.css?v=<?= time(); ?>" />
         <link rel="stylesheet" type="text/css" href="./static/css/widget-wind.css?v=<?= time(); ?>" />

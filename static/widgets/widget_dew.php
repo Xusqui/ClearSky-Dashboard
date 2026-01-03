@@ -11,7 +11,7 @@
     $dew = 0;
     $inner_percent = (100 * $dew) / 49;
     ?>
-    <dew-point-widget-view data-pws-id="<?= $observatorio ?>" data-status="connected" data-unit="m" data-temp="<?= $temp ?>" data-dew-point="<?= $dew ?>" data-main-value="<?= $dew ?>" aria-valuenow="<?= $dew ?>" class="widget-view loaded" style="--dewpoint-droplet-width: <?= $inner_percent ?>%;">
+    <dew-point-widget-view data-pws-id="<?= $observatorio ?>" data-status="connected" data-unit="m" data-temp="" data-dew-point="" data-main-value="" aria-valuenow="" class="widget-view loaded" style="--dewpoint-droplet-width: 50%;">
         <div class="graphic-container">
             <div class="dew-container">
                 <div class="droplet"></div>

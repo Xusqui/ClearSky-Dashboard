@@ -11,6 +11,9 @@ function updateDewWidget() {
             const dewWidget = document.querySelector('dew-point-widget-view');
             if (dewWidget) {
                 dewWidget.style.setProperty('--dewpoint-droplet-width', `${d.percent}%`);
+                dewWidget.setAttribute('data-main-value', `${d.dew}`);
+                dewWidget.setAttribute('data-dew-point', `${d.dew}`);
+                dewWidget.setAttribute('aria-valuenow', `${d.dew}`);
             }
 
             const trend = document.getElementById('dew-trend');

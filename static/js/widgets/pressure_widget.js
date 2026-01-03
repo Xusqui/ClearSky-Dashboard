@@ -18,6 +18,9 @@ function fetchPressureData() {
 
         // Actualizar data-pressure-angle en el widget
         document.querySelector("pressure-widget-view").setAttribute("data-pressure-angle", pressureAngle);
+        document.querySelector("pressure-widget-view").setAttribute("data-pressure", `${pressure}`);
+        document.querySelector("pressure-widget-view").setAttribute("data-main-value", `${pressure}`);
+        document.querySelector("pressure-widget-view").setAttribute("aria-valuenow", `${pressure}`);
 
         // Actualizar presión absoluta
         document.getElementById("pressure-widget-secondary-display").textContent = `Abs: ${press_abs}`;

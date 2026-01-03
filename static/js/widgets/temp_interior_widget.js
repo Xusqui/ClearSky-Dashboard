@@ -22,7 +22,7 @@ async function updateTempInteriorWidget() {
         if (needle) needle.style.transform = `translate(-50%, -100%) rotate(${angle}deg)`;
 
         // Actualizar atributos del widget
-        const widget = document.querySelector("temp-widget-view");
+        const widget = document.querySelector("temp-int-widget-view");
         if (widget) {
             widget.setAttribute("data-temp", temp);
             widget.setAttribute("data-temp-angle", angle);

@@ -7,6 +7,16 @@ function updateTempWidget() {
             console.error("Error Home Assistant:", data.message);
             return;
         }
+        // Modificar los datos del temp-widget-view:
+        // Seleccionamos el widget
+        const tempWidget = document.querySelector('temp-widget-view');
+        const dewWidget = document.querySelector('dew-point-widget-view');
+
+        tempWidget.setAttribute('data-temp', `${data.temp}`);
+        tempWidget.setAttribute('data-main-value', `${data.temp}`);
+        tempWidget.setAttribute('aria-valuenow', `${data.temp}`);
+        tempWidget.setAttribute('data-temp-angle', `${data.angle}`);
+        dewWidget.setAttribute('data-temp', `${data.temp}`);
 
         // Valores principales
         document.getElementById('temp-widget-main-display').textContent = data.temp;
