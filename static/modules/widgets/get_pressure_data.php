@@ -47,13 +47,25 @@ function computePressureTrend(mysqli $db) {
 
     $slopeHour = $slope * 3600; // hPa / hora
 
-    if ($slopeHour > 0.5)      $trend = 'up';
-    elseif ($slopeHour < -0.5) $trend = 'down';
-    else                       $trend = 'stable';
+    $threshold_stable = 0.5;
+    $threshold_fast   = 2.0;
+
+    if ($slopeHour > $threshold_fast) {
+        $trend = 'fast_up';      // Subida muy rápida (> 2 hPa/h)
+    } elseif ($slopeHour > $threshold_stable) {
+        $trend = 'up';           // Subida moderada (0.5 a 2 hPa/h)
+    } elseif ($slopeHour < -$threshold_fast) {
+        $trend = 'fast_down';    // Caída muy rápida (< -2 hPa/h) - ¡Alerta de tormenta!
+    } elseif ($slopeHour < -$threshold_stable) {
+        $trend = 'down';         // Caída moderada (-0.5 a -2 hPa/h)
+    } else {
+        $trend = 'stable';       // Estable (-0.5 a 0.5 hPa/h)
+    }
 
     return [
         'trend' => $trend,
-        'slope_hour' => round($slopeHour, 3),
+        'slope' => number_format($slope, 7, '.', ''), // hPa/s
+        'slope_hour' => round($slopeHour, 3), // hPa/h
         'computed_at' => date('Y-m-d H:i:s')
     ];
 }
@@ -158,6 +170,8 @@ echo json_encode([
     "pressure"   => $pressure_rel,
     "pressure_abs" => $pressure_abs,
     "pres_angle" => $pres_angle,
-    "trend"      => $trendData['trend'] ?? null
-], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    "trend"      => $trendData['trend'] ?? null,
+    "slope"        => $trendData['slope'] ?? null,
+    "slope_hour"   => $trendData['slope_hour'] ?? null
+], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION);
 ?>

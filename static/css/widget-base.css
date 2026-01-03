@@ -133,6 +133,20 @@
     content: "";
 }
 
+.widget-view[data-unit="e"] .value-unit.pressure-hour:after {
+    display: inline-block;
+    vertical-align: top;
+    font-size: 0.6rem;
+    content: "in";
+}
+
+.widget-view[data-unit="m"] .value-unit.pressure-hour:after {
+    display: inline-block;
+    vertical-align: top;
+    font-size: 0.6rem;
+    content: "hPa/h";
+}
+
 .widget-view .value-unit.radiation:after {
     content: "W/m²";
 }

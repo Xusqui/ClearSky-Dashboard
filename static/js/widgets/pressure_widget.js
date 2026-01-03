@@ -5,6 +5,7 @@ function fetchPressureData() {
         .then(data => {
         const pressure = parseFloat(data.pressure);
         const press_abs = parseFloat(data.pressure_abs);
+        const press_trend = parseFloat(data.slope_hour);
 
         // Actualizar el valor absoluto
         document.getElementById("pressure-widget-main-display").textContent = pressure;
@@ -20,6 +21,7 @@ function fetchPressureData() {
 
         // Actualizar presión absoluta
         document.getElementById("pressure-widget-secondary-display").textContent = `Abs: ${press_abs}`;
+        document.getElementById("trend-value").textContent = `Tend: ${press_trend}`;
 
         const trendEl = document.getElementById("pressure-widget-trend");
 
@@ -35,6 +37,14 @@ function fetchPressureData() {
                 text = 'Bajando';
                 icon = '▼';
                 cls  = 'trend-low';
+            } else if (data.trend === 'fast_up') {
+                text = 'Ascenso';
+                icon = '▲▲▲';
+                cls = ' trend-high';
+            } else if (data.trend === 'fast_down') {
+                text = 'Descenso';
+                icon = '▼▼▼';
+                cls = 'trend-low';
             } else {
                 text = 'Estable';
                 icon = '●';

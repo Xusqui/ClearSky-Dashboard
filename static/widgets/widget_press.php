@@ -13,8 +13,9 @@
             </div>
         </div>
         <div class="value-container">
-            <div class="main-value value-unit pressure" id="pressure-widget-main-display"><?= $pressure ?></div>
+            <div class="main-value value-unit pressure" id="pressure-widget-main-display"></div>
             <div class="tertiary-value value-unit pressure" id="pressure-widget-secondary-display"></div>
+            <div class="tertiary-value value-unit pressure-hour" id="trend-value"></div>
             <div id="pressure-widget-trend" class="pressure-trend"></div>
         </div>
     </pressure-widget-view>
