@@ -47,8 +47,7 @@ include __DIR__ . "/static/config/config.php";
         <link rel="stylesheet" type="text/css" href="./static/css/modal-sistema-solar.css?v=<?= time(); ?>" />
         <link rel="stylesheet" type="text/css" href="./static/css/modal-catalogo.css?v=<?= time(); ?>" />
         <link rel="stylesheet" type="text/css" href="./static/css/modal-dso.css?v=<?= time(); ?>" />
-        <!-- El enlace de la hoja de estilos (css) moon-phase.php se actualiza dinámicamente dentro del archivo /static/js/moon.js -->
-        <link id="moon-phase-css" rel="stylesheet" type="text/css" href="./static/css/moon-phase.php?position=&scale=0.4&bright=1&v=<?= time() ?>">
+        <link rel="stylesheet" type="text/css"href="./static/css/moon.css?v=<?= time(); ?>">
     </head>
     <body>
         <div class="widgets">
@@ -187,6 +186,7 @@ include __DIR__ . "/static/config/config.php";
         <script src="./static/js/moon.js?v<?= time() ?>"></script>
         <script src="./static/js/sun.js?v<?= time() ?>"></script>
         <script type="module" src="./static/js/theme-switcher.js?v=<?= time(); ?>"></script>
+        <script type="module" src="./static/js/moon_viewer.js?v=<?= time(); ?>"></script>
         <!-- JS de widgets-->
         <script src="./static/js/widgets/update_status.js?v=<?= time(); ?>"></script>
         <script src="./static/js/widgets/forecast.js?v=<?= time(); ?>"></script>
