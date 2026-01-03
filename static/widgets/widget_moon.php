@@ -9,10 +9,15 @@
                     <p>Salida</p>
                 </div>
             </div>
+            <!--
             <div class="moon">
                 <div class="light"></div>
                 <div class="texture"></div>
                 <div class="sphere"></div>
+            </div>
+-->
+            <div class="moon-container">
+                <canvas id="moonCanvas" width="155" height="155"></canvas>
             </div>
             <div class="moon-set-info">
                 <div class="time-group"> <span id="moon-set-time">--:--</span>

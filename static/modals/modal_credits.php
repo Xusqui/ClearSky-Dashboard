@@ -33,14 +33,14 @@
                     <p class="credits-card-value">La mayoría de iconos y gráficos son originales de **Weather Underground**</p>
                     <span class="credits-card-source">wunderground.com</span>
                 </a>
-                <!-- 2. CodePen (Fases Lunares) -->
+                <!-- 2. CodePen (Fases Lunares)
                 <a class="credits-card" href="https://codepen.io/xaelan/pen/bjqOvo" target="_blank" rel="noopener noreferrer">
-                    <!-- Usamos un icono de noche despejada como representación lunar genérica -->
+                    <!-- Usamos un icono de noche despejada como representación lunar genérica
                     <span class="credits-card-icon icon clear-night"></span>
                     <h3 class="credits-card-title">Fases Lunares (CSS)</h3>
                     <p class="credits-card-value">Código de **Pure CSS Moon Phases**</p>
                     <span class="credits-card-source">codepen.io/xaelan</span>
-                </a>
+                </a>-->
                 <!-- 3. Cloudy Nights (Mapa Lunar) -->
                 <a class="credits-card" href="https://www.cloudynights.com/forums/topic/908244-high-resolution-map-lunar-100/#comment-13218711" target="_blank" rel="noopener noreferrer">
                     <!-- Usamos un icono de información para referencia de mapa -->

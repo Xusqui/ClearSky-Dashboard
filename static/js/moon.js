@@ -124,9 +124,3 @@ if (!cssLink) {
     cssLink.id = 'moon-phase-css';
     document.head.appendChild(cssLink);
 }
-
-// Generar la URL con el valor calculado de window.phase
-const newHref = `./static/css/moon-phase.php?position=${phasePercentage}&scale=${moonScale}&bright=1&v=${Date.now()}`;
-
-// Actualizar el href del enlace
-cssLink.href = newHref;
