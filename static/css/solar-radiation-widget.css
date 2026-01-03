@@ -67,3 +67,10 @@ solar-radiation-widget-view .ring-2 {
         opacity: 0
     }
 }
+.icon-solar {
+    width: 2em;          /* Se ajusta al tamaño de la fuente */
+    height: 2em;         /* Mantiene proporción cuadrada */
+    vertical-align: middle; /* Alinea con el centro del texto */
+    margin-right: 5px;   /* Espacio entre icono y número */
+    display: inline-block;
+}

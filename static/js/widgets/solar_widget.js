@@ -12,6 +12,10 @@ async function updateSolarWidget() {
 
         const solarValue = data.solar;
         const percentage = data.percentage;
+        const productionDisplay = document.getElementById("produccion-energetica");
+        if (productionDisplay) {
+            productionDisplay.textContent = new Intl.NumberFormat('es-ES').format(data.estimacion);
+        }
 
         // Actualizar valor absoluto
         const solarMain = document.getElementById("solar-radiation-widget-main-display");
@@ -40,6 +44,3 @@ async function updateSolarWidget() {
 
 // Primera carga
 updateSolarWidget();
-
-// Cada 60 segundos. Se actualiza desde update_status.js
-//setInterval(updateSolarWidget, 1 * 60 * 1000);

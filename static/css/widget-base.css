@@ -151,6 +151,13 @@
     content: "W/m²";
 }
 
+.widget-view .value-unit.kW:after {
+    display: inline-block;
+    vertical-align: top;
+    font-size: 0.6rem;
+    content: "kW";
+}
+
 .widget-view:not([data-unit]) .value-unit.radiation:after {
     content: "";
 }

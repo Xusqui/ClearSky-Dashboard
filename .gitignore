@@ -14,7 +14,6 @@
 /weather_data.log
 /debug.log
 /api_data_87493479023.php
-/test.html
 /@eaDir/
 /static/@eaDir/
 /static/config/@eaDir/
@@ -43,5 +42,4 @@
 /static/cache/temp_trend.json
 /static/cache/pressure_trend.json
 /static/cache/dew_cache.json
-/hoy.php
 /moon.html
