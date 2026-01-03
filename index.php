@@ -47,7 +47,7 @@ include __DIR__ . "/static/config/config.php";
         <link rel="stylesheet" type="text/css" href="./static/css/modal-sistema-solar.css?v=<?= time(); ?>" />
         <link rel="stylesheet" type="text/css" href="./static/css/modal-catalogo.css?v=<?= time(); ?>" />
         <link rel="stylesheet" type="text/css" href="./static/css/modal-dso.css?v=<?= time(); ?>" />
-        <link rel="stylesheet" type="text/css"href="./static/css/moon.css?v=<?= time(); ?>">
+        <link rel="stylesheet" type="text/css" href="./static/css/moon.css?v=<?= time(); ?>">
     </head>
     <body>
         <div class="widgets">
