@@ -15,7 +15,6 @@
 /debug.log
 /api_data_87493479023.php
 /@eaDir/
-/static/@eaDir/
 /static/config/@eaDir/
 /static/css/@eaDir/
 /static/images/@eaDir/
@@ -33,8 +32,6 @@
 /static/widgets/@eaDir/
 /static/images/icons/moons/@eaDir/
 /static/solar_system/images/@eaDir/
-/static/modules/widgets/._get_astronomy_quality.php
-/static/modules/widgets/._get_forecast.php
 /static/cache/cache_astronomy.json
 /static/cache/cache_forecast.json
 /static/config/sensors.php
@@ -42,4 +39,3 @@
 /static/cache/temp_trend.json
 /static/cache/pressure_trend.json
 /static/cache/dew_cache.json
-/moon.html
