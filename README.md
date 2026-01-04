@@ -130,9 +130,8 @@ La integración de las estaciones meteorológicas con Home Assistant, corre de v
 ---
 ### &check; ToDo
 
-* Pendiente realizar el catálogo detallado de Messier y Caldwell
 * Pendiente las instrucciones de instalación de la api astro.
-
+* Pendiente de poner en setup.php las variables para el cálculo de producción de energía solar en lugar de modificarlas a mano en el archivo /static/modules/widgets/get_solar_data.php
 
 ### 💬 Feedback
 
