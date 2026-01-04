@@ -1,195 +1,176 @@
-/* setup.css */
+:root {
+    --primary: #6c8e7f;
+    --bg-gradient: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+    /* Paleta Pastel Ampliada */
+    --p-green: #e1eedd;    /* Equipo */
+    --p-purple: #f1e4f3;   /* Seguridad */
+    --p-blue: #deecfb;     /* Home Assistant */
+    --p-coral: #ffe4e1;    /* Meteoclimatic */
+    --p-yellow: #fdf6e3;   /* Visual */
+}
+
 body { 
-    font-family: 'Segoe UI', Roboto, sans-serif; 
-    background: linear-gradient(135deg, #1f4037, #99f2c8); 
-    color: #222; 
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    min-height: 100vh; 
+    font-family: 'Segoe UI', system-ui, sans-serif; 
+    background: var(--bg-gradient); 
     margin: 0; 
+    padding: 30px 15px;
+    color: #4a4a4a;
 }
-.container { 
-    background: #fff; 
-    padding: 2rem 3rem; 
-    border-radius: 16px; 
-    box-shadow: 0 8px 25px rgba(0,0,0,0.2); 
-    max-width: 420px; 
-    width: 90%; 
-    animation: fadeIn 0.7s ease-out; }
-h1 { 
-    text-align: center; 
-    color: #1f4037; 
-    margin-bottom: 1.5rem; 
+
+.container { max-width: 1200px; margin: 0 auto; }
+
+.main-title {
+    text-align: center;
+    font-weight: 300;
+    color: #2f4f4f;
+    font-size: 2.2rem;
+    margin-bottom: 30px;
 }
+
+/* Rejilla de Tarjetas */
+.setup-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    background: #ffffff;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    border: 1px solid rgba(0,0,0,0.03);
+    display: flex;
+    flex-direction: column;
+}
+
+.card h2 {
+    margin: -20px -20px 20px -20px;
+    padding: 15px 20px;
+    font-size: 1.1rem;
+    border-radius: 15px 15px 0 0;
+    color: #444;
+}
+
+/* Encabezados de colores pastel */
+.card-team h2 { background-color: var(--p-green); }
+.card-api h2 { background-color: var(--p-purple); }
+.card-services h2 { background-color: var(--p-blue); }
+.card-visual h2 { background-color: var(--p-yellow); }
+
 label { 
     display: block; 
-    margin-top: 1rem; 
-    font-weight: 600; 
+    margin-top: 12px; 
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #666;
 }
+
 input, select {
     width: 100%; 
-    padding: 0.6rem; 
+    padding: 10px; 
     border-radius: 8px; 
-    border: 1px solid #ccc; 
-    margin-top: 0.3rem; 
-    font-size: 1rem; 
-    transition: border 0.3s; 
-}
-input:focus, select:focus { 
-    outline: none; 
-    border-color: #1f4037; 
-}
-button { 
-    margin-top: 1.8rem;
-    width: 100%;
-    background: #1f4037;
-    color: white;
-    font-size: 1.1rem;
-    font-weight: bold; 
-    padding: 0.8rem;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background 0.3s, transform 0.1s;
-}
-button:hover { background: #26735c; }
-button:active { transform: scale(0.97); }
-.warning-card { 
-    background: #ffe6e6; 
-    border-left: 6px solid #b00020; 
-    padding: 1rem; 
-    margin-top: 1.5rem; 
-    border-radius: 8px; 
-    font-weight: bold; 
-    color: #b00020; 
-}
-@keyframes fadeIn { 
-    from { 
-        opacity: 0; 
-        transform: translateY(20px); 
-    } to { 
-        opacity: 1; 
-        transform: translateY(0); 
-    } 
-}
-footer { 
-    text-align: center;
-    font-size: 0.85rem; 
-    color: #666; 
-    margin-top: 1.5rem;
-}
-.token-container {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center; /* centra verticalmente ambos elementos */
-}
-#ha_token_truncado {
-    all: unset;
-    flex: 0 0 70%;
-    font-family: monospace;
-    background-color: #f5f5f5;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    color: #333;
-    padding: 0.5rem 0.6rem;
+    border: 1px solid #e0e0e0; 
+    margin-top: 5px; 
+    font-size: 0.9rem;
+    background: #fcfcfc;
     box-sizing: border-box;
+}
+
+input:focus { border-color: var(--primary); outline: none; background: #fff; }
+
+/* Grupo de inputs horizontales (Lat/Lon) */
+.input-row { display: flex; gap: 10px; }
+.input-row div { flex: 1; }
+
+/* Widgets Visuales */
+.visual-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.visual-item {
+    background: #f9f9f9;
+    padding: 10px;
+    border-radius: 10px;
     text-align: center;
-    font-size: 1rem;
-    line-height: 1.2;
-    appearance: none;
+    border: 1px solid #eee;
 }
-#copyTokenBtn {
-    margin-top: 0;
-    flex: 0 0 30%;
+
+.visual-item img { width: 30px; height: 30px; margin-bottom: 5px; }
+.visual-item h3 { font-size: 0.75rem; margin: 5px 0; }
+
+/* Secciones condicionales (HA / Meteoclimatic) */
+.conditional-group {
+    background: #f8f9fa;
+    padding: 10px;
     border-radius: 8px;
-    border: 1px solid #ccc;
-    background: #1f4037;
+    margin-top: 10px;
+    border-left: 3px solid #ccc;
+}
+
+.warning-card {
+    grid-column: 1 / -1;
+    background: #fff5f5;
+    border: 1px solid #feb2b2;
+    color: #c53030;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.btn-save-container {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px 0;
+}
+
+.btn-save {
+    background: var(--primary);
     color: white;
-    font-weight: bold;
+    border: none;
+    padding: 15px 40px;
+    font-size: 1.1rem;
+    border-radius: 30px;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.5rem 0.6rem;
-    font-size: 1rem;
-    line-height: 1.2;
-    appearance: none;
-    transition: background 0.3s;
-}
-#copyTokenBtn:hover {
-    background: #26735c;
-}
-/* Contenedor para alinear input y botón */
-.input-group-horizontal {
-    display: flex;
-    gap: 10px;          /* Espacio entre el input y el botón */
-    align-items: center;
-    margin-bottom: 1rem; /* Margen inferior para separar del siguiente campo */
+    box-shadow: 0 4px 10px rgba(108, 142, 127, 0.3);
 }
 
-/* Ajuste del input para que ocupe el espacio sobrante */
-.input-group-horizontal input {
-    flex: 1;            /* El input se expande */
-    margin-top: 0;      /* Quitamos márgenes superiores que puedan descuadrar */
-}
-
-/* Ajuste del botón para que no se deforme */
 .btn-inline {
-    margin-top: 0 !important; /* Anula el margin-top general de los botones si existe */
-    width: auto !important;   /* Evita que el botón ocupe el 100% */
-    padding: 0.6rem 1rem;
-    white-space: nowrap;      /* Evita que el texto "Calcular" se parta */
+    background: #eee;
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    cursor: pointer;
 }
-.setup-row-highlight {
-        display: flex;
-        align-items: center;
-        background: #fdfdfd;
-        border: 1px solid #e0e0e0;
-        border-radius: 12px;
-        padding: 20px;
-        margin: 25px 0;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    }
+.card-team h2 { background-color: var(--p-green); }
+.card-api h2 { background-color: var(--p-purple); }
+.card-ha h2 { background-color: var(--p-blue); }
+.card-meteoclimatic h2 { background-color: var(--p-coral); }
+.card-visual h2 { background-color: var(--p-yellow); }
 
-    .setup-icon-container {
-        flex: 0 0 100px; /* Tamaño fijo para el contenedor de la imagen */
-        margin-right: 25px;
-        text-align: center;
-    }
+/* Estilo para los grupos de inputs dentro de servicios */
+.service-config {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px dashed #ccc;
+}
 
-    .setup-icon-container img {
-        width: 100%;    /* La imagen ocupará todo el contenedor (100px) */
-        height: auto;
-        display: block;
-    }
+.setup-footer {
+    width: 100%;
+    text-align: center;
+    margin-top: 50px;
+    padding: 20px 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
 
-    .setup-controls {
-        flex: 1;
-    }
-
-    .setup-controls h3 {
-        margin: 0 0 8px 0;
-        color: #1f4037;
-        font-size: 1.4rem;
-    }
-
-    .setup-controls label {
-        display: block;
-        margin-bottom: 10px;
-        font-weight: normal;
-        color: #555;
-    }
-
-    /* Ajuste para móviles */
-    @media (max-width: 480px) {
-        .setup-row-highlight {
-            flex-direction: column;
-            text-align: center;
-        }
-        .setup-icon-container {
-            margin-right: 0;
-            margin-bottom: 15px;
-            flex: 0 0 80px;
-        }
-    }
+.setup-footer p {
+    font-size: 0.9rem;
+    color: #888;
+    letter-spacing: 1px;
+    font-weight: 500;
+    text-transform: uppercase;
+    opacity: 0.7;
+}
