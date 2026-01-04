@@ -17,7 +17,7 @@
             </div>
 -->
             <div class="moon-container">
-                <canvas id="moonCanvas" width="155" height="155"></canvas>
+                <canvas id="moonCanvas" width="160" height="160"></canvas>
             </div>
             <div class="moon-set-info">
                 <div class="time-group"> <span id="moon-set-time">--:--</span>
