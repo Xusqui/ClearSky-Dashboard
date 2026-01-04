@@ -60,14 +60,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 // Rellenar la cuadrícula de estadísticas
                 let estado = (parseFloat(data.rate) > 0) ? "Llueve" : "No llueve";
                 document.getElementById("rain-status").textContent = estado;
-                document.getElementById("rain-rate").textContent = (data.rate ? data.rate + " mm/h" : "0.0 mm/h");
-                document.getElementById("rain-evento").textContent = (data.event ? data.event + " mm" : "0.0 mm");
-                document.getElementById("rain-today").textContent = (data.rain_daily ? data.rain_daily + " mm" : "0.0 mm");
-                document.getElementById("rain-hour").textContent = (data.hourly ? data.hourly + " mm" : "0.0 mm");
-                document.getElementById("rain-month").textContent = (data.monthly ? data.monthly + " mm" : "0.0 mm");
-                document.getElementById("rain-total").textContent = (data.total ? data.total + " mm" : "0.0 mm");
-                document.getElementById("rain-week").textContent = (data.rain_weekly ? data.rain_weekly + " mm" : "0.0 mm");
-                document.getElementById("rain-year").textContent = (data.rain_yearly ? data.rain_yearly + " mm" : "0.0 mm");
+                document.getElementById("rain-rate").textContent = (data.rate ? Number(data.rate).toFixed(2) + " mm/h" : "0.0 mm/h");
+                document.getElementById("rain-evento").textContent = (data.event ? Number(data.event).toFixed(2) + " mm" : "0.0 mm");
+                document.getElementById("rain-today").textContent = (data.rain_daily ? Number(data.rain_daily).toFixed(2) + " mm" : "0.0 mm");
+                document.getElementById("rain-hour").textContent = (data.hourly ? Number(data.hourly).toFixed(2) + " mm" : "0.0 mm");
+                document.getElementById("rain-month").textContent = (data.monthly ? Number(data.monthly).toFixed(2) + " mm" : "0.0 mm");
+                document.getElementById("rain-total").textContent = (data.total ? Number(data.total).toFixed(2) + " mm" : "0.0 mm");
+                document.getElementById("rain-week").textContent = (data.rain_weekly ? Number(data.rain_weekly).toFixed(2) + " mm" : "0.0 mm");
+                document.getElementById("rain-year").textContent = (data.rain_yearly ? Number(data.rain_yearly).toFixed(2) + " mm" : "0.0 mm");
             })
             .catch(error => console.error("Error cargando estadísticas de lluvia:", error));
 
