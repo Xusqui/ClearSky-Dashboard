@@ -254,7 +254,9 @@ $tz = $config['tz'] ?? 'UTC';
 $send_local = $config['send_local'] ?? true;
 $local_token = $config['local_token'] ?? '';
 $send_ha = $config['send_ha'] ?? true;
-$ha_token = $config['ha_token'] ?? '';
+	$ha_token = $config['ha_token'] ?? '';
+	$ha_ip = $config['ha_ip'] ?? '';
+	$ha_port = $config['ha_port'] ?? '';
 $send_meteoclimatic = $config['send_meteoclimatic'] ?? false;
 $meteoclimatic_code = $config['meteoclimatic_code'] ?? '';
 $meteoclimatic_token = $config['meteoclimatic_token'] ?? '';
@@ -321,6 +323,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 	$local_token_post = trim($_POST['local_token'] ?? '');
 	$send_ha_post = (int)($_POST['send_ha'] ?? 0);
 	$ha_token_post = trim($_POST['ha_token'] ?? '');
+	$ha_ip_post = trim($_POST['ha_ip'] ?? '');
+	$ha_port_post = filter_var($_POST['ha_port'] ?? '', FILTER_VALIDATE_INT);
 	$send_meteoclimatic_post = (int)($_POST['send_meteoclimatic'] ?? 0);
 	$meteoclimatic_code_post = trim($_POST['meteoclimatic_code'] ?? '');
 	$meteoclimatic_token_post = trim($_POST['meteoclimatic_token'] ?? '');
@@ -369,6 +373,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 		$local_token = $local_token_post;
 		$send_ha = $send_ha_post;
 		$ha_token = $ha_token_post;
+		$ha_ip = $ha_ip_post;
+		$ha_port = $ha_port_post;
 		$send_meteoclimatic = $send_meteoclimatic_post;
 		$meteoclimatic_code = $meteoclimatic_code_post;
 		$meteoclimatic_token = $meteoclimatic_token_post;
@@ -456,10 +462,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 		// Hash de nueva contraseña si se ingresó
 		$password_final = $password_new ? password_hash($password_new, PASSWORD_DEFAULT) : $password_hash;
 
-		// --- PREPARACIÓN DE LA CONSULTA SQL (24 parámetros) ---
+		// --- PREPARACIÓN DE LA CONSULTA SQL (26 parámetros: se añaden ha_ip y ha_port) ---
 		$sql = "
-			INSERT INTO config (id, observatorio, latitud, longitud, elevacion, hardware, software, city, country, tz, password, send_local, local_token, send_ha, ha_token, send_meteoclimatic, meteoclimatic_code, meteoclimatic_token, log_weather, show_in_temp, show_in_hum, show_UV, show_solar, show_dew, show_sky, rain_offset)
-			VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+			INSERT INTO config (id, observatorio, latitud, longitud, elevacion, hardware, software, city, country, tz, password, send_local, local_token, send_ha, ha_token, ha_ip, ha_port, send_meteoclimatic, meteoclimatic_code, meteoclimatic_token, log_weather, show_in_temp, show_in_hum, show_UV, show_solar, show_dew, show_sky, rain_offset)
+			VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 			ON DUPLICATE KEY UPDATE
 				observatorio = VALUES(observatorio),
 				latitud = VALUES(latitud),
@@ -475,6 +481,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 				local_token = VALUES(local_token),
 				send_ha = VALUES(send_ha),
 				ha_token = VALUES(ha_token),
+				ha_ip = VALUES(ha_ip),
+				ha_port = VALUES(ha_port),
 				send_meteoclimatic = VALUES(send_meteoclimatic),
 				meteoclimatic_code = VALUES(meteoclimatic_code),
 				meteoclimatic_token = VALUES(meteoclimatic_token),
@@ -492,8 +500,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 		if (!$stmt) {
 			$setup_warning .= "Error al preparar la consulta: " . $conn->error;
 		} else {
-			// Tipos: s d d i s s s s s s i s i s i s s i i i i i i i d (25 parámetros)
-			$stmt->bind_param("sddissssssisssissiiiiiiid",
+			// Tipos: s d d i s s s s s s i s i s s i i s i i i i i i i d (28 parámetros)
+			$stmt->bind_param("sddissssssissssiiissiiiiiid",
 							  $observatorio,
 							  $latitud_post_saneada,
 							  $longitud_post_saneada,
@@ -508,6 +516,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 							  $local_token_post,
 							  $send_ha_post,
 							  $ha_token_post,
+							  $ha_ip_post,
+							  $ha_port_post,
 							  $send_meteoclimatic_post,
 							  $meteoclimatic_code_post,
 							  $meteoclimatic_token_post,
@@ -629,6 +639,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 						<div class="token-container">
 							<input type="text" name="ha_token" id="ha_token" value="<?= htmlspecialchars($ha_token) ?>" <?= $send_ha == 1 ? 'required' : '' ?>>
 						</div>
+
+						<label for="ha_ip" style="margin-top: 1rem; display: block;">Dirección IP de Home Assistant</label>
+						<input type="text" name="ha_ip" id="ha_ip" placeholder="ej. 192.168.1.100" value="<?= htmlspecialchars($ha_ip) ?>" <?= $send_ha == 1 ? 'required' : '' ?>>
+
+						<label for="ha_port" style="margin-top: 1rem; display: block;">Puerto de Home Assistant</label>
+						<input type="number" name="ha_port" id="ha_port" min="1" max="65535" placeholder="ej. 8123" value="<?= htmlspecialchars($ha_port) ?>" <?= $send_ha == 1 ? 'required' : '' ?>>
+
 					</div>
 
 					<h3 style="margin-top: 2rem;">3. Meteoclimatic</h3>

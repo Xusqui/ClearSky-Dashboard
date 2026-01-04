@@ -17,7 +17,6 @@ function write_debug($file, $msg) {
 // -------------------------------------------
 // Incluir las credenciales de la DB
 require_once __DIR__ . "/static/config/config_db.php";
-//$db_database = "el_patio"; 
 
 $conn = new mysqli($db_url, $db_user, $db_pass, $db_database);
 if ($conn->connect_error) {
@@ -35,12 +34,22 @@ $config = $result->fetch_assoc() ?? [];
 $conn->close();
 
 // --- DEFINICIÓN DE VARIABLES DINÁMICAS ---
-// URL base del Webhook de Home Assistant (se asume fija)
-// Si el token es 'ha_token' en la DB, la URL se construye: BASE + TOKEN
-const HA_WEBHOOK_BASE = "http://192.168.1.100:8123/api/webhook/"; 
+// Construir URL base del Webhook de Home Assistant dinámicamente
+$ha_ip = $config['ha_ip'] ?? '192.168.1.100';
+$ha_port = $config['ha_port'] ?? 8123;
 
+// Validar IP y puerto antes de construir la URL
+if (filter_var($ha_ip, FILTER_VALIDATE_IP) && is_numeric($ha_port) && $ha_port > 0 && $ha_port <= 65535) {
+    $HA_WEBHOOK_BASE = "http://" . $ha_ip . ":" . $ha_port . "/api/webhook/";
+} else {
+    // Fallback si los datos no son válidos
+    $HA_WEBHOOK_BASE = "http://192.168.1.100:8123/api/webhook/";
+    write_debug($DEBUG_FILE, "Advertencia: IP o puerto de HA no válidos. Usando configuración por defecto.");
+}
+
+// Si el token es 'ha_token' en la DB, la URL se construye: BASE + TOKEN
 $TOKEN_SEGURO = $config['local_token'] ?? 'FAILSAFE_TOKEN';
-$HOME_ASSISTANT_WEBHOOK = HA_WEBHOOK_BASE . ($config['ha_token'] ?? '');
+$HOME_ASSISTANT_WEBHOOK = $HA_WEBHOOK_BASE . ($config['ha_token'] ?? '');
 $METEOCLIMATIC_API = "http://api.m11c.net/v2/ew/{station_code}/{api_key}"; // Template
 $STATION_CODE = $config['meteoclimatic_code'] ?? '';
 $API_KEY = $config['meteoclimatic_token'] ?? '';

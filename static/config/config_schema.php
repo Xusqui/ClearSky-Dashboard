@@ -22,6 +22,8 @@ $config_schema = [
 
     'send_ha' => 'BOOLEAN NOT NULL DEFAULT TRUE',
     'ha_token' => 'VARCHAR(255)',
+    'ha_ip' => 'VARCHAR(15)',
+    'ha_port' => 'INT',
 
     'send_meteoclimatic' => 'BOOLEAN NOT NULL DEFAULT FALSE',
     'meteoclimatic_code' => 'VARCHAR(50)',
