@@ -254,9 +254,9 @@ $tz = $config['tz'] ?? 'UTC';
 $send_local = $config['send_local'] ?? true;
 $local_token = $config['local_token'] ?? '';
 $send_ha = $config['send_ha'] ?? true;
-	$ha_token = $config['ha_token'] ?? '';
-	$ha_ip = $config['ha_ip'] ?? '';
-	$ha_port = $config['ha_port'] ?? '';
+$ha_token = $config['ha_token'] ?? '';
+$ha_ip = $config['ha_ip'] ?? '';
+$ha_port = $config['ha_port'] ?? '';
 $send_meteoclimatic = $config['send_meteoclimatic'] ?? false;
 $meteoclimatic_code = $config['meteoclimatic_code'] ?? '';
 $meteoclimatic_token = $config['meteoclimatic_token'] ?? '';
@@ -352,8 +352,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 		$missing_field = 'Token de Acceso a la API (Token Local)';
 	}
 	// Validación de Tokens de envío (obligatorio si el envío está activado)
-	elseif ($send_ha_post && !$ha_token_post) {
-		$missing_field = 'Home Assistant Token';
+	elseif ($send_ha_post && (!$ha_token_post || !$ha_ip_post || !$ha_port_post)) {
+		if (!$ha_token_post) {
+			$missing_field = 'Falta Token de Home Assistant';
+		} elseif (!$ha_ip_post) {
+			$missing_field = 'Falta IP de Home Assistant';
+		} elseif (!$ha_port_post) {
+			$missing_field = 'Falta el Puerto de Home Assistant';
+		}
 	} elseif ($send_meteoclimatic_post) {
 		if (!$meteoclimatic_code_post) {
 			$missing_field = 'Meteoclimatic Código de Estación';
@@ -462,7 +468,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 		// Hash de nueva contraseña si se ingresó
 		$password_final = $password_new ? password_hash($password_new, PASSWORD_DEFAULT) : $password_hash;
 
-		// --- PREPARACIÓN DE LA CONSULTA SQL (26 parámetros: se añaden ha_ip y ha_port) ---
+		// --- PREPARACIÓN DE LA CONSULTA SQL (24 parámetros) ---
 		$sql = "
 			INSERT INTO config (id, observatorio, latitud, longitud, elevacion, hardware, software, city, country, tz, password, send_local, local_token, send_ha, ha_token, ha_ip, ha_port, send_meteoclimatic, meteoclimatic_code, meteoclimatic_token, log_weather, show_in_temp, show_in_hum, show_UV, show_solar, show_dew, show_sky, rain_offset)
 			VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -500,8 +506,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 		if (!$stmt) {
 			$setup_warning .= "Error al preparar la consulta: " . $conn->error;
 		} else {
-			// Tipos: s d d i s s s s s s i s i s s i i s i i i i i i i d (28 parámetros)
-			$stmt->bind_param("sddissssssissssiiissiiiiiid",
+			// Tipos: 
+			// s $observatorio (String)
+			// d $latitud_post_saneada (Dedimal)
+			// d $longitud_post_saneada (Decimal)
+			// i $elevacion (Integer)
+			// s $hardware (String)
+			// s $software (string)
+			// s $city_to_save (String)
+			// s $country_to_save (String)
+			// s $tz (String)
+			// s $password_final (string)
+			// i $send_local_post (string)
+			// s $local_token_post (string)
+			// i $send_ha_post (Integer)
+			// s $ha_token_post (String)
+			// s $ha_ip_post (String)
+			// i $ha_port_post (Integer)
+			// i $send_meteoclimatic_post (Integer)
+			// s $meteoclimatic_code_post (String)
+			// s $meteoclimatic_token_post (String)
+			// i $log_weather_post (Ingeger)
+			// i $show_in_temp_post (Integer)
+			// i $show_in_hum_post (Integer)
+			// i $show_UV_post (Integer)
+			// i $show_solar_post (Integer)
+			// i $show_dew_post (Integer)
+			// i $show_sky_post (Integer)
+			// d $rain_offset_post (Decimal)
+			// (27 parámetros)
+			$stmt->bind_param("sddissssssisissiissiiiiiiid",
 							  $observatorio,
 							  $latitud_post_saneada,
 							  $longitud_post_saneada,
@@ -633,19 +667,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 						<option value="1" <?= $send_ha == 1 ? 'selected' : '' ?>>Sí</option>
 						<option value="0" <?= $send_ha == 0 ? 'selected' : '' ?>>No</option>
 					</select>
+					<div class="ha-connection-details" style="margin-top: 1rem; <?= $send_ha == 1 ? '' : 'display: none;' ?>">
+						<label for="ha_ip">IP o dominio de Home Assistant</label>
+						<input type="text" name="ha_ip" id="ha_ip" value="<?= htmlspecialchars($ha_ip) ?>" <?= $send_ha == 1 ? 'required' : '' ?>>
+
+						<label for="ha_port" style="margin-top: 1rem; display: block;">Puerto de Home Assistant</label>
+						<input type="number" name="ha_port" id="ha_port" value="<?= htmlspecialchars($ha_port) ?>" <?= $send_ha == 1 ? 'required' : '' ?>>
 
 					<div id="token-group-ha" class="token-group" style="display: <?= $send_ha == 1 ? 'block' : 'none' ?>;">
 						<label for="ha_token">Long Live Token de Home Assistant</label>
 						<div class="token-container">
 							<input type="text" name="ha_token" id="ha_token" value="<?= htmlspecialchars($ha_token) ?>" <?= $send_ha == 1 ? 'required' : '' ?>>
 						</div>
-
-						<label for="ha_ip" style="margin-top: 1rem; display: block;">Dirección IP de Home Assistant</label>
-						<input type="text" name="ha_ip" id="ha_ip" placeholder="ej. 192.168.1.100" value="<?= htmlspecialchars($ha_ip) ?>" <?= $send_ha == 1 ? 'required' : '' ?>>
-
-						<label for="ha_port" style="margin-top: 1rem; display: block;">Puerto de Home Assistant</label>
-						<input type="number" name="ha_port" id="ha_port" min="1" max="65535" placeholder="ej. 8123" value="<?= htmlspecialchars($ha_port) ?>" <?= $send_ha == 1 ? 'required' : '' ?>>
-
 					</div>
 
 					<h3 style="margin-top: 2rem;">3. Meteoclimatic</h3>
