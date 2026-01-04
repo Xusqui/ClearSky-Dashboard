@@ -1,6 +1,6 @@
 <?php
-// api_data.php
-// 1.- Cambia el nombre de api_data_xxxxxxxxxx.php a algo diferente, ej: api_data_219871554981.php (Una cadena aleatoria, para más seguridad)
+// api_data_xxxxxx.php
+// 1.- Cambia el nombre de api_data_xxxxxx.php a algo diferente, ej: api_data_219871554981.php (Una cadena aleatoria, para más seguridad)
 // -------------------------------------------
 // DEBUG (Definición temprana por si falla la DB)
 // -------------------------------------------
@@ -17,14 +17,14 @@ function write_debug($file, $msg) {
 // -------------------------------------------
 // Incluir las credenciales de la DB
 require_once __DIR__ . "/static/config/config_db.php";
-//$db_database = "el_patio";
+//$db_database = "el_patio"; 
 
 $conn = new mysqli($db_url, $db_user, $db_pass, $db_database);
 if ($conn->connect_error) {
     $error_msg = "Error de conexión a la Base de Datos: " . $conn->connect_error;
     write_debug($DEBUG_FILE, $error_msg);
     // Respondemos OK a la estación para evitar reintentos, pero no procesamos.
-    http_response_code(200);
+    http_response_code(200); 
     echo "DB Connection Error";
     exit;
 }
@@ -37,7 +37,7 @@ $conn->close();
 // --- DEFINICIÓN DE VARIABLES DINÁMICAS ---
 // URL base del Webhook de Home Assistant (se asume fija)
 // Si el token es 'ha_token' en la DB, la URL se construye: BASE + TOKEN
-const HA_WEBHOOK_BASE = "http://192.168.1.100:8123/api/webhook/";
+const HA_WEBHOOK_BASE = "http://192.168.1.100:8123/api/webhook/"; 
 
 $TOKEN_SEGURO = $config['local_token'] ?? 'FAILSAFE_TOKEN';
 $HOME_ASSISTANT_WEBHOOK = HA_WEBHOOK_BASE . ($config['ha_token'] ?? '');
@@ -53,7 +53,7 @@ $send_METEOCLIMATIC = (int)($config['send_meteoclimatic'] ?? 0);
 $send_LOG = (int)($config['log_weather'] ?? 0);
 
 // Zona horaria
-$TIMEZONE = $config['tz'] ?? "UTC";
+$TIMEZONE = $config['tz'] ?? "UTC"; 
 date_default_timezone_set($TIMEZONE);
 
 // -------------------------------------------
@@ -131,9 +131,8 @@ if ($send_HA === 1){
             curl_exec($ch);
             $http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             curl_close($ch);
-            // La siguiente línea escribe el resultado devuelto por Home Assistant.
-            // Comentarla para que el debug.log no se haga muy grande
-            write_debug($DEBUG_FILE, "Enviado a HA. Estado: $http_status");
+            // Para ver los datos enviados a HA, descomentar la siguiente línea
+            // write_debug($DEBUG_FILE, "Enviado a HA. Estado: $http_status");
         }
     } catch (Exception $e) {
         write_debug($DEBUG_FILE, "Error enviando a HA: " . $e->getMessage());
@@ -162,9 +161,8 @@ if ($send_METEOCLIMATIC === 1) {
             curl_exec($ch);
             $http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             curl_close($ch);
-            // La siguiente linea escribe el resultado devuelto por Meteoclimatic
-            // COmentarla para que el debug.log no se haga muy grande
-            write_debug($DEBUG_FILE, "Enviado a Meteoclimatic. Estado: $http_status");
+            // Para ver el resultado de los datos enviados a meteoclimatic, descomentar la siguiente línea
+            //write_debug($DEBUG_FILE, "Enviado a Meteoclimatic. Estado: $http_status");
         }
     } catch (Exception $e) {
         write_debug($DEBUG_FILE, "Error enviando a Meteoclimatic: " . $e->getMessage());
@@ -228,6 +226,80 @@ if ($send_LOCAL === 1) {
         return round($td, 2);
     }
 
+    // Heat Index (NOAA / Rothfusz regression) - devuelve °C
+    function heat_index($tempC, $humidity) {
+        // Formula válida típicamente para temperaturas altas (≈27°C+) y humedad moderada/alta
+        $Tf = $tempC * 9.0/5.0 + 32.0; // pasar a Fahrenheit
+        $R = floatval($humidity);
+
+        // Rothfusz regression
+        $HI = -42.379 + 2.04901523*$Tf + 10.14333127*$R - 0.22475541*$Tf*$R
+            - 0.00683783*($Tf*$Tf) - 0.05481717*($R*$R)
+            + 0.00122874*($Tf*$Tf)*$R + 0.00085282*$Tf*($R*$R)
+            - 0.00000199*($Tf*$Tf)*($R*$R);
+
+        // Ajustes sencillos según NOAA (cuando aplican)
+        if ($R < 13 && $Tf >= 80 && $Tf <= 112) {
+            $HI -= ((13 - $R) / 4) * sqrt((17 - abs($Tf - 95.0)) / 17);
+        } elseif ($R > 85 && $Tf >= 80 && $Tf <= 87) {
+            $HI += (($R - 85) / 10) * ((87 - $Tf) / 5);
+        }
+
+        // Volver a Celsius
+        $hic = ($HI - 32.0) * 5.0/9.0;
+        return round($hic, 2);
+    }
+
+    // Apparent Temperature (fórmula australiana simple)
+    // AT = T + 0.33*e - 0.70*ws - 4.00  where e = vapour pressure (hPa), ws in m/s
+    function apparent_temperature($tempC, $humidity, $wind_kmh) {
+        $t = floatval($tempC);
+        $rh = floatval($humidity);
+        $ws = floatval($wind_kmh) / 3.6; // km/h -> m/s
+
+        // vapour pressure (Magnus approximation)
+        $e = ($rh/100.0) * 6.105 * exp((17.27*$t)/($t + 237.7));
+
+        $AT = $t + 0.33 * $e - 0.70 * $ws - 4.00;
+        return round($AT, 2);
+    }
+
+    // Sensación térmica mejorada (regresión polinómica + humedad + viento)
+    // Más precisa para rango -50 a 50°C
+    function feeling_temperature($tempC, $humidity, $wind_kmh) {
+        $t = floatval($tempC);
+        $rh = floatval($humidity);
+        $v = floatval($wind_kmh);
+
+        // Calcular presión de vapor usando Magnus
+        $e_s = 6.1078 * exp((17.27 * $t) / ($t + 237.7));
+        $e = $e_s * ($rh / 100.0);
+
+        // Componente de viento (wind cooling)
+        // Reducción mayor con viento
+        $wind_cooling = 0.16 * pow($v, 0.5); // raíz cuadrada del viento
+
+        // Componente de humedad
+        // En frío, humedad muy alta reduce la sensación térmica
+        // porque reduce la evaporación y el cuerpo retiene menos calor
+        $humidity_factor = 0.0;
+        if ($t < 15) {
+            // En frío, humedad muy alta causa sensación de más frío
+            // Factor aumentado: -0.08 por cada 50% por encima de 50% RH
+            $humidity_factor = -0.08 * ($rh - 50);
+        } else if ($t < 25) {
+            // En templado bajo, efecto moderado
+            $humidity_factor = -0.03 * ($rh - 50);
+        } else {
+            // En cálido, humedad aumenta la sensación
+            $humidity_factor = 0.08 * ($rh - 50);
+        }
+
+        // Sensación térmica final
+        $feeling = $t - $wind_cooling + $humidity_factor;
+        return round($feeling, 2);
+    }
+
     // Convertir dateutc a la zona horaria de la configuración ($TIMEZONE)
     $utc = new DateTime($data["dateutc"], new DateTimeZone("UTC"));
     $timestamp_utc = $utc->format("Y-m-d H:i:s");
@@ -261,7 +333,40 @@ if ($send_LOCAL === 1) {
     $sol = $data["solarradiation"];
     $uv = $data["uv"];
 
-    $sensacion = wind_chill($temperatura, $viento_velocidad);
+    // Calcular varias sensaciones y elegir la más adecuada
+    $wind_chill_val = wind_chill($temperatura, $viento_velocidad);
+    $heat_index_val = heat_index($temperatura, $humedad);
+    $apparent_val = apparent_temperature($temperatura, $humedad, $viento_velocidad);
+    $feeling_val = feeling_temperature($temperatura, $humedad, $viento_velocidad);
+
+    // Lógica de selección simplificada:
+    // 1. Wind Chill: aplica en frío con viento significativo (T ≤ 10°C y viento ≥ 4.8 km/h)
+    // 2. Heat Index: aplica en calor extremo (T ≥ 27°C) con humedad moderada/alta
+    // 3. Feeling Temperature: para rango templado (-10°C a 27°C) considerando viento + humedad
+    
+    if ($temperatura <= 10 && $viento_velocidad >= 4.8) {
+        // Wind chill para frío con viento
+        $sensacion = round($wind_chill_val, 2);
+    } elseif ($temperatura >= 27 && $humedad >= 40) {
+        // Heat index para calor con humedad
+        $sensacion = round($heat_index_val, 2);
+    } else {
+        // Feeling Temperature para rango templado
+        $sensacion = round($feeling_val, 2);
+    }
+
+    // Añadir al log los valores calculados si está activado el logging
+    if ($send_LOG === 1) {
+        $calc = [
+            'sensacion_termica' => $sensacion,
+            'wind_chill' => $wind_chill_val,
+            'heat_index' => $heat_index_val,
+            'feeling_temperature' => $feeling_val,
+            'apparent_temperature' => $apparent_val,
+        ];
+        //file_put_contents($LOG_FILE, json_encode($calc, JSON_PARTIAL_OUTPUT_ON_ERROR | JSON_UNESCAPED_UNICODE) . "\n", FILE_APPEND);
+        file_put_contents($LOG_FILE, json_encode($calc, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n", FILE_APPEND);
+    }
     $punto_rocio = dew_point($temperatura, $humedad);
 
     $vpd = isset($data["vpd"]) ? $data["vpd"] : null;
@@ -274,6 +379,7 @@ if ($send_LOCAL === 1) {
     $freq = $data["freq"];
     $model = $data["model"];
     $passkey = $data["PASSKEY"];
+    $interval = $data["interval"];
 
     // -------------------------------------------
     // INSERT EN BASE DE DATOS
@@ -283,9 +389,7 @@ if ($send_LOCAL === 1) {
     if ($mysqli->connect_errno) {
         write_debug($DEBUG_FILE, "Error conexión DB: " . $mysqli->connect_error);
     } else {
-        // La siguiente línea escribe la conexión a la BD ha sido exitosa
-        // Comentarla para que debug.log no sea muy grande
-        write_debug($DEBUG_FILE, "Conexión OK a la DB");
+        //write_debug($DEBUG_FILE, "Conexión OK a la DB");
         $stmt = $mysqli->prepare("
     INSERT INTO meteo (
         timestamp, timezone, temperatura, humedad, sensacion_termica,
@@ -297,8 +401,8 @@ if ($send_LOCAL === 1) {
         lluvia_semana, lluvia_mes, lluvia_ano, lluvia_total,
         viento_racha_maxima, vpd,
         stationtype, runtime, heap, wh65batt,
-        freq, model, passkey
-    ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+        freq, model, passkey, interval_sec
+    ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
 ");
 
         if (!$stmt) {
@@ -307,7 +411,7 @@ if ($send_LOCAL === 1) {
         }
 
         $stmt->bind_param(
-            "ssdddddddddddddddddddddddsiiisss",
+            "ssdddddddddddddddddddddddsiiisssi",
             $timestamp_utc, $timezone, $temperatura, $humedad, $sensacion,
             $presion_rel, $presion_abs, $punto_rocio,
             $viento_velocidad, $viento_direccion, $viento_racha,
@@ -317,7 +421,7 @@ if ($send_LOCAL === 1) {
             $lluvia_semana, $lluvia_mes, $lluvia_ano, $lluvia_total,
             $viento_racha_maxima, $vpd,
             $stationtype, $runtime, $heap, $wh65batt,
-            $freq, $model, $passkey
+            $freq, $model, $passkey, $interval
         );
 
         if ($stmt->errno) {
@@ -326,9 +430,7 @@ if ($send_LOCAL === 1) {
         }
 
         if ($stmt->execute()) {
-            // La siguiente línea escribe que los datos se insertaron correctamente en la BD
-            // Comentarla para que debug.log no sea muy grande
-            write_debug($DEBUG_FILE, "DB insert OK");
+            //write_debug($DEBUG_FILE, "DB insert OK");
         } else {
             write_debug($DEBUG_FILE, "DB ERROR: " . $stmt->error);
         }
