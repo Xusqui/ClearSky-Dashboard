@@ -162,7 +162,7 @@ if (!$password_hash) {
 			}
 		}
 	}
-	?>
+?>
 	<!DOCTYPE html>
 	<html lang="es">
 
@@ -235,7 +235,7 @@ if (!$password_hash) {
 	</body>
 
 	</html>
-	<?php
+<?php
 	exit;
 }
 
@@ -251,7 +251,7 @@ if ($password_hash && !isset($_SESSION['authenticated'])) {
 			$error = "Contraseña incorrecta.";
 		}
 	}
-	?>
+?>
 	<!DOCTYPE html>
 	<html lang="es">
 
@@ -323,7 +323,7 @@ if ($password_hash && !isset($_SESSION['authenticated'])) {
 	</body>
 
 	</html>
-	<?php
+<?php
 	exit;
 }
 
@@ -549,8 +549,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 				if (curl_errno($ch)) {
 					$setup_warning .= "Error cURL: " . curl_error($ch) . ". ";
 				}
-				curl_close($ch);
-
+				//curl_close($ch);
 				if ($response) {
 					$data = json_decode($response, true);
 					if (!empty($data['address'])) {
@@ -831,7 +830,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 	</div>
 
 	<script>
-		document.addEventListener('DOMContentLoaded', function () {
+		document.addEventListener('DOMContentLoaded', function() {
 
 			// Función para alternar la visibilidad de los campos de token/código (SOLO PARA HA Y METEOCLIMATIC)
 			function toggleTokenGroup(selectElement) {
@@ -862,14 +861,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 				toggleTokenGroup(select);
 
 				// Escuchar cambios
-				select.addEventListener('change', function () {
+				select.addEventListener('change', function() {
 					toggleTokenGroup(this);
 				});
 			});
 		});
 	</script>
 	<script>
-		document.addEventListener('DOMContentLoaded', function () {
+		document.addEventListener('DOMContentLoaded', function() {
 			// ... (aquí ya tienes el código de toggleTokenGroup y los selects) ...
 
 			const btnCalc = document.getElementById('calcElevation');
