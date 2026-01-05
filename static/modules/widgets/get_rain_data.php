@@ -9,7 +9,8 @@ include __DIR__ . '/../../config/config.php';
  * Función para devolver un error en formato JSON y terminar el script.
  * @param string $message Mensaje de error a devolver.
  */
-function die_with_error($message) {
+function die_with_error($message)
+{
     header('Content-Type: application/json');
     die(json_encode([
         "error" => true,
@@ -78,7 +79,7 @@ $h_min = 40;
 $h_max = 440;
 
 // Calcular la altura relativa
-$heigh = $daily_rain / $max_rain * ($h_max - $h_min);
+$heigh = $rain_event / $max_rain * ($h_max - $h_min);
 if ($heigh > ($h_max - $h_min)) {
     $heigh = $h_max - $h_min;
 }
@@ -87,7 +88,7 @@ if ($heigh > ($h_max - $h_min)) {
 $water_start = $h_max - $heigh;
 
 // Colores del pluviómetro (Misma lógica anterior)
-if ($daily_rain != 0) {
+if ($rain_event != 0) {
     $stroke_bucket_top = "var(--lightblue20)";
     $fill_bucket_top = "var(--lightblue)";
     $fill_bucket_bottom = "var(--lightblue20)";
@@ -106,9 +107,8 @@ echo json_encode([
     "rain_rate"  => $rain_rate,
     "rain_event" => $rain_event, // Nuevo dato añadido
     "heigh"      => $heigh,
-    "water_start"=> $water_start,
+    "water_start" => $water_start,
     "stroke_bucket_top" => $stroke_bucket_top,
     "fill_bucket_top"   => $fill_bucket_top,
-    "fill_bucket_bottom"=> $fill_bucket_bottom
+    "fill_bucket_bottom" => $fill_bucket_bottom
 ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-?>

@@ -5,49 +5,43 @@ function updateRainWidget() {
     fetch('./static/modules/widgets/get_rain_data.php')
         .then(response => response.json())
         .then(data => {
-        if (data.error) {
-            console.error("Error get_rain_data.php:", data.message);
-            scheduleNextUpdate(300000); // reintentar en 5 min si falla
-            return;
-        }
-        // Actualizar valores numéricos
-        document.getElementById('rain-widget-main-display').textContent = data.rain_event;
-        document.getElementById('rain-widget-secondary-display').textContent = data.rain_rate;
-        document.getElementById('widget_de_lluvia').setAttribute("data-precip-rate", data.rain_rate);
+            if (data.error) {
+                console.error("Error get_rain_data.php:", data.message);
+                scheduleNextUpdate(300000); // reintentar en 5 min si falla
+                return;
+            }
+            // Actualizar valores numéricos
+            document.getElementById('rain-widget-main-display').textContent = data.rain_event;
+            document.getElementById('rain-widget-secondary-display').textContent = data.rain_rate;
+            document.getElementById('rain-widget-tertiary-display').textContent = `Diario: ${data.daily_rain}`;
+            document.getElementById('widget_de_lluvia').setAttribute("data-precip-rate", data.rain_rate);
 
-        // Rellenar los datos del querySelector
-        const rainWidget = document.querySelector('rain-widget-view');
-        rainWidget.setAttribute('data-precip-rate', `${data.rain_rate}`);
-        rainWidget.setAttribute('data-precip-total', `${data.rain_event}`);
-        rainWidget.setAttribute('data-main-value', `${data.rain_event}`);
-        rainWidget.setAttribute('aria-valuenow', `${data.rain_event}`);
-        rainWidget.setAttribute('data-secondary-value', `${data.rain_rate}`);
+            // Rellenar los datos del querySelector
+            const rainWidget = document.querySelector('rain-widget-view');
+            rainWidget.setAttribute('data-precip-rate', `${data.rain_rate}`);
+            rainWidget.setAttribute('data-precip-total', `${data.rain_event}`);
+            rainWidget.setAttribute('data-main-value', `${data.rain_event}`);
+            rainWidget.setAttribute('aria-valuenow', `${data.rain_event}`);
+            rainWidget.setAttribute('data-secondary-value', `${data.rain_rate}`);
 
-        // Actualizar pluviómetro
-        const fill = document.getElementById('precip-bucket-fill');
-        const top  = document.getElementById('precip-bucket-top');
-        const bottom = document.getElementById('precip-bucket-bottom');
+            // Actualizar pluviómetro
+            const fill = document.getElementById('precip-bucket-fill');
+            const top = document.getElementById('precip-bucket-top');
+            const bottom = document.getElementById('precip-bucket-bottom');
 
-        if (fill) fill.setAttribute('y', data.water_start);
-        if (fill) fill.setAttribute('height', data.heigh);
-        if (top) top.setAttribute('cy', data.water_start);
-        if (top) {
-            top.setAttribute('stroke', data.stroke_bucket_top);
-            top.setAttribute('fill', data.fill_bucket_top);
-        }
-        if (bottom) bottom.setAttribute('fill', data.fill_bucket_bottom);
-
-        // Determinar intervalo dinámico
-        if (data.daily_rain > 0 || data.rain_rate > 0) {
-            scheduleNextUpdate(65000); // 65 segundos si llueve
-        } else {
-            scheduleNextUpdate(300000); // 5 minutos si no llueve
-        }
-    })
+            if (fill) fill.setAttribute('y', data.water_start);
+            if (fill) fill.setAttribute('height', data.heigh);
+            if (top) top.setAttribute('cy', data.water_start);
+            if (top) {
+                top.setAttribute('stroke', data.stroke_bucket_top);
+                top.setAttribute('fill', data.fill_bucket_top);
+            }
+            if (bottom) bottom.setAttribute('fill', data.fill_bucket_bottom);
+        })
         .catch(err => {
-        console.error('Error al actualizar precipitación:', err);
-        scheduleNextUpdate(300000); // reintentar en 5 min si hay error
-    });
+            console.error('Error al actualizar precipitación:', err);
+            scheduleNextUpdate(300000); // reintentar en 5 min si hay error
+        });
 }
 
 // Función para programar la siguiente actualización

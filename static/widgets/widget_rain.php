@@ -8,23 +8,23 @@
     <div class="title">Precipitación</div>
     <div class="subtitle">(último evento)</div>
     <?php
-        $stroke_bucket_top = "transparent";
-        $fill_bucket_top = "transparent";
-        $fill_bucket_bottom = "var(--widget-empty)";
-        $water_start = 440;
-        $daily_rain = 0; //Inicialmente 0mm
-        $max_rain = 200; //Máxima cantidad de lluvia que se puede registar en un día.
-        $h_min = 40;
-        $h_max = 440; //Altura máxima en píxeles del pluviómetro
-        // Vamos a calcular la altura del pluviómetro
-        $heigh = ($daily_rain / $max_rain) * ($h_max - $h_min);
-        if ($heigh > 400) {
-            $heigh = 400;
-        }
-        $water_start = $h_max - $heigh;
-        $stroke_bucket_top = "var(--lightblue20)";
-        $fill_bucket_top = "var(--lightblue)";
-        $fill_bucket_bottom = "var(--lightblue20)";
+    $stroke_bucket_top = "transparent";
+    $fill_bucket_top = "transparent";
+    $fill_bucket_bottom = "var(--widget-empty)";
+    $water_start = 440;
+    $daily_rain = 0; //Inicialmente 0mm
+    $max_rain = 200; //Máxima cantidad de lluvia que se puede registar en un día.
+    $h_min = 40;
+    $h_max = 440; //Altura máxima en píxeles del pluviómetro
+    // Vamos a calcular la altura del pluviómetro
+    $heigh = ($daily_rain / $max_rain) * ($h_max - $h_min);
+    if ($heigh > 400) {
+        $heigh = 400;
+    }
+    $water_start = $h_max - $heigh;
+    $stroke_bucket_top = "var(--lightblue20)";
+    $fill_bucket_top = "var(--lightblue)";
+    $fill_bucket_bottom = "var(--lightblue20)";
     ?>
     <rain-widget-view id="widget_de_lluvia" data-pws-id="<?= $observatorio ?>" data-status="connected" data-unit="m" data-precip-rate="0" data-precip-total="0" data-main-value="0" aria-valuenow="0" data-secondary-value="0" class="widget-view loaded">
         <div class="graphic-container">
@@ -46,8 +46,9 @@
             </div>
         </div>
         <div class="value-container">
-            <div class="main-value value-unit precip-total" id="rain-widget-main-display"><?= $daily_rain ?></div>
-            <div class="secondary-value value-unit precip-rate uppercase" id="rain-widget-secondary-display"><?= $rain_rate ?></div>
+            <div class="main-value value-unit precip-total" id="rain-widget-main-display"></div>
+            <div class="secondary-value value-unit precip-rate uppercase" id="rain-widget-secondary-display">></div>
+            <div class="tertiary-value value-unit precip-total" id="rain-widget-tertiary-display"></div>
         </div>
     </rain-widget-view>
 </div>
