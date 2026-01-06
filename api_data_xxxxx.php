@@ -7,7 +7,8 @@
 $LOG_FILE = "weather_data.log";
 $DEBUG_FILE = "debug.log";
 
-function write_debug($file, $msg) {
+function write_debug($file, $msg)
+{
     $time = date("Y-m-d H:i:s");
     file_put_contents($file, "[$time] $msg\n", FILE_APPEND);
 }
@@ -23,7 +24,7 @@ if ($conn->connect_error) {
     $error_msg = "Error de conexión a la Base de Datos: " . $conn->connect_error;
     write_debug($DEBUG_FILE, $error_msg);
     // Respondemos OK a la estación para evitar reintentos, pero no procesamos.
-    http_response_code(200); 
+    http_response_code(200);
     echo "DB Connection Error";
     exit;
 }
@@ -62,7 +63,7 @@ $send_METEOCLIMATIC = (int)($config['send_meteoclimatic'] ?? 0);
 $send_LOG = (int)($config['log_weather'] ?? 0);
 
 // Zona horaria
-$TIMEZONE = $config['tz'] ?? "UTC"; 
+$TIMEZONE = $config['tz'] ?? "UTC";
 date_default_timezone_set($TIMEZONE);
 
 // -------------------------------------------
@@ -127,7 +128,7 @@ if (!empty($missing_fields)) {
 // -------------------------------------------
 // ENVÍO A HOME ASSISTANT
 // -------------------------------------------
-if ($send_HA === 1){
+if ($send_HA === 1) {
     try {
         // Validación: asegurar que la URL se ha construido correctamente
         if (empty($config['ha_token'])) {
@@ -139,7 +140,7 @@ if ($send_HA === 1){
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_exec($ch);
             $http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            curl_close($ch);
+            //curl_close($ch);
             // Para ver los datos enviados a HA, descomentar la siguiente línea
             // write_debug($DEBUG_FILE, "Enviado a HA. Estado: $http_status");
         }
@@ -169,7 +170,7 @@ if ($send_METEOCLIMATIC === 1) {
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_exec($ch);
             $http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            curl_close($ch);
+            //curl_close($ch);
             // Para ver el resultado de los datos enviados a meteoclimatic, descomentar la siguiente línea
             //write_debug($DEBUG_FILE, "Enviado a Meteoclimatic. Estado: $http_status");
         }
@@ -184,35 +185,41 @@ if ($send_METEOCLIMATIC === 1) {
 // -------------------------------------------
 if ($send_LOCAL === 1) {
     // Fahrenheit → Celsius
-    function f_to_c($f) {
-        return ($f - 32) * 5/9;
+    function f_to_c($f)
+    {
+        return ($f - 32) * 5 / 9;
     }
 
     // Mph → Km/h
-    function mph_to_kmh($mph) {
+    function mph_to_kmh($mph)
+    {
         return $mph * 1.60934;
     }
 
     // in (lluvia) → mm
-    function in_to_mm($in) {
+    function in_to_mm($in)
+    {
         return $in * 25.4;
     }
 
     // Pulgadas mercurio → hPa
-    function inHg_to_hPa($inhg) {
+    function inHg_to_hPa($inhg)
+    {
         return $inhg * 33.8639;
     }
 
     // Sensación térmica (viento en km/h)
-    function wind_chill($tempC, $wind_kmh) {
+    function wind_chill($tempC, $wind_kmh)
+    {
         if ($tempC > 10 || $wind_kmh < 4.8) {
             return $tempC;
         }
-        return 13.12 + 0.6215*$tempC - 11.37*pow($wind_kmh,0.16) + 0.3965*$tempC*pow($wind_kmh,0.16);
+        return 13.12 + 0.6215 * $tempC - 11.37 * pow($wind_kmh, 0.16) + 0.3965 * $tempC * pow($wind_kmh, 0.16);
     }
 
     // Punto de rocío (fórmula de Magnus, robusta)
-    function dew_point($tempC, $humidity) {
+    function dew_point($tempC, $humidity)
+    {
         // Forzar tipo numérico
         $t = floatval($tempC);
         $h = floatval($humidity);
@@ -236,16 +243,17 @@ if ($send_LOCAL === 1) {
     }
 
     // Heat Index (NOAA / Rothfusz regression) - devuelve °C
-    function heat_index($tempC, $humidity) {
+    function heat_index($tempC, $humidity)
+    {
         // Formula válida típicamente para temperaturas altas (≈27°C+) y humedad moderada/alta
-        $Tf = $tempC * 9.0/5.0 + 32.0; // pasar a Fahrenheit
+        $Tf = $tempC * 9.0 / 5.0 + 32.0; // pasar a Fahrenheit
         $R = floatval($humidity);
 
         // Rothfusz regression
-        $HI = -42.379 + 2.04901523*$Tf + 10.14333127*$R - 0.22475541*$Tf*$R
-            - 0.00683783*($Tf*$Tf) - 0.05481717*($R*$R)
-            + 0.00122874*($Tf*$Tf)*$R + 0.00085282*$Tf*($R*$R)
-            - 0.00000199*($Tf*$Tf)*($R*$R);
+        $HI = -42.379 + 2.04901523 * $Tf + 10.14333127 * $R - 0.22475541 * $Tf * $R
+            - 0.00683783 * ($Tf * $Tf) - 0.05481717 * ($R * $R)
+            + 0.00122874 * ($Tf * $Tf) * $R + 0.00085282 * $Tf * ($R * $R)
+            - 0.00000199 * ($Tf * $Tf) * ($R * $R);
 
         // Ajustes sencillos según NOAA (cuando aplican)
         if ($R < 13 && $Tf >= 80 && $Tf <= 112) {
@@ -255,58 +263,35 @@ if ($send_LOCAL === 1) {
         }
 
         // Volver a Celsius
-        $hic = ($HI - 32.0) * 5.0/9.0;
+        $hic = ($HI - 32.0) * 5.0 / 9.0;
         return round($hic, 2);
     }
 
     // Apparent Temperature (fórmula australiana simple)
     // AT = T + 0.33*e - 0.70*ws - 4.00  where e = vapour pressure (hPa), ws in m/s
-    function apparent_temperature($tempC, $humidity, $wind_kmh) {
+    function apparent_temperature($tempC, $humidity, $wind_kmh, $vpd = null)
+    {
         $t = floatval($tempC);
         $rh = floatval($humidity);
         $ws = floatval($wind_kmh) / 3.6; // km/h -> m/s
 
         // vapour pressure (Magnus approximation)
-        $e = ($rh/100.0) * 6.105 * exp((17.27*$t)/($t + 237.7));
+        $e = ($rh / 100.0) * 6.105 * exp((17.27 * $t) / ($t + 237.7));
 
-        $AT = $t + 0.33 * $e - 0.70 * $ws - 4.00;
+        // Si se proporciona VPD, usarlo en la fórmula variante
+        if ($vpd !== null) {
+            $AT = $t - 0.33 * floatval($vpd) - 0.70 * $ws - 4.00;
+        } else {
+            $AT = $t + 0.33 * $e - 0.70 * $ws - 4.00;
+        }
         return round($AT, 2);
     }
 
     // Sensación térmica mejorada (regresión polinómica + humedad + viento)
     // Más precisa para rango -50 a 50°C
-    function feeling_temperature($tempC, $humidity, $wind_kmh) {
-        $t = floatval($tempC);
-        $rh = floatval($humidity);
-        $v = floatval($wind_kmh);
-
-        // Calcular presión de vapor usando Magnus
-        $e_s = 6.1078 * exp((17.27 * $t) / ($t + 237.7));
-        $e = $e_s * ($rh / 100.0);
-
-        // Componente de viento (wind cooling)
-        // Reducción mayor con viento
-        $wind_cooling = 0.16 * pow($v, 0.5); // raíz cuadrada del viento
-
-        // Componente de humedad
-        // En frío, humedad muy alta reduce la sensación térmica
-        // porque reduce la evaporación y el cuerpo retiene menos calor
-        $humidity_factor = 0.0;
-        if ($t < 15) {
-            // En frío, humedad muy alta causa sensación de más frío
-            // Factor aumentado: -0.08 por cada 50% por encima de 50% RH
-            $humidity_factor = -0.08 * ($rh - 50);
-        } else if ($t < 25) {
-            // En templado bajo, efecto moderado
-            $humidity_factor = -0.03 * ($rh - 50);
-        } else {
-            // En cálido, humedad aumenta la sensación
-            $humidity_factor = 0.08 * ($rh - 50);
-        }
-
-        // Sensación térmica final
-        $feeling = $t - $wind_cooling + $humidity_factor;
-        return round($feeling, 2);
+    function feeling_temperature($tempC, $humidity, $wind_kmh, $vpd = null)
+    {
+        return apparent_temperature($tempC, $humidity, $wind_kmh, $vpd);
     }
 
     // Convertir dateutc a la zona horaria de la configuración ($TIMEZONE)
@@ -345,22 +330,30 @@ if ($send_LOCAL === 1) {
     // Calcular varias sensaciones y elegir la más adecuada
     $wind_chill_val = wind_chill($temperatura, $viento_velocidad);
     $heat_index_val = heat_index($temperatura, $humedad);
-    $apparent_val = apparent_temperature($temperatura, $humedad, $viento_velocidad);
-    $feeling_val = feeling_temperature($temperatura, $humedad, $viento_velocidad);
+    $vpd_val = isset($data["vpd"]) ? floatval($data["vpd"]) : null;
+    $apparent_val = apparent_temperature($temperatura, $humedad, $viento_velocidad, $vpd_val);
+    $feeling_val = feeling_temperature($temperatura, $humedad, $viento_velocidad, $vpd_val);
 
     // Lógica de selección simplificada:
     // 1. Wind Chill: aplica en frío con viento significativo (T ≤ 10°C y viento ≥ 4.8 km/h)
     // 2. Heat Index: aplica en calor extremo (T ≥ 27°C) con humedad moderada/alta
     // 3. Feeling Temperature: para rango templado (-10°C a 27°C) considerando viento + humedad
-    
+
     if ($temperatura <= 10 && $viento_velocidad >= 4.8) {
         // Wind chill para frío con viento
         $sensacion = round($wind_chill_val, 2);
+        $tipo_sensacion = 'wind_chill';
     } elseif ($temperatura >= 27 && $humedad >= 40) {
         // Heat index para calor con humedad
         $sensacion = round($heat_index_val, 2);
+        $tipo_sensacion = 'heat_index';
     } else {
         // Feeling Temperature para rango templado
+        if ($vpd_val !== null) {
+            $tipo_sensacion = 'steadman_vpd';
+        } else {
+            $tipo_sensacion = 'steadman';
+        }
         $sensacion = round($feeling_val, 2);
     }
 
@@ -368,6 +361,7 @@ if ($send_LOCAL === 1) {
     if ($send_LOG === 1) {
         $calc = [
             'sensacion_termica' => $sensacion,
+            'formula_sensacion_termica' => $tipo_sensacion,
             'wind_chill' => $wind_chill_val,
             'heat_index' => $heat_index_val,
             'feeling_temperature' => $feeling_val,
@@ -410,8 +404,9 @@ if ($send_LOCAL === 1) {
         lluvia_semana, lluvia_mes, lluvia_ano, lluvia_total,
         viento_racha_maxima, vpd,
         stationtype, runtime, heap, wh65batt,
-        freq, model, passkey, interval_sec
-    ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+        freq, model, passkey, interval_sec,
+        formula_sensacion_termica
+    ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
 ");
 
         if (!$stmt) {
@@ -420,17 +415,41 @@ if ($send_LOCAL === 1) {
         }
 
         $stmt->bind_param(
-            "ssdddddddddddddddddddddddsiiisssi",
-            $timestamp_utc, $timezone, $temperatura, $humedad, $sensacion,
-            $presion_rel, $presion_abs, $punto_rocio,
-            $viento_velocidad, $viento_direccion, $viento_racha,
-            $lluvia_diaria, $uv, $sol,
-            $temperatura_interior, $humedad_interior,
-            $lluvia_rate, $lluvia_evento, $lluvia_hora,
-            $lluvia_semana, $lluvia_mes, $lluvia_ano, $lluvia_total,
-            $viento_racha_maxima, $vpd,
-            $stationtype, $runtime, $heap, $wh65batt,
-            $freq, $model, $passkey, $interval
+            "ssdddddddddddddddddddddddsiiisssis",
+            $timestamp_utc,
+            $timezone,
+            $temperatura,
+            $humedad,
+            $sensacion,
+            $presion_rel,
+            $presion_abs,
+            $punto_rocio,
+            $viento_velocidad,
+            $viento_direccion,
+            $viento_racha,
+            $lluvia_diaria,
+            $uv,
+            $sol,
+            $temperatura_interior,
+            $humedad_interior,
+            $lluvia_rate,
+            $lluvia_evento,
+            $lluvia_hora,
+            $lluvia_semana,
+            $lluvia_mes,
+            $lluvia_ano,
+            $lluvia_total,
+            $viento_racha_maxima,
+            $vpd,
+            $stationtype,
+            $runtime,
+            $heap,
+            $wh65batt,
+            $freq,
+            $model,
+            $passkey,
+            $interval,
+            $tipo_sensacion
         );
 
         if ($stmt->errno) {
@@ -455,4 +474,3 @@ if ($send_LOCAL === 1) {
 // -------------------------------------------
 http_response_code(200);
 echo "OK";
-?>

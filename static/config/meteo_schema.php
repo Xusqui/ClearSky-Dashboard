@@ -44,7 +44,8 @@ $meteo_schema = [
     'freq' => 'VARCHAR(10) DEFAULT NULL',
     'model' => 'VARCHAR(50) DEFAULT NULL',
     'passkey' => 'CHAR(32) DEFAULT NULL',
-    'interval_sec' => 'INT(11) DEFAULT NULL'
+    'interval_sec' => 'INT(11) DEFAULT NULL',
+    'formula_sensacion_termica' => 'VARCHAR(50) DEFAULT NULL'
 ];
 
 // Opcional: Definición de índices (requiere lógica adicional en setup.php)
@@ -52,4 +53,3 @@ $meteo_indexes = [
     'PRIMARY KEY' => ['id'],
     'KEY_TIMESTAMP' => ['timestamp']
 ];
-?>

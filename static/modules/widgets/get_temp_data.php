@@ -16,7 +16,8 @@ $maxAngle = 145;
  * Función para devolver un error en formato JSON y terminar el script.
  * @param string $message Mensaje de error a devolver.
  */
-function die_with_error($message) {
+function die_with_error($message)
+{
     header('Content-Type: application/json');
     die(json_encode([
         "error" => true,
@@ -36,7 +37,8 @@ if ($mysqli->connect_error) {
 }
 
 // FUNCIÓN PARA CALCULAR LA TENDENCIA TÉRMICA EXTERIOR:
-function computeTempTrend(mysqli $db) {
+function computeTempTrend(mysqli $db)
+{
     $stmt = $db->prepare("
         SELECT UNIX_TIMESTAMP(timestamp) AS t, temperatura
         FROM meteo
@@ -78,10 +80,11 @@ function computeTempTrend(mysqli $db) {
 // Consulta SQL para obtener la última temperatura y la sensación térmica (feels_like)
 // Asumo que la columna de sensación térmica se llama 'feels_like' o similar.
 // Usaremos 'temperatura' (temperatura exterior) y 'sensacion_termica' (un nombre lógico para la BD)
-$sql = "SELECT temperatura, sensacion_termica
-        FROM meteo
-        ORDER BY timestamp DESC
-        LIMIT 1";
+
+$sql = "SELECT temperatura, sensacion_termica, formula_sensacion_termica
+    FROM meteo
+    ORDER BY timestamp DESC
+    LIMIT 1";
 
 $result = $mysqli->query($sql);
 
@@ -122,8 +125,10 @@ if ($trendData === null) {
 
 // 2. Obtener los valores
 $row = $result->fetch_assoc();
+
 $temp = $row['temperatura'];
-$feels_like = $row['sensacion_termica']; // Asumiendo que esta es la columna para 'feels_like'
+$feels_like = $row['sensacion_termica'];
+$formula = isset($row['formula_sensacion_termica']) ? $row['formula_sensacion_termica'] : '';
 
 $result->free();
 $mysqli->close();
@@ -156,7 +161,7 @@ header('Content-Type: application/json');
 echo json_encode([
     "temp" => $temp,
     "feels_like" => $feels_like,
+    "formula" => $formula,
     "angle" => $temp_angle,
     "trend" => $trendData['trend'] ?? null
 ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-?>
