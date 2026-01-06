@@ -54,49 +54,41 @@ $mysqli->close();
 // 4. Realizar los cálculos y el formateo de la fecha
 
 // Crear objetos DateTime para manipular las fechas
+// 4. Realizar los cálculos y el formateo de la fecha
+
 try {
     // La marca de tiempo de la BD se considera en UTC
     $utc_datetime = new DateTime($last_update_utc_string, new DateTimeZone('UTC'));
 
     // Convertir la fecha UTC a la zona horaria local
     $local_timezone = new DateTimeZone($local_timezone_id);
-    $local_datetime = $utc_datetime->setTimezone($local_timezone);
+    $local_datetime = clone $utc_datetime;
+    $local_datetime->setTimezone($local_timezone);
 
-    // Obtener la hora actual en la misma zona horaria local para el cálculo de la diferencia
+    // Obtener la hora actual para el cálculo de la diferencia
     $now_local = new DateTime('now', $local_timezone);
-
-    // Calcular la diferencia en segundos
-    $interval = $now_local->diff($local_datetime);
-    // Calcular los segundos totales
-    // Nota: diff->s no es suficiente; debemos convertir la diferencia total a segundos.
     $diff_seconds = $now_local->getTimestamp() - $local_datetime->getTimestamp();
 
-    // Formato de la fecha y hora local
-    // 'H' (00-23), 'i' (00-59), 'd' (01-31), 'M' (Abrev. Mes), 'Y' (Año 4 dig.)
-    // La 'M' se convierte a español si usas setlocale, pero para consistencia
-    // y simplificación usaremos strftime si es posible, o una función de traducción.
-    // Por simplicidad, usaremos el formato en inglés y luego lo ajustaremos
+    // --- NUEVA FORMA DE FORMATEAR SIN STRFTIME ---
 
-    // Configurar idioma español para la fecha (si se desea 'DE' en lugar de 'OF')
-    setlocale(LC_TIME, 'es_ES.utf8', 'es_ES', 'es');
-
-    $ts_formatted = strftime(
-        'A LAS %H:%M DEL %d DE %B DE %Y',
-        $local_datetime->getTimestamp()
+    // Creamos el formateador: (Idioma, Estilo Fecha, Estilo Hora, Zona Horaria, Tipo Calendario, Patrón)
+    $formatter = new IntlDateFormatter(
+        'es_ES',
+        IntlDateFormatter::LONG,
+        IntlDateFormatter::SHORT,
+        $local_timezone_id,
+        IntlDateFormatter::GREGORIAN,
+        "'A LAS' HH:mm 'DEL' dd 'DE' MMMM 'DE' yyyy"
     );
 
-    // Reemplazar la primera letra del mes a minúscula
-    $ts_formatted = str_replace(
-        $local_datetime->format('F'),
-        mb_strtolower($local_datetime->format('F')),
-        $ts_formatted
-    );
+    // Convertimos a mayúsculas para mantener tu estilo actual
+    $ts_formatted = mb_strtoupper($formatter->format($local_datetime));
 
     // Construir la cadena de estado final
     $status_message = sprintf(
         '%s. ACTUALIZADO HACE %d SEG.',
         $ts_formatted,
-        max(0, $diff_seconds) // Asegura que no sea negativo (aunque no debería)
+        max(0, $diff_seconds)
     );
 
     // 5. Devolver la respuesta JSON
@@ -107,7 +99,6 @@ try {
         'local_timestamp' => $local_datetime->getTimestamp(),
         'station_interval_sec' => $station_interval_seconds
     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-
 } catch (Exception $e) {
     http_response_code(500); // Internal Server Error
     echo json_encode([
@@ -115,4 +106,3 @@ try {
     ]);
     exit();
 }
-?>
