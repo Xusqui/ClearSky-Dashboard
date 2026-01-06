@@ -69,12 +69,12 @@ function fetch_pressure_levels($lat, $lon)
     curl_setopt($ch, CURLOPT_TIMEOUT, 10);
 
     $resp = curl_exec($ch);
+
     if ($resp === false) {
         $err = curl_error($ch);
-        curl_close($ch);
+        // curl_close($ch); // Ya no es necesario en PHP 8+
         return ["error" => true, "message" => $err];
     }
-    curl_close($ch);
 
     $json = json_decode($resp, true);
     if (!isset($json['hourly']['time'])) {
@@ -104,18 +104,16 @@ function fetch_cloud_layers_openmeteo($lat, $lon, $tz)
         "&timezone={$tz}" .
         "&start_date={$today}&end_date={$today}";
 
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
+    $ch = curl_init($url); // Puedes pasar la URL directamente aquí
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_TIMEOUT, 10);
 
     $resp = curl_exec($ch);
+
     if ($resp === false) {
         $err = curl_error($ch);
-        curl_close($ch);
         return ["error" => true, "message" => "Error al conectar con Open-Meteo: $err"];
     }
-    curl_close($ch);
 
     $data = json_decode($resp, true);
     if (!$data || !isset($data["hourly"]["time"])) {
