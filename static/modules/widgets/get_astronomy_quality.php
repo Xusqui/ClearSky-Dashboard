@@ -1,5 +1,6 @@
 <?php
 // get_astronomy_quality.php
+// UNUSED
 header('Content-Type: application/json; charset=utf-8');
 
 // ================= CONFIG =================
@@ -30,7 +31,7 @@ if (file_exists($CACHE_FILE)) {
 // ================= DATOS ESTACIÓN =================
 $conn = new mysqli($db_url, $db_user, $db_pass, $db_database);
 if ($conn->connect_error) {
-    echo json_encode(["error"=>true,"message"=>"DB error"]);
+    echo json_encode(["error" => true, "message" => "DB error"]);
     exit;
 }
 
@@ -48,7 +49,7 @@ LIMIT 1
 
 $res = $conn->query($sql);
 if (!$res || $res->num_rows === 0) {
-    echo json_encode(["error"=>true,"message"=>"Sin datos meteo"]);
+    echo json_encode(["error" => true, "message" => "Sin datos meteo"]);
     exit;
 }
 
@@ -57,10 +58,10 @@ $conn->close();
 
 // ================= OPEN-METEO =================
 $url = "https://api.open-meteo.com/v1/forecast?"
-     . "latitude=$lat&longitude=$lon"
-     . "&hourly=cloud_cover_low,cloud_cover_mid,cloud_cover_high,"
-     . "windspeed_10m,windspeed_80m,windspeed_180m"
-     . "&timezone=$tz";
+    . "latitude=$lat&longitude=$lon"
+    . "&hourly=cloud_cover_low,cloud_cover_mid,cloud_cover_high,"
+    . "windspeed_10m,windspeed_80m,windspeed_180m"
+    . "&timezone=$tz";
 
 $ch = curl_init();
 curl_setopt_array($ch, [
@@ -134,14 +135,18 @@ $winds_aloft = [
 
 // ================= ALTURA LUNAR =================
 // ================= LÓGICA ASTRONÓMICA =================
-class AstroCalculator {
-    public static function getMoonPhase($ts) {
-        $lp = 2551443; $new_moon = 1230783600;
+class AstroCalculator
+{
+    public static function getMoonPhase($ts)
+    {
+        $lp = 2551443;
+        $new_moon = 1230783600;
         $phase = (($ts - $new_moon) % $lp) / $lp;
         return 1 - abs(($phase - 0.5) * 2);
     }
 
-    public static function moonAltitude($lat, $lon, $ts) {
+    public static function moonAltitude($lat, $lon, $ts)
+    {
         $rad = M_PI / 180;
         $d = ($ts / 86400) - 10957.5;
         $L = $rad * (218.316 + 13.176396 * $d);
@@ -152,7 +157,8 @@ class AstroCalculator {
         $e = $rad * 23.4397;
         $ra  = atan2(sin($l) * cos($e) - tan($b) * sin($e), cos($l));
         $dec = asin(sin($b) * cos($e) + cos($b) * sin($e) * sin($l));
-        $lw  = -$lon * $rad; $phi = $lat * $rad;
+        $lw  = -$lon * $rad;
+        $phi = $lat * $rad;
         $H   = fmod(($rad * (280.16 + 360.9856235 * $d)) - $lw - $ra, 2 * M_PI);
         return round(asin(sin($phi) * sin($dec) + cos($phi) * cos($dec) * cos($H)) / $rad, 1);
     }
@@ -182,7 +188,8 @@ $seeing_deepsky += max(0, ($meteo['humedad'] - 75)) * 0.015;
 $seeing_deepsky = round(min(max($seeing_deepsky, 0.8), 5.0), 2);
 
 // Conversión arcsec → índice
-function seeing_index($arcsec, $best, $worst) {
+function seeing_index($arcsec, $best, $worst)
+{
     $idx = 100 * (1 - (($arcsec - $best) / ($worst - $best)));
     return round(min(max($idx, 0), 100));
 }
@@ -195,8 +202,8 @@ $seeing_deepsky_idx   = seeing_index($seeing_deepsky,   0.8, 5.0);
 // CALIDAD VISUAL
 $visual = 100;
 $cloud_effective = $clouds['bajas'] * 1.0
-                 + $clouds['medias'] * 1.0
-                 + $clouds['altas']  * 0.8;
+    + $clouds['medias'] * 1.0
+    + $clouds['altas']  * 0.8;
 
 $visual -= min($cloud_effective, 100);
 $visual -= max(0, $moon_alt) * 1.5;

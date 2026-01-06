@@ -25,7 +25,7 @@ function computePressureTrend(mysqli $db) {
     $stmt = $db->prepare("
         SELECT UNIX_TIMESTAMP(timestamp) AS t, presion_relativa
         FROM meteo
-        WHERE timestamp >= NOW() - INTERVAL 12 HOUR
+        WHERE timestamp >= NOW() - INTERVAL 3 HOUR
           AND presion_relativa IS NOT NULL
         ORDER BY timestamp ASC
     ");

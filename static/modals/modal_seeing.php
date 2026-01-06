@@ -1,6 +1,10 @@
 <?php
 // modal_seeing.php
 ?>
+<!--************************************************************
+    ******************** DATOS DEL SEEING **********************
+    *********************** M O D A L **************************
+    ************************************************************ -->
 <div id="seeingModal" class="modal">
     <div class="modal-content">
         <button class="close" aria-label="Cerrar" id="closeSeeingModal">
@@ -11,142 +15,94 @@
             </svg>
         </button>
         <div class="infografia">
-            <h1 class="seeing-modal-title">🔭 Calidad Astronómica</h1>
-
-            <h2 class="seeing-group-title">Estación Local</h2>
-            <div class="bloque bloque-fixed-3">
-                <div class="card">
-                    <h3 class="seeing-card-title">🌡️ Temperatura</h3>
-                    <p class="seeing-card-value"><span id="st_temp">-</span><span class="unit">ºC</span></p>
+            <h1 class="seeing-modal-title">🌠 Datos del Seeing Astronómico</h1>
+            <h2 class="seeing-group-title">Datos de Superficie</h2>
+            <div class="bloque bloque-fixed-3"> <div class="card">
+                <h3 class="seeing-card-title">🌡️ Variación térmica</h3>
+                <p class="seeing-card-value" id="t8h">-</p>
+                <span class="seeing-card-desc">ºC (Últimas 8h)</span>
                 </div>
                 <div class="card">
-                    <h3 class="seeing-card-title">💧 Humedad</h3>
-                    <p class="seeing-card-value"><span id="st_hum">-</span><span class="unit">%</span></p>
+                    <h3 class="seeing-card-title">💧 Variación de humedad</h3>
+                    <p class="seeing-card-value" id="h8h">-</p>
+                    <span class="seeing-card-desc">% (Últimas 8h)</span>
                 </div>
                 <div class="card">
-                    <h3 class="seeing-card-title">🌬️ Viento</h3>
-                    <p class="seeing-card-value"><span id="st_wind">-</span><span class="unit">Km/h</span></p>
-                </div>
-            </div>
-
-            <h2 class="seeing-group-title">Estado de la Luna</h2>
-            <div class="bloque bloque-fixed-3">
-                <div class="card">
-                    <h3 class="seeing-card-title">📏 Altura</h3>
-                    <p class="seeing-card-value"><span id="luna_alt">-</span><span class="unit">º</span></p>
+                    <h3 class="seeing-card-title">🌬️ Viento actual</h3>
+                    <p class="seeing-card-value" id="wnow">-</p>
+                    <span class="seeing-card-desc">Km/h</span>
                 </div>
                 <div class="card">
-                    <h3 class="seeing-card-title">💡 Iluminación</h3>
-                    <p class="seeing-card-value"><span id="luna_pct">-</span><span class="unit">%</span></p>
+                    <h3 class="seeing-card-title">🌬️ Racha de viento</h3>
+                    <p class="seeing-card-value" id="gnow">-</p>
+                    <span class="seeing-card-desc">Km/h</span>
                 </div>
                 <div class="card">
-                    <h3 class="seeing-card-title">✨ Brillo</h3>
-                    <p class="seeing-card-value" id="luna_bright">-</p>
-                    <span class="seeing-card-desc">Impacto</span>
-                </div>
-            </div>
-
-            <h2 class="seeing-group-title">Viento en Altura</h2>
-            <div class="bloque bloque-fixed-3">
-                <div class="card">
-                    <h3 class="seeing-card-title">💨 A 10m</h3>
-                    <p class="seeing-card-value"><span id="v_10m">-</span><span class="unit">Km/h</span></p>
+                    <h3 class="seeing-card-title">📉 Variación de presión</h3>
+                    <p class="seeing-card-value" id="p8h">-</p>
+                    <span class="seeing-card-desc">hPa (Últimas 8h)</span>
                 </div>
                 <div class="card">
-                    <h3 class="seeing-card-title">💨 A 80m</h3>
-                    <p class="seeing-card-value"><span id="v_80m">-</span><span class="unit">Km/h</span></p>
-                </div>
-                <div class="card">
-                    <h3 class="seeing-card-title">💨 A 180m</h3>
-                    <p class="seeing-card-value"><span id="v_180m">-</span><span class="unit">Km/h</span></p>
+                    <h3 class="seeing-card-title">☀️ Radiación solar</h3>
+                    <p class="seeing-card-value" id="rs">-</p>
+                    <span class="seeing-card-desc">W/m²</span>
                 </div>
             </div>
-
+            <h2 class="seeing-group-title">Datos en Altura</h2>
+            <div class="bloque bloque-fixed-3"> <div class="card">
+                <h3 class="seeing-card-title">🌀 Temp. a 500 hPa</h3>
+                <p class="seeing-card-value" id="t500">-</p>
+                <span class="seeing-card-desc">ºC</span>
+                </div>
+                <div class="card">
+                    <h3 class="seeing-card-title">🌀 Temp. a 300 hPa</h3>
+                    <p class="seeing-card-value" id="t300">-</p>
+                    <span class="seeing-card-desc">ºC</span>
+                </div>
+                <div class="card">
+                    <h3 class="seeing-card-title">📊 DeltaT</h3>
+                    <p class="seeing-card-value" id="deltaT">-</p>
+                    <span class="seeing-card-desc">(Estabilidad)</span>
+                </div>
+                <div class="card">
+                    <h3 class="seeing-card-title">💨 Viento a 500 hPa</h3>
+                    <p class="seeing-card-value" id="w500">-</p>
+                    <span class="seeing-card-desc">Km/h</span>
+                </div>
+                <div class="card">
+                    <h3 class="seeing-card-title">💨 Viento a 300 hPa</h3>
+                    <p class="seeing-card-value" id="w300">-</p>
+                    <span class="seeing-card-desc">Km/h</span>
+                </div>
+                <div class="card">
+                    <h3 class="seeing-card-title">🌪️ Shear vertical</h3>
+                    <p class="seeing-card-value" id="shear">-</p>
+                    <span class="seeing-card-desc">(Turbulencia)</span>
+                </div>
+            </div>
             <h2 class="seeing-group-title">Cobertura de Nubes</h2>
-            <div class="bloque bloque-fixed-3">
-                <div class="card">
-                    <h3 class="seeing-card-title">☁️ Bajas</h3>
-                    <p class="seeing-card-value"><span id="n_low">-</span><span class="unit">%</span></p>
+            <div class="bloque"> <div class="card">
+                <h3 class="seeing-card-title">☁️ Nubes bajas</h3>
+                <p class="seeing-card-value" id="clow">-</p>
+                <span class="seeing-card-desc">% Cobertura</span>
                 </div>
                 <div class="card">
-                    <h3 class="seeing-card-title">🌥️ Medias</h3>
-                    <p class="seeing-card-value"><span id="n_mid">-</span><span class="unit">%</span></p>
+                    <h3 class="seeing-card-title">🌥️ Nubes medias</h3>
+                    <p class="seeing-card-value" id="cmid">-</p>
+                    <span class="seeing-card-desc">% Cobertura</span>
                 </div>
                 <div class="card">
-                    <h3 class="seeing-card-title">🌤️ Altas</h3>
-                    <p class="seeing-card-value"><span id="n_high">-</span><span class="unit">%</span></p>
+                    <h3 class="seeing-card-title">🌤️ Nubes altas</h3>
+                    <p class="seeing-card-value" id="chigh">-</p>
+                    <span class="seeing-card-desc">% Cobertura</span>
                 </div>
             </div>
-
-            <h2 class="seeing-group-title">Seeing (Arcsec)</h2>
-            <div class="bloque">
-                <div class="card">
-                    <h3 class="seeing-card-title">🪐 Planetario</h3>
-                    <p class="seeing-card-value"><span id="s_plan">-</span><span class="unit">arcsec</span></p>
-                </div>
-                <div class="card">
-                    <h3 class="seeing-card-title">🌌 Cielo Prof.</h3>
-                    <p class="seeing-card-value"><span id="s_deep">-</span><span class="unit">arcsec</span></p>
-                </div>
-            </div>
-
-            <h2 class="seeing-group-title">Aptitud de la Noche</h2>
-            <div class="bloque">
-                <div class="card gauge-card">
-                    <h3 class="seeing-card-title">👁️ Calidad Visual</h3>
-                    <svg class="gauge" viewBox="0 0 200 110" data-type="visual">
-                        <defs>
-                            <linearGradient id="grad-visual" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%"   stop-color="var(--red)"/>
-                                <stop offset="50%"  stop-color="var(--red80)"/>
-                                <stop offset="100%" stop-color="var(--green)"/>
-                            </linearGradient>
-                        </defs>
-                        <path d="M10 100 A90 90 0 0 1 190 100"
-                              fill="none"
-                              stroke="url(#grad-visual)"
-                              stroke-width="14"
-                              stroke-linecap="round"/>
-                        <polygon class="needle"
-                                 points="98,100 102,100 100,18"/>
-
-                        <circle class="needle-hub"
-                                cx="100" cy="100" r="5"/>
-
-                        <text class="gauge-value" x="100" y="85">--%</text>
-                    </svg>
-                </div>
-
-                <div class="card gauge-card">
-                    <h3 class="seeing-card-title">📸 Astrofoto</h3>
-                    <svg class="gauge" viewBox="0 0 200 110" data-type="astro">
-                        <defs>
-                            <linearGradient id="grad-astro" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%"   stop-color="var(--red)"/>
-                                <stop offset="50%"  stop-color="var(--red80)"/>
-                                <stop offset="100%" stop-color="var(--green)"/>
-                            </linearGradient>
-                        </defs>
-                        <path d="M10 100 A90 90 0 0 1 190 100"
-                              fill="none"
-                              stroke="url(#grad-astro)"
-                              stroke-width="14"
-                              stroke-linecap="round"/>
-                        <polygon class="needle"
-                                 points="98,100 102,100 100,18"/>
-
-                        <circle class="needle-hub"
-                                cx="100" cy="100" r="5"/>
-
-                        <text class="gauge-value" x="100" y="85">--%</text>
-                    </svg>
-                </div>
-            </div>
-
-
             <div class="footer">
+                <p class="seeing-result">
+                    👁️ Seeing: <strong><span id="seeingtext">-</span></strong>
+                </p>
                 <p class="seeing-attribution">
-                    Datos procesados de Open-Meteo & Estación Local
+                    Datos en altura y nubes de <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a>
                 </p>
             </div>
         </div>
