@@ -1,3 +1,73 @@
+/* === SEEING ARCSEC (barras gráficas) === */
+.bloque-seeing-arcsec {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.seeing-arcsec-card {
+    background: var(--color-box-bg);
+    border-radius: 10px;
+    padding: 18px 22px 14px 22px;
+    min-width: 220px;
+    max-width: 320px;
+    box-shadow: var(--search-focus-box-shadow);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 0;
+}
+
+.seeing-arcsec-bar-container {
+    width: 100%;
+    margin: 0 0 10px 0;
+    display: block;
+}
+
+.seeing-arcsec-bar-bg {
+    background: #e0e0e0;
+    border-radius: 8px;
+    width: 100%;
+    height: 22px;
+    overflow: hidden;
+    position: relative;
+    margin-top: 6px;
+}
+
+.seeing-arcsec-bar {
+    height: 100%;
+    border-radius: 8px;
+    transition: width 0.5s cubic-bezier(.4, 2, .6, 1), background 0.3s;
+    min-width: 6px;
+}
+
+.seeing-arcsec-value {
+    font-size: 1.7em;
+    font-weight: 700;
+    color: var(--nav-menu-font-color);
+    margin-left: 0;
+    display: block;
+    text-align: center;
+}
+
+.seeing-arcsec-unit {
+    font-size: 1.1em;
+    color: var(--color-secondary-font);
+    margin-left: 2px;
+}
+
+.seeing-arcsec-legend {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85em;
+    color: var(--color-secondary-font);
+    margin-top: 2px;
+    padding: 0 2px;
+}
+
 /* modal-seeing.css */
 .infografia {
     max-width: 800px;
@@ -5,7 +75,8 @@
     /* Respetamos las variables de tu tema para fondo y sombra */
     background-color: color-mix(in srgb, var(--bg-color) 0%, transparent);
     border-radius: 12px;
-    padding: 20px 30px 30px 30px; /* Ajuste de padding */
+    padding: 20px 30px 30px 30px;
+    /* Ajuste de padding */
 }
 
 /* Título principal del modal */
@@ -13,7 +84,8 @@
     text-align: center;
     color: var(--font-color);
     font-size: 1.8em;
-    font-weight: 600; /* Un peso más definido */
+    font-weight: 600;
+    /* Un peso más definido */
     margin-top: 0;
     margin-bottom: 25px;
 }
@@ -22,22 +94,27 @@
 .seeing-group-title {
     font-size: 1.1em;
     font-weight: 700;
-    color: var(--color-secondary-font); /* Usamos color secundario */
+    color: var(--color-secondary-font);
+    /* Usamos color secundario */
     border-bottom: 1px solid var(--dashboard-widget-box-shadow-color, #e0e0e0);
     padding-bottom: 8px;
     margin-top: 25px;
     margin-bottom: 15px;
     text-align: center;
 }
+
 .seeing-group-title-container {
     display: flex;
     /* Alinea el título y el botón en la misma línea */
     align-items: center;
     /* Distribuye el espacio entre el título y el botón */
     justify-content: space-between;
-    margin-top: 1.5rem; /* Margen superior para separarlo del grupo anterior */
-    margin-bottom: 0.5rem; /* Margen inferior para separarlo de la rejilla */
+    margin-top: 1.5rem;
+    /* Margen superior para separarlo del grupo anterior */
+    margin-bottom: 0.5rem;
+    /* Margen inferior para separarlo de la rejilla */
 }
+
 /* Quitar margen superior al primer título */
 .infografia h2.seeing-group-title:first-of-type {
     margin-top: 0;
@@ -48,7 +125,8 @@
     display: grid;
     /* Comportamiento original: Columnas adaptables con un mínimo de 160px */
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 15px; /* Espacio entre tarjetas */
+    gap: 15px;
+    /* Espacio entre tarjetas */
     margin-bottom: 15px;
 }
 
@@ -65,6 +143,7 @@
         grid-template-columns: repeat(2, 1fr);
     }
 }
+
 /* ============================================= */
 
 
@@ -77,7 +156,8 @@
     /* Flex para alinear verticalmente */
     display: flex;
     flex-direction: column;
-    justify-content: flex-start; /* Alinea al inicio */
+    justify-content: flex-start;
+    /* Alinea al inicio */
     transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
 }
 
@@ -88,17 +168,20 @@
 
 /* Título de la tarjeta (reemplaza a h2-seeing) */
 .seeing-card-title {
-    font-size: 1.1em; /* 🎉 ¡MODIFICADO A 1.1em! */
+    font-size: 1.1em;
+    /* 🎉 ¡MODIFICADO A 1.1em! */
     margin-top: 0;
     margin-bottom: 10px;
     color: var(--color-secondary-font);
     font-weight: 500;
-    min-height: 2.7em; /* Fija altura para 1-2 líneas */
+    min-height: 2.7em;
+    /* Fija altura para 1-2 líneas */
 }
 
 /* Valor principal (reemplaza a .card p) */
 .seeing-card-value {
-    font-size: 1.7em; /* Grande y destacado */
+    font-size: 1.7em;
+    /* Grande y destacado */
     font-weight: 600;
     margin: 0;
     color: var(--nav-menu-font-color);
@@ -128,7 +211,8 @@
 
 /* Estilo para la línea principal del "Seeing" */
 .footer .seeing-result {
-    font-size: 1em; /* 1em (relativo al 1.3em del .footer) */
+    font-size: 1em;
+    /* 1em (relativo al 1.3em del .footer) */
     color: var(--orange-raw);
     margin: 0;
 }
@@ -139,16 +223,20 @@
 
 /* Estilo para la nueva línea de atribución */
 .footer .seeing-attribution {
-    font-size: 0.7em; /* Más pequeño y discreto */
+    font-size: 0.7em;
+    /* Más pequeño y discreto */
     color: var(--color-secondary-font);
-    margin: 8px 0 0 0; /* Espacio superior */
+    margin: 8px 0 0 0;
+    /* Espacio superior */
 }
 
 .footer .seeing-attribution a {
-    color: var(--color-secondary-font); /* Mismo color */
+    color: var(--color-secondary-font);
+    /* Mismo color */
     text-decoration: underline;
 }
 
 .footer .seeing-attribution a:hover {
-    color: var(--font-color); /* Color principal al pasar el ratón */
+    color: var(--font-color);
+    /* Color principal al pasar el ratón */
 }

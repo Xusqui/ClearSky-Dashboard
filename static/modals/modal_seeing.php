@@ -9,7 +9,7 @@
     <div class="modal-content">
         <button class="close" aria-label="Cerrar" id="closeSeeingModal">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                 stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
@@ -17,10 +17,11 @@
         <div class="infografia">
             <h1 class="seeing-modal-title">🌠 Datos del Seeing Astronómico</h1>
             <h2 class="seeing-group-title">Datos de Superficie</h2>
-            <div class="bloque bloque-fixed-3"> <div class="card">
-                <h3 class="seeing-card-title">🌡️ Variación térmica</h3>
-                <p class="seeing-card-value" id="t8h">-</p>
-                <span class="seeing-card-desc">ºC (Últimas 8h)</span>
+            <div class="bloque bloque-fixed-3">
+                <div class="card">
+                    <h3 class="seeing-card-title">🌡️ Variación térmica</h3>
+                    <p class="seeing-card-value" id="t8h">-</p>
+                    <span class="seeing-card-desc">ºC (Últimas 8h)</span>
                 </div>
                 <div class="card">
                     <h3 class="seeing-card-title">💧 Variación de humedad</h3>
@@ -49,10 +50,11 @@
                 </div>
             </div>
             <h2 class="seeing-group-title">Datos en Altura</h2>
-            <div class="bloque bloque-fixed-3"> <div class="card">
-                <h3 class="seeing-card-title">🌀 Temp. a 500 hPa</h3>
-                <p class="seeing-card-value" id="t500">-</p>
-                <span class="seeing-card-desc">ºC</span>
+            <div class="bloque bloque-fixed-3">
+                <div class="card">
+                    <h3 class="seeing-card-title">🌀 Temp. a 500 hPa</h3>
+                    <p class="seeing-card-value" id="t500">-</p>
+                    <span class="seeing-card-desc">ºC</span>
                 </div>
                 <div class="card">
                     <h3 class="seeing-card-title">🌀 Temp. a 300 hPa</h3>
@@ -81,10 +83,11 @@
                 </div>
             </div>
             <h2 class="seeing-group-title">Cobertura de Nubes</h2>
-            <div class="bloque"> <div class="card">
-                <h3 class="seeing-card-title">☁️ Nubes bajas</h3>
-                <p class="seeing-card-value" id="clow">-</p>
-                <span class="seeing-card-desc">% Cobertura</span>
+            <div class="bloque">
+                <div class="card">
+                    <h3 class="seeing-card-title">☁️ Nubes bajas</h3>
+                    <p class="seeing-card-value" id="clow">-</p>
+                    <span class="seeing-card-desc">% Cobertura</span>
                 </div>
                 <div class="card">
                     <h3 class="seeing-card-title">🌥️ Nubes medias</h3>
@@ -95,6 +98,36 @@
                     <h3 class="seeing-card-title">🌤️ Nubes altas</h3>
                     <p class="seeing-card-value" id="chigh">-</p>
                     <span class="seeing-card-desc">% Cobertura</span>
+                </div>
+            </div>
+            <!-- Nueva sección gráfica para seeing en arcsec -->
+            <h2 class="seeing-group-title">Seeing en segundos de arco</h2>
+            <div class="bloque bloque-seeing-arcsec">
+                <div class="seeing-arcsec-card">
+                    <h3 class="seeing-card-title">🪐 Planetaria</h3>
+                    <span class="seeing-arcsec-value" id="val-seeing-planetaria">-</span><span class="seeing-arcsec-unit">"</span>
+                    <div class="seeing-arcsec-bar-container">
+                        <div class="seeing-arcsec-bar-bg">
+                            <div class="seeing-arcsec-bar" id="bar-seeing-planetaria"></div>
+                        </div>
+                    </div>
+                    <div class="seeing-arcsec-legend">
+                        <span>Mejor</span>
+                        <span>Peor</span>
+                    </div>
+                </div>
+                <div class="seeing-arcsec-card">
+                    <h3 class="seeing-card-title">✨ Cielo profundo</h3>
+                    <span class="seeing-arcsec-value" id="val-seeing-deep">-</span><span class="seeing-arcsec-unit">"</span>
+                    <div class="seeing-arcsec-bar-container">
+                        <div class="seeing-arcsec-bar-bg">
+                            <div class="seeing-arcsec-bar" id="bar-seeing-deep"></div>
+                        </div>
+                    </div>
+                    <div class="seeing-arcsec-legend">
+                        <span>Mejor</span>
+                        <span>Peor</span>
+                    </div>
                 </div>
             </div>
             <div class="footer">

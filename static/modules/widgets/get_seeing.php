@@ -33,7 +33,8 @@ if ($result) {
 }
 
 // --- 2. Calcular variaciones ---
-function calcularVariacion($array, $campo) {
+function calcularVariacion($array, $campo)
+{
     $valores = array_column($array, $campo);
     return max($valores) - min($valores);
 }
@@ -55,7 +56,8 @@ $detalles = [
 ];
 
 // --- 3. Función para obtener datos 300/500 hPa ---
-function fetch_pressure_levels($lat, $lon) {
+function fetch_pressure_levels($lat, $lon)
+{
     $url = "https://api.open-meteo.com/v1/forecast?latitude={$lat}&longitude={$lon}"
         . "&hourly=temperature_300hPa,temperature_500hPa,wind_speed_300hPa,wind_speed_500hPa"
         . "&forecast_days=1&timezone=UTC";
@@ -91,7 +93,8 @@ function fetch_pressure_levels($lat, $lon) {
 }
 
 // --- 4. Función para cobertura de nubes ---
-function fetch_cloud_layers_openmeteo($lat, $lon, $tz) {
+function fetch_cloud_layers_openmeteo($lat, $lon, $tz)
+{
     $now = new DateTime("now", new DateTimeZone($tz));
     $today = $now->format("Y-m-d");
 
@@ -200,7 +203,7 @@ $factor_nubes = 1 - (($low * 0.5 + $mid * 0.7 + $high * 1.0) / 100);
 $factor_nubes = max(0, min(1, $factor_nubes)); // límite entre 0 y 1
 
 $puntos_final = $puntos_base * $factor_nubes;
-$detalles['cloud_index'] = round(($low*0.5 + $mid*0.7 + $high*1.0), 1);
+$detalles['cloud_index'] = round(($low * 0.5 + $mid * 0.7 + $high * 1.0), 1);
 $detalles['factor_nubes'] = round($factor_nubes, 2);
 $detalles['puntos_base'] = $puntos_base;
 $detalles['puntos_final'] = round($puntos_final, 1);
@@ -226,13 +229,26 @@ if ($puntos_final < 5) {
     $point = 3;
 }
 
-// --- 10. Salida JSON ---
+
+// --- 10. Cálculo de seeing en segundos de arco ---
+// Fórmulas empíricas, ajustables
+$seeing_planetaria = 0.7 + 0.015 * $wind300 + 0.02 * $shear + 0.03 * $deltaT + 0.01 * $vientoActual;
+$seeing_planetaria = max(0.5, min(5, $seeing_planetaria));
+$seeing_deep = 0.6 + 0.01 * $wind300 + 0.015 * $shear + 0.02 * $deltaT + 0.005 * $vientoActual;
+$seeing_deep = max(0.4, min(4, $seeing_deep));
+
+$detalles['seeing_planetaria_arcsec'] = round($seeing_planetaria, 2);
+$detalles['seeing_deep_arcsec'] = round($seeing_deep, 2);
+
 echo json_encode([
     "IEAL" => round($puntos_final, 1),
     "estrellas" => $point,
     "seeing" => $seeing,
-    "detalles" => $detalles
+    "detalles" => $detalles,
+    "seeing_arcsec" => [
+        "planetaria" => round($seeing_planetaria, 2),
+        "cielo_profundo" => round($seeing_deep, 2)
+    ]
 ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
 $mysqli->close();
-?>

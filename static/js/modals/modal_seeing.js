@@ -10,37 +10,63 @@ document.addEventListener("DOMContentLoaded", function () {
     fetch('./static/modules/widgets/get_seeing.php')
       .then(response => response.json())
       .then(data => {
-      if (data.error) {
-        console.error("Error al cargar detalles del seeing:", data.message);
-        return;
-      }
+        if (data.error) {
+          console.error("Error al cargar detalles del seeing:", data.message);
+          return;
+        }
 
-      const d = data.detalles || {};
+        const d = data.detalles || {};
 
-      // --- Actualizar Superficie (CORREGIDO: Sin unidades) ---
-      document.getElementById("t8h").textContent = d.variacionTemp !== undefined ? `${parseFloat(d.variacionTemp).toFixed(2)}` : "-";
-      document.getElementById("h8h").textContent = d.variacionHum !== undefined ? `${parseFloat(d.variacionHum).toFixed(1)}` : "-";
-      document.getElementById("p8h").textContent = d.variacionPres !== undefined ? `${parseFloat(d.variacionPres).toFixed(2)}` : "-";
-      document.getElementById("wnow").textContent = d.vientoActual !== undefined ? `${parseFloat(d.vientoActual).toFixed(2)}` : "-";
-      document.getElementById("gnow").textContent = d.rachaActual !== undefined ? `${parseFloat(d.rachaActual).toFixed(2)}` : "-";
-      document.getElementById("rs").textContent = d.luminosidadActual !== undefined ? `${parseFloat(d.luminosidadActual).toFixed(2)}` : "-";
+        // --- Actualizar Superficie (CORREGIDO: Sin unidades) ---
+        document.getElementById("t8h").textContent = d.variacionTemp !== undefined ? `${parseFloat(d.variacionTemp).toFixed(2)}` : "-";
+        document.getElementById("h8h").textContent = d.variacionHum !== undefined ? `${parseFloat(d.variacionHum).toFixed(1)}` : "-";
+        document.getElementById("p8h").textContent = d.variacionPres !== undefined ? `${parseFloat(d.variacionPres).toFixed(2)}` : "-";
+        document.getElementById("wnow").textContent = d.vientoActual !== undefined ? `${parseFloat(d.vientoActual).toFixed(2)}` : "-";
+        document.getElementById("gnow").textContent = d.rachaActual !== undefined ? `${parseFloat(d.rachaActual).toFixed(2)}` : "-";
+        document.getElementById("rs").textContent = d.luminosidadActual !== undefined ? `${parseFloat(d.luminosidadActual).toFixed(2)}` : "-";
 
-      // --- Actualizar Altura (Sin unidades) ---
-      document.getElementById("t300").textContent = d.temp300 !== undefined ? `${parseFloat(d.temp300).toFixed(2)}` : "-";
-      document.getElementById("t500").textContent = d.temp500 !== undefined ? `${parseFloat(d.temp500).toFixed(2)}` : "-";
-      document.getElementById("w300").textContent = d.wind300 !== undefined ? `${parseFloat(d.wind300).toFixed(2)}` : "-";
-      document.getElementById("w500").textContent = d.wind500 !== undefined ? `${parseFloat(d.wind500).toFixed(2)}` : "-";
-      document.getElementById("shear").textContent = d.shear !== undefined ? `${parseFloat(d.shear).toFixed(2)}` : "-";
-      document.getElementById("deltaT").textContent = d.deltaT !== undefined ? `${parseFloat(d.deltaT).toFixed(2)}` : "-";
+        // --- Actualizar Altura (Sin unidades) ---
+        document.getElementById("t300").textContent = d.temp300 !== undefined ? `${parseFloat(d.temp300).toFixed(2)}` : "-";
+        document.getElementById("t500").textContent = d.temp500 !== undefined ? `${parseFloat(d.temp500).toFixed(2)}` : "-";
+        document.getElementById("w300").textContent = d.wind300 !== undefined ? `${parseFloat(d.wind300).toFixed(2)}` : "-";
+        document.getElementById("w500").textContent = d.wind500 !== undefined ? `${parseFloat(d.wind500).toFixed(2)}` : "-";
+        document.getElementById("shear").textContent = d.shear !== undefined ? `${parseFloat(d.shear).toFixed(2)}` : "-";
+        document.getElementById("deltaT").textContent = d.deltaT !== undefined ? `${parseFloat(d.deltaT).toFixed(2)}` : "-";
 
-      // --- Actualizar Nubes (CORREGIDO: Sin '%' duplicado) ---
-      document.getElementById("clow").textContent = d.nubes_low !== undefined ? `${parseFloat(d.nubes_low).toFixed(0)}` : "-";
-      document.getElementById("cmid").textContent = d.nubes_mid !== undefined ? `${parseFloat(d.nubes_mid).toFixed(0)}` : "-";
-      document.getElementById("chigh").textContent = d.nubes_high !== undefined ? `${parseFloat(d.nubes_high).toFixed(0)}` : "-";
+        // --- Actualizar Nubes (CORREGIDO: Sin '%' duplicado) ---
+        document.getElementById("clow").textContent = d.nubes_low !== undefined ? `${parseFloat(d.nubes_low).toFixed(0)}` : "-";
+        document.getElementById("cmid").textContent = d.nubes_mid !== undefined ? `${parseFloat(d.nubes_mid).toFixed(0)}` : "-";
+        document.getElementById("chigh").textContent = d.nubes_high !== undefined ? `${parseFloat(d.nubes_high).toFixed(0)}` : "-";
 
-      // --- Actualizar Footer ---
-      document.getElementById("seeingtext").textContent = data.seeing;
-    })
+        // --- Actualizar Footer ---
+        document.getElementById("seeingtext").textContent = data.seeing;
+
+        // --- Actualizar sección gráfica de seeing en arcsec ---
+        if (data.seeing_arcsec) {
+          // Rango visual: 0.4" (mejor) a 5" (peor)
+          const minArcsec = 0.4, maxArcsec = 5.0;
+          // Función para interpolar color de verde a rojo
+          function interpColor(p) {
+            // p: 0 (verde brillante) ... 1 (rojo brillante)
+            const r = Math.round(40 + (255 - 40) * p);   // 40 -> 255
+            const g = Math.round(230 - (230 - 40) * p);  // 230 -> 40
+            const b = Math.round(40 + (40 - 40) * p);    // 40 -> 40
+            return `rgb(${r},${g},${b})`;
+          }
+          // Planetaria
+          const valPlanet = data.seeing_arcsec.planetaria;
+          const pctPlanet = Math.max(0, Math.min(1, (valPlanet - minArcsec) / (maxArcsec - minArcsec)));
+          document.getElementById("val-seeing-planetaria").textContent = valPlanet !== undefined ? valPlanet.toFixed(2) : "-";
+          document.getElementById("bar-seeing-planetaria").style.width = (pctPlanet * 100) + "%";
+          document.getElementById("bar-seeing-planetaria").style.background = interpColor(pctPlanet);
+          // Deep sky
+          const valDeep = data.seeing_arcsec.cielo_profundo;
+          const pctDeep = Math.max(0, Math.min(1, (valDeep - minArcsec) / (maxArcsec - minArcsec)));
+          document.getElementById("val-seeing-deep").textContent = valDeep !== undefined ? valDeep.toFixed(2) : "-";
+          document.getElementById("bar-seeing-deep").style.width = (pctDeep * 100) + "%";
+          document.getElementById("bar-seeing-deep").style.background = interpColor(pctDeep);
+        }
+      })
       .catch(err => console.error("Error al obtener datos del modal:", err));
   }
 
