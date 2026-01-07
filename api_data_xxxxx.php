@@ -1,6 +1,6 @@
 <?php
-// api_data_xxxxxx.php
-// 1.- Cambia el nombre de api_data_xxxxxx.php a algo diferente, ej: api_data_219871554981.php (Una cadena aleatoria, para más seguridad)
+// api_data.php
+// 
 // -------------------------------------------
 // DEBUG (Definición temprana por si falla la DB)
 // -------------------------------------------
@@ -335,27 +335,13 @@ if ($send_LOCAL === 1) {
     $feeling_val = feeling_temperature($temperatura, $humedad, $viento_velocidad, $vpd_val);
 
     // Lógica de selección simplificada:
-    // 1. Wind Chill: aplica en frío con viento significativo (T ≤ 10°C y viento ≥ 4.8 km/h)
-    // 2. Heat Index: aplica en calor extremo (T ≥ 27°C) con humedad moderada/alta
-    // 3. Feeling Temperature: para rango templado (-10°C a 27°C) considerando viento + humedad
-
-    if ($temperatura <= 10 && $viento_velocidad >= 4.8) {
-        // Wind chill para frío con viento
-        $sensacion = round($wind_chill_val, 2);
-        $tipo_sensacion = 'wind_chill';
-    } elseif ($temperatura >= 27 && $humedad >= 40) {
-        // Heat index para calor con humedad
-        $sensacion = round($heat_index_val, 2);
-        $tipo_sensacion = 'heat_index';
+    // Usar siempre la fórmula de Steadman (apparent_temperature)
+    if ($vpd_val !== null) {
+        $tipo_sensacion = 'steadman_vpd';
     } else {
-        // Feeling Temperature para rango templado
-        if ($vpd_val !== null) {
-            $tipo_sensacion = 'steadman_vpd';
-        } else {
-            $tipo_sensacion = 'steadman';
-        }
-        $sensacion = round($feeling_val, 2);
+        $tipo_sensacion = 'steadman';
     }
+    $sensacion = round($feeling_val, 2);
 
     // Añadir al log los valores calculados si está activado el logging
     if ($send_LOG === 1) {
