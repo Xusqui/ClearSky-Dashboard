@@ -1,9 +1,9 @@
 // sun.js
 // --- Sol ---
 function updateSunPosition() {
-    const scriptURL = document.querySelector('script[src*="sun.js"]').src;
-    const params = new URLSearchParams(scriptURL.split('?')[1]);
-    const times = SunCalc.getTimes(now, LAT, LON);
+    // const scriptURL = document.querySelector('script[src*="sun.js"]').src;
+    // const params = new URLSearchParams(scriptURL.split('?')[1]);
+    const times = SunCalc.getTimes(now, latitude, longitude);
     const sunrise = times.sunrise;
     const sunset = times.sunset;
     const noontime = times.solarNoon;
@@ -32,4 +32,3 @@ function updateSunPosition() {
     sunIcon.setAttribute("y", y - 15);
 }
 updateSunPosition();
-setInterval(updateSunPosition, 60000);

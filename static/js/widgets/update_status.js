@@ -31,6 +31,7 @@ const WIDGET_SCRIPTS = [
     "./static/js/widgets/temp_interior_widget.js",
     "./static/js/widgets/humidity_interior_widget.js",
     "./static/js/widgets/seeing_widget.js",
+    "./static/js/sun.js",
 ];
 
 // Variable global para almacenar la última diferencia conocida de tiempo
@@ -78,78 +79,78 @@ function reloadWidgetScripts() {
  * 3. Función principal para obtener el estado del servidor y actualizar el DOM.
  */
 async function updateStatusFromAPI() {
-    try {
-        const response = await fetch(STATUS_API_URL);
+    try {
+        const response = await fetch(STATUS_API_URL);
 
-        if (!response.ok) {
-            throw new Error(`Error en la respuesta de la API: ${response.statusText}`);
-        }
+        if (!response.ok) {
+            throw new Error(`Error en la respuesta de la API: ${response.statusText}`);
+        }
 
-        const data = await response.json();
+        const data = await response.json();
 
-        // **Lógica de Recarga Automática de Widgets**
-        const currentDiffSeconds = data.diff_seconds;
+        // **Lógica de Recarga Automática de Widgets**
+        const currentDiffSeconds = data.diff_seconds;
 
-        // Comprobamos si el tiempo de actualización actual es *menor* que la diferencia previa.
-        if (currentDiffSeconds < lastKnownDiffSeconds) {
-            reloadWidgetScripts();
-        }
+        // Comprobamos si el tiempo de actualización actual es *menor* que la diferencia previa.
+        if (currentDiffSeconds < lastKnownDiffSeconds) {
+            reloadWidgetScripts();
+        }
 
-        // Actualizar la última diferencia conocida DESPUÉS de la comprobación.
-        lastKnownDiffSeconds = currentDiffSeconds;
+        // Actualizar la última diferencia conocida DESPUÉS de la comprobación.
+        lastKnownDiffSeconds = currentDiffSeconds;
 
-        // =======================================================
-        // 🚨 LÓGICA DE ESTADO ONLINE / OFFLINE
-        // =======================================================
-        // 🔑 Modificado: Usar el valor de la BD para calcular el umbral
-        // Usamos 90s como valor de respaldo si station_interval_sec no se recibe (aunque no debería)
+        // =======================================================
+        // 🚨 LÓGICA DE ESTADO ONLINE / OFFLINE
+        // =======================================================
+        // 🔑 Modificado: Usar el valor de la BD para calcular el umbral
+        // Usamos 90s como valor de respaldo si station_interval_sec no se recibe (aunque no debería)
         // El valor que usamos es un minuto más de lo que debería ser el intervalo establecido en la estación.
-        const STATION_INTERVAL = data.station_interval_sec || 30;
-        const OFFLINE_THRESHOLD = STATION_INTERVAL + 60;
+        const STATION_INTERVAL = data.station_interval_sec || 30;
+        const OFFLINE_THRESHOLD = STATION_INTERVAL + 60;
 
-        let newStatusClass = 'pws-online';
-        let newStatusText = 'PWS online';
+        let newStatusClass = 'pws-online';
+        let newStatusText = 'PWS online';
 
-        if (currentDiffSeconds > OFFLINE_THRESHOLD) {
-            newStatusClass = 'pws-offline';
-            newStatusText = 'PWS Desconectada';
-        }
+        if (currentDiffSeconds > OFFLINE_THRESHOLD) {
+            newStatusClass = 'pws-offline';
+            newStatusText = 'PWS Desconectada';
+        }
 
-        // Aplicar los cambios al DOM
-        if (statusContainerEl && statusTextEl) {
-            // Eliminar la clase vieja y añadir la nueva
-            statusContainerEl.classList.remove('pws-online', 'pws-offline');
-            statusContainerEl.classList.add(newStatusClass);
+        // Aplicar los cambios al DOM
+        if (statusContainerEl && statusTextEl) {
+            // Eliminar la clase vieja y añadir la nueva
+            statusContainerEl.classList.remove('pws-online', 'pws-offline');
+            statusContainerEl.classList.add(newStatusClass);
 
-            // Actualizar el texto
-            statusTextEl.textContent = newStatusText;
+            // Actualizar el texto
+            statusTextEl.textContent = newStatusText;
 
             // Opcional: Actualizar el tooltip (si es necesario)
             // Esto solo se puede hacer si el elemento tiene un método para actualizar el título.
             // Si es un <pws-info> con atributo title, se puede actualizar así:
-            const pwsInfoEl = document.getElementById("PWS_info");
-            if(pwsInfoEl) {
-                pwsInfoEl.setAttribute("title", `Última actualización: ${data.ts_formatted}`);
-            }
-        }
-        // =======================================================
+            const pwsInfoEl = document.getElementById("PWS_info");
+            if (pwsInfoEl) {
+                pwsInfoEl.setAttribute("title", `Última actualización: ${data.ts_formatted}`);
+            }
+        }
+        // =======================================================
 
-        // **Actualización del DOM**
-        if (statusTimeLongEl) {
-            statusTimeLongEl.innerText = data.ts_formatted;
-        }
+        // **Actualización del DOM**
+        if (statusTimeLongEl) {
+            statusTimeLongEl.innerText = data.ts_formatted;
+        }
 
-        if (statusTimeAgoEl) {
-            statusTimeAgoEl.innerText = `Actualizado hace ${currentDiffSeconds} sec`;
-            statusTimeAgoEl.dataset.updated = data.local_timestamp;
-        }
+        if (statusTimeAgoEl) {
+            statusTimeAgoEl.innerText = `Actualizado hace ${currentDiffSeconds} sec`;
+            statusTimeAgoEl.dataset.updated = data.local_timestamp;
+        }
 
-    } catch (error) {
-        console.error('Fallo al actualizar el estado:', error);
-        if (statusTimeAgoEl) {
-             statusTimeAgoEl.innerText = 'Error al cargar estado';
-        }
-    }
+    } catch (error) {
+        console.error('Fallo al actualizar el estado:', error);
+        if (statusTimeAgoEl) {
+            statusTimeAgoEl.innerText = 'Error al cargar estado';
+        }
+    }
 }
 
 // =========================================================

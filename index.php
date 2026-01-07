@@ -186,7 +186,7 @@ include __DIR__ . "/static/config/config.php";
     <script src="./static/js/other/orb.v2.js?v=<?= time(); ?>"></script>
     <script src="./static/config/conf_to_js.php?v=<?= time(); ?>"></script>
     <script src="./static/js/moon.js?v<?= time() ?>"></script>
-    <script src="./static/js/sun.js?v<?= time() ?>"></script>
+    <!--<script src="./static/js/sun.js?v<?= time() ?>"></script>-->
     <script type="module" src="./static/js/theme-switcher.js?v=<?= time(); ?>"></script>
 
     <!-- JS de widgets-->
