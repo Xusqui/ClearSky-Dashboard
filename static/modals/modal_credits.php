@@ -33,7 +33,7 @@
                     <p class="credits-card-value">La mayoría de iconos y gráficos son originales de **Weather Underground**</p>
                     <span class="credits-card-source">wunderground.com</span>
                 </a>
-                2. CodePen (Fases Lunares)
+                <!-- 2. CodePen (Fases Lunares)-->
                 <a class="credits-card" href="https://codepen.io/xaelan/pen/bjqOvo" target="_blank" rel="noopener noreferrer">
                     <!-- Usamos un icono de noche despejada como representación lunar genérica -->
                     <span class="credits-card-icon icon clear-night"></span>
