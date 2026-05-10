@@ -93,17 +93,13 @@ if ($mode === 'monthly') {
 
     // Consulta para obtener el valor de lluvia_mes del ÚLTIMO registro de cada mes
     $query = "
-        SELECT
-            DATE_FORMAT(`timestamp`, '%Y-%m') AS anio_mes,
-            SUBSTRING_INDEX(GROUP_CONCAT(lluvia_mes ORDER BY `timestamp` DESC), ',', 1) AS total_mes
-        FROM
-            meteo
-        WHERE
-            `timestamp` BETWEEN ? AND ?
-        GROUP BY
-            anio_mes
-        ORDER BY
-            anio_mes ASC
+    SELECT 
+    DATE_FORMAT(timestamp, '%Y-%m') AS anio_mes,
+    MAX(lluvia_mes) AS total_mes
+    FROM meteo
+    WHERE timestamp BETWEEN ? AND ?
+    GROUP BY anio_mes
+    ORDER BY anio_mes ASC;
     ";
 
     $stmt = $mysqli->prepare($query);
