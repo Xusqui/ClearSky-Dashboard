@@ -11,6 +11,7 @@ include './config_db.php';
 // === INCLUIR ESQUEMA CENTRAL ===
 require_once './config_schema.php';
 require_once './meteo_schema.php'; // ¡Añadido el esquema de la tabla 'meteo'!
+require_once __DIR__ . '/../modules/security/ip_allowlist.php';
 
 $conn = new mysqli($db_url, $db_user, $db_pass, $db_database);
 if ($conn->connect_error) {
@@ -345,6 +346,7 @@ $tz = $config['tz'] ?? 'UTC';
 // Variables de envío de datos
 $send_local = $config['send_local'] ?? true;
 $local_token = $config['local_token'] ?? '';
+$local_allowlist_cidrs = trim((string)($config['local_allowlist_cidrs'] ?? ''));
 $send_ha = $config['send_ha'] ?? true;
 $ha_token = $config['ha_token'] ?? '';
 $ha_ip = $config['ha_ip'] ?? '';
@@ -413,6 +415,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 	// Captura de las variables de envío (Desde SELECT -> 1 o 0)
 	$send_local_post = (int) ($_POST['send_local'] ?? 0);
 	$local_token_post = trim($_POST['local_token'] ?? '');
+	$local_allowlist_cidrs_post = trim($_POST['local_allowlist_cidrs'] ?? '');
 	$send_ha_post = (int) ($_POST['send_ha'] ?? 0);
 	$ha_token_post = trim($_POST['ha_token'] ?? '');
 	$ha_ip_post = trim($_POST['ha_ip'] ?? '');
@@ -449,6 +452,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 	// Validación: El token local es OBLIGATORIO para el acceso a la API (independientemente de send_local)
 	elseif (!$local_token_post) {
 		$missing_field = 'Token de Acceso a la API (Token Local)';
+	} elseif ($local_allowlist_cidrs_post !== '') {
+		$parsed_cidrs = clearsky_parse_cidr_list($local_allowlist_cidrs_post);
+		$invalid_cidr = '';
+
+		if (empty($parsed_cidrs)) {
+			$missing_field = 'Rango de IP local (CIDR/IP)';
+		} else {
+			foreach ($parsed_cidrs as $cidr_item) {
+				if (!clearsky_is_valid_cidr_entry($cidr_item)) {
+					$invalid_cidr = $cidr_item;
+					break;
+				}
+			}
+
+			if ($invalid_cidr !== '') {
+				$missing_field = "Rango de IP local inválido: {$invalid_cidr}";
+			} else {
+				// Normaliza y elimina duplicados para guardar formato consistente.
+				$local_allowlist_cidrs_post = implode(',', $parsed_cidrs);
+			}
+		}
 	}
 	// Validación de Tokens de envío (obligatorio si el envío está activado)
 	elseif ($send_ha_post && (!$ha_token_post || !$ha_ip_post || !$ha_port_post)) {
@@ -476,6 +500,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 		// Reasignar las variables de envío para preservar el estado del formulario al fallar
 		$send_local = $send_local_post;
 		$local_token = $local_token_post;
+		$local_allowlist_cidrs = $local_allowlist_cidrs_post;
 		$send_ha = $send_ha_post;
 		$ha_token = $ha_token_post;
 		$ha_ip = $ha_ip_post;
@@ -568,8 +593,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 
 		// --- PREPARACIÓN DE LA CONSULTA SQL (24 parámetros) ---
 		$sql = "
-			INSERT INTO config (id, observatorio, latitud, longitud, elevacion, hardware, software, city, country, tz, password, send_local, local_token, send_ha, ha_token, ha_ip, ha_port, send_meteoclimatic, meteoclimatic_code, meteoclimatic_token, log_weather, show_in_temp, show_in_hum, show_UV, show_solar, show_dew, show_sky, rain_offset)
-			VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+			INSERT INTO config (id, observatorio, latitud, longitud, elevacion, hardware, software, city, country, tz, password, send_local, local_token, local_allowlist_cidrs, send_ha, ha_token, ha_ip, ha_port, send_meteoclimatic, meteoclimatic_code, meteoclimatic_token, log_weather, show_in_temp, show_in_hum, show_UV, show_solar, show_dew, show_sky, rain_offset)
+			VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 			ON DUPLICATE KEY UPDATE
 				observatorio = VALUES(observatorio),
 				latitud = VALUES(latitud),
@@ -583,6 +608,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 				password = VALUES(password),
 				send_local = VALUES(send_local),
 				local_token = VALUES(local_token),
+				local_allowlist_cidrs = VALUES(local_allowlist_cidrs),
 				send_ha = VALUES(send_ha),
 				ha_token = VALUES(ha_token),
 				ha_ip = VALUES(ha_ip),
@@ -617,6 +643,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 			// s $password_final (string)
 			// i $send_local_post (string)
 			// s $local_token_post (string)
+			// s $local_allowlist_cidrs_post (String)
 			// i $send_ha_post (Integer)
 			// s $ha_token_post (String)
 			// s $ha_ip_post (String)
@@ -632,9 +659,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 			// i $show_dew_post (Integer)
 			// i $show_sky_post (Integer)
 			// d $rain_offset_post (Decimal)
-			// (27 parámetros)
+			// (28 parámetros)
 			$stmt->bind_param(
-				"sddissssssisissiissiiiiiiid",
+				"sddissssssississiissiiiiiiid",
 				$observatorio,
 				$latitud_post_saneada,
 				$longitud_post_saneada,
@@ -647,6 +674,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 				$password_final,
 				$send_local_post,
 				$local_token_post,
+				$local_allowlist_cidrs_post,
 				$send_ha_post,
 				$ha_token_post,
 				$ha_ip_post,
@@ -729,6 +757,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['authenticated'])) 
 
 				<div class="card card-api">
 					<h2>🔐 Seguridad y Sistema</h2>
+					<label>Rango IP permitido (CIDR/IP)</label>
+					<input type="text" name="local_allowlist_cidrs"
+						value="<?= htmlspecialchars($local_allowlist_cidrs) ?>"
+						placeholder="Ej: 192.168.1.0/24,10.0.0.15">
+					<small style="display:block; margin-top:8px; color:#666;">Opcional. Si se deja vacío, se aplica detección automática LAN + loopback.</small>
+
 					<label>API Key Local</label>
 					<input type="text" name="local_token" value="<?= htmlspecialchars($local_token) ?>" required>
 

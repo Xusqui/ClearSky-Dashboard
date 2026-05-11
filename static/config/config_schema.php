@@ -19,6 +19,7 @@ $config_schema = [
 
     'send_local' => 'BOOLEAN NOT NULL DEFAULT TRUE',
     'local_token' => 'VARCHAR(255)',
+    'local_allowlist_cidrs' => 'VARCHAR(500)',
 
     'send_ha' => 'BOOLEAN NOT NULL DEFAULT TRUE',
     'ha_token' => 'VARCHAR(255)',
@@ -38,4 +39,3 @@ $config_schema = [
     'show_sky' => 'BOOLEAN NOT NULL DEFAULT TRUE',
     'rain_offset' => 'DECIMAL(10,3) NOT NULL DEFAULT 0.000'
 ];
-?>

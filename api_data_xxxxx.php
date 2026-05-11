@@ -49,7 +49,7 @@ if (filter_var($ha_ip, FILTER_VALIDATE_IP) && is_numeric($ha_port) && $ha_port >
 }
 
 // Si el token es 'ha_token' en la DB, la URL se construye: BASE + TOKEN
-$TOKEN_SEGURO = $config['local_token'] ?? 'FAILSAFE_TOKEN';
+$TOKEN_SEGURO = trim((string)($config['local_token'] ?? ''));
 $HOME_ASSISTANT_WEBHOOK = $HA_WEBHOOK_BASE . ($config['ha_token'] ?? '');
 $METEOCLIMATIC_API = "http://api.m11c.net/v2/ew/{station_code}/{api_key}"; // Template
 $STATION_CODE = $config['meteoclimatic_code'] ?? '';
@@ -66,11 +66,32 @@ $send_LOG = (int)($config['log_weather'] ?? 0);
 $TIMEZONE = $config['tz'] ?? "UTC";
 date_default_timezone_set($TIMEZONE);
 
+// Seguridad LAN: lista blanca de IPs/CIDR permitidos.
+require_once __DIR__ . "/static/modules/security/ip_allowlist.php";
+
+$REQUEST_IP = $_SERVER['REMOTE_ADDR'] ?? '';
+$SERVER_IP = $_SERVER['SERVER_ADDR'] ?? '';
+$ALLOWED_CIDRS = trim((string)(($config['local_allowlist_cidrs'] ?? '') ?: getenv('CLEARSKY_ALLOWED_CIDRS')));
+
+if (!clearsky_is_request_ip_allowed($REQUEST_IP, $ALLOWED_CIDRS, $SERVER_IP)) {
+    write_debug($DEBUG_FILE, 'Acceso denegado: IP no autorizada (' . ($REQUEST_IP ?: 'NULO') . ').');
+    http_response_code(403);
+    echo "Forbidden";
+    exit;
+}
+
 // -------------------------------------------
 // TOKEN
 // -------------------------------------------
-// Si el token cargado está vacío, denegamos el acceso inmediatamente.
-if (empty($TOKEN_SEGURO) || !isset($_GET["token"]) || $_GET["token"] !== $TOKEN_SEGURO) {
+// Fail-closed: si local_token no está configurado, bloqueamos la ingesta.
+if ($TOKEN_SEGURO === '') {
+    write_debug($DEBUG_FILE, 'Acceso denegado: local_token no configurado en DB.');
+    http_response_code(403);
+    echo "Forbidden";
+    exit;
+}
+
+if (!isset($_GET["token"]) || $_GET["token"] !== $TOKEN_SEGURO) {
     write_debug($DEBUG_FILE, 'Acceso denegado: token inválido o no configurado. Token: ' . ($_GET["token"] ?? 'NULO'));
     http_response_code(403);
     echo "Forbidden";
