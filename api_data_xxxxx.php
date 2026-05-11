@@ -101,6 +101,15 @@ if (!clearsky_is_request_ip_allowed($REQUEST_IP, $ALLOWED_CIDRS, $SERVER_IP)) {
     exit;
 }
 
+$REQUEST_METHOD = strtoupper($_SERVER['REQUEST_METHOD'] ?? '');
+if ($REQUEST_METHOD !== 'POST') {
+    write_debug($DEBUG_FILE, 'Acceso denegado: método no permitido (' . ($REQUEST_METHOD ?: 'NULO') . '). Solo POST.');
+    http_response_code(405);
+    header('Allow: POST');
+    echo "Method Not Allowed";
+    exit;
+}
+
 // -------------------------------------------
 // TOKEN
 // -------------------------------------------
@@ -121,11 +130,14 @@ if (!isset($_GET["token"]) || $_GET["token"] !== $TOKEN_SEGURO) {
 unset($_GET["token"]);
 
 // -------------------------------------------
-// OBTENER DATOS (Ecowitt → $_POST o $_GET)
+// OBTENER DATOS (Ecowitt → solo $_POST)
 // -------------------------------------------
 $data = $_POST;
 if (empty($data)) {
-    $data = $_GET;
+    write_debug($DEBUG_FILE, 'Ingesta rechazada: POST sin datos.');
+    http_response_code(400);
+    echo "Bad Request";
+    exit;
 }
 
 // Guardar JSON crudo
