@@ -4,11 +4,32 @@
 // -------------------------------------------
 // DEBUG (Definición temprana por si falla la DB)
 // -------------------------------------------
-$LOG_FILE = "weather_data.log";
-$DEBUG_FILE = "debug.log";
+$log_dir    = dirname(__DIR__, 2) . '/Logs/clearsky';
+$LOG_FILE   = $log_dir . '/weather_data.log';
+$DEBUG_FILE = $log_dir . '/debug.log';
 
-function write_debug($file, $msg)
+function clearsky_rotate_log(string $file, int $max_bytes = 5 * 1024 * 1024): void
 {
+    if (file_exists($file) && filesize($file) >= $max_bytes) {
+        @rename($file, $file . '.1');
+    }
+}
+
+function clearsky_sanitize_log(array $data): array
+{
+    $out = $data;
+    foreach ($out as $key => $val) {
+        $lk = strtolower((string)$key);
+        if (str_contains($lk, 'pass') || str_contains($lk, 'token') || str_contains($lk, 'key')) {
+            $out[$key] = '[REDACTED]';
+        }
+    }
+    return $out;
+}
+
+function write_debug(string $file, string $msg): void
+{
+    clearsky_rotate_log($file);
     $time = date("Y-m-d H:i:s");
     file_put_contents($file, "[$time] $msg\n", FILE_APPEND);
 }
@@ -92,7 +113,7 @@ if ($TOKEN_SEGURO === '') {
 }
 
 if (!isset($_GET["token"]) || $_GET["token"] !== $TOKEN_SEGURO) {
-    write_debug($DEBUG_FILE, 'Acceso denegado: token inválido o no configurado. Token: ' . ($_GET["token"] ?? 'NULO'));
+    write_debug($DEBUG_FILE, 'Acceso denegado: token inválido o ausente.');
     http_response_code(403);
     echo "Forbidden";
     exit;
@@ -111,7 +132,8 @@ if (empty($data)) {
 // Una vez compruebes que todo funciona bien, puedes desactivar el log en el setup de la web para que
 // el archivo weather_data.log no se haga gigantesco
 if ($send_LOG === 1) {
-    file_put_contents($LOG_FILE, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n", FILE_APPEND);
+    clearsky_rotate_log($LOG_FILE);
+    file_put_contents($LOG_FILE, json_encode(clearsky_sanitize_log($data), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n", FILE_APPEND);
     write_debug($DEBUG_FILE, "SE ESTÁN ESCRIBIENDO LOS DATOS CRUDOS EN weather_data.log");
 }
 
