@@ -81,14 +81,28 @@ function fetch_pressure_levels($lat, $lon)
         return ["error" => true, "message" => "No hourly data"];
     }
 
-    $lastIndex = count($json['hourly']['time']) - 1;
+    // Buscar el índice horario más cercano a ahora (la petición usa timezone=UTC,
+    // así que comparamos en UTC) en vez de asumir que el último índice del array
+    // es el más reciente. Mismo criterio que ya usa fetch_cloud_layers_openmeteo().
+    $time_array = $json['hourly']['time'];
+    $now = new DateTime("now", new DateTimeZone("UTC"));
+    $closest_index = 0;
+    $min_diff = PHP_INT_MAX;
+    foreach ($time_array as $i => $time_str) {
+        $t = new DateTime($time_str, new DateTimeZone("UTC"));
+        $diff = abs($t->getTimestamp() - $now->getTimestamp());
+        if ($diff < $min_diff) {
+            $min_diff = $diff;
+            $closest_index = $i;
+        }
+    }
 
     return [
         "error" => false,
-        "temp300" => (float) $json['hourly']['temperature_300hPa'][$lastIndex],
-        "temp500" => (float) $json['hourly']['temperature_500hPa'][$lastIndex],
-        "wind300" => (float) $json['hourly']['wind_speed_300hPa'][$lastIndex],
-        "wind500" => (float) $json['hourly']['wind_speed_500hPa'][$lastIndex]
+        "temp300" => (float) $json['hourly']['temperature_300hPa'][$closest_index],
+        "temp500" => (float) $json['hourly']['temperature_500hPa'][$closest_index],
+        "wind300" => (float) $json['hourly']['wind_speed_300hPa'][$closest_index],
+        "wind500" => (float) $json['hourly']['wind_speed_500hPa'][$closest_index]
     ];
 }
 
@@ -143,55 +157,59 @@ function fetch_cloud_layers_openmeteo($lat, $lon, $tz)
 
 // --- 5/6. Obtener datos externos de Open-Meteo (altura + nubosidad), con caché ---
 // Son datos horarios (no cambian dentro de la misma hora), así que se cachean
-// juntos con TTL de 30 min (igual que get_forecast.php) en vez de llamar a la
-// API externa en cada poll del widget.
-$SEEING_CACHE_FILE = __DIR__ . '/../../cache/seeing_external.json';
+// juntos con TTL de 30 min (igual que get_forecast.php). Caché en APCu
+// (memoria compartida entre procesos PHP-FPM) en vez de un archivo en disco;
+// si APCu no estuviera disponible, se degrada a llamar siempre a Open-Meteo.
+$SEEING_CACHE_KEY = 'clearsky_seeing_external';
 $SEEING_CACHE_TTL = 30 * 60; // 30 minutos
+$apcuAvailable = function_exists('apcu_fetch');
 
 $levels = null;
 $clouds = null;
 
-$fp = fopen($SEEING_CACHE_FILE, 'c+');
-if ($fp) {
-    flock($fp, LOCK_EX);
-
+if (!$apcuAvailable) {
+    $levels = fetch_pressure_levels($lat, $lon);
+    $clouds = fetch_cloud_layers_openmeteo($lat, $lon, $tz);
+} else {
     $now = time();
-    $contents = stream_get_contents($fp);
-    $cache = $contents ? json_decode($contents, true) : null;
-    $cacheIsFresh = $cache && isset($cache['timestamp'], $cache['levels'], $cache['clouds'])
+    $cache = apcu_fetch($SEEING_CACHE_KEY, $found);
+    $cacheIsFresh = $found && isset($cache['timestamp'], $cache['levels'], $cache['clouds'])
         && ($now - $cache['timestamp']) < $SEEING_CACHE_TTL;
 
     if ($cacheIsFresh) {
         $levels = $cache['levels'];
         $clouds = $cache['clouds'];
     } else {
-        $freshLevels = fetch_pressure_levels($lat, $lon);
-        $freshClouds = fetch_cloud_layers_openmeteo($lat, $lon, $tz);
+        $lockKey = $SEEING_CACHE_KEY . '_lock';
+        if (apcu_add($lockKey, true, 10)) {
+            $freshLevels = fetch_pressure_levels($lat, $lon);
+            $freshClouds = fetch_cloud_layers_openmeteo($lat, $lon, $tz);
 
-        if ($freshLevels['error'] && $freshClouds['error'] && $cache) {
-            // Open-Meteo no responde: servir la última caché conocida antes que nada.
+            if ($freshLevels['error'] && $freshClouds['error'] && $found) {
+                // Open-Meteo no responde: servir la última caché conocida antes que nada.
+                $levels = $cache['levels'];
+                $clouds = $cache['clouds'];
+            } else {
+                $levels = $freshLevels;
+                $clouds = $freshClouds;
+
+                apcu_store($SEEING_CACHE_KEY, [
+                    "timestamp" => $now,
+                    "levels" => $levels,
+                    "clouds" => $clouds
+                ]);
+            }
+            apcu_delete($lockKey);
+        } elseif ($found) {
+            // Otro proceso ya está recalculando: servir la caché existente.
             $levels = $cache['levels'];
             $clouds = $cache['clouds'];
         } else {
-            $levels = $freshLevels;
-            $clouds = $freshClouds;
-
-            rewind($fp);
-            ftruncate($fp, 0);
-            fwrite($fp, json_encode([
-                "timestamp" => $now,
-                "levels" => $levels,
-                "clouds" => $clouds
-            ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+            // No hay caché previa ni se pudo tomar el lock: llamar igualmente.
+            $levels = fetch_pressure_levels($lat, $lon);
+            $clouds = fetch_cloud_layers_openmeteo($lat, $lon, $tz);
         }
     }
-
-    flock($fp, LOCK_UN);
-    fclose($fp);
-} else {
-    // No se pudo abrir el archivo de caché: seguir funcionando sin cachear.
-    $levels = fetch_pressure_levels($lat, $lon);
-    $clouds = fetch_cloud_layers_openmeteo($lat, $lon, $tz);
 }
 
 // --- 5. Procesar datos de altura ---

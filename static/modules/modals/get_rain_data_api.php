@@ -133,15 +133,51 @@ if ($mode === 'detailed') {
 
     $target_timezone = get_target_timezone($mysqli);
     $tz_destination = new DateTimeZone($target_timezone);
-    $date_format_php = (strtotime($end_date) - strtotime($start_date)) > (24 * 3600) ? 'Y-m-d H:i' : 'H:i';
 
-    // Consulta SQL para obtener los datos de la serie de tiempo (lluvia_rate, lluvia_evento, etc.)
-    $query = "
-        SELECT `timestamp` AS hora, lluvia_rate, lluvia_evento, lluvia_hora
-        FROM meteo
-        WHERE `timestamp` BETWEEN ? AND ?
-        ORDER BY `timestamp` ASC
-    ";
+    // Downsampling según la amplitud del rango (mismo criterio que el resto de
+    // get_*_historic.php): por encima de 7/30 días se agrega por hora o por
+    // día para no devolver decenas de miles de filas sin agregar.
+    $diff_days = (int) floor((strtotime($end_date) - strtotime($start_date)) / 86400);
+
+    if ($diff_days > 30) {
+        // Rango largo (> 30 días): un punto por día.
+        $date_format_php = 'Y-m-d';
+        $query = "
+            SELECT DATE(`timestamp`) AS hora,
+                   AVG(lluvia_rate) AS lluvia_rate,
+                   AVG(lluvia_evento) AS lluvia_evento,
+                   AVG(lluvia_hora) AS lluvia_hora
+            FROM meteo
+            WHERE `timestamp` BETWEEN ? AND ?
+            GROUP BY DATE(`timestamp`)
+            ORDER BY hora ASC
+        ";
+    } elseif ($diff_days > 7) {
+        // Rango medio (7-30 días): un punto por hora.
+        $date_format_php = 'Y-m-d H:i';
+        $query = "
+            SELECT DATE_FORMAT(`timestamp`, '%Y-%m-%d %H:00:00') AS hora,
+                   AVG(lluvia_rate) AS lluvia_rate,
+                   AVG(lluvia_evento) AS lluvia_evento,
+                   AVG(lluvia_hora) AS lluvia_hora
+            FROM meteo
+            WHERE `timestamp` BETWEEN ? AND ?
+            GROUP BY DATE_FORMAT(`timestamp`, '%Y-%m-%d %H:00:00')
+            ORDER BY hora ASC
+        ";
+    } else {
+        // Rango corto (<= 7 días): muestras sin agregar, como antes.
+        // LIMIT de seguridad: cota defensiva ante un rango/frecuencia de
+        // reporte inusualmente altos, sin afectar el uso normal.
+        $date_format_php = (strtotime($end_date) - strtotime($start_date)) > (24 * 3600) ? 'Y-m-d H:i' : 'H:i';
+        $query = "
+            SELECT `timestamp` AS hora, lluvia_rate, lluvia_evento, lluvia_hora
+            FROM meteo
+            WHERE `timestamp` BETWEEN ? AND ?
+            ORDER BY `timestamp` ASC
+            LIMIT 50000
+        ";
+    }
 
     $stmt = $mysqli->prepare($query);
     $stmt->bind_param("ss", $start_date, $end_date);

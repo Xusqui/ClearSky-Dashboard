@@ -36,16 +36,56 @@ if (isset($_GET['start']) && isset($_GET['end'])) {
     $end_dt = DateTime::createFromFormat('Y-m-d\TH:i', $end_date);
 
     if ($start_dt && $end_dt) {
-        // Formato de fecha dinámico para el eje X (Formato PHP)
-        $date_format_php = ($start_dt->diff($end_dt)->d > 0) ? 'Y-m-d H:i' : 'H:i';
+        // Downsampling según la amplitud del rango: por encima de 7/30 días,
+        // devolver todas las muestras crudas puede significar decenas de miles
+        // de filas. Se agrega por hora o por día para mantener el payload y la
+        // consulta acotados.
+        //
+        // viento_direccion es una magnitud circular (0°=360°): promediarla con
+        // AVG() normal daría resultados incorrectos cerca del norte (ej. AVG de
+        // 350° y 10° saldría 180°=sur, en vez de 0°=norte). Se calcula la media
+        // circular vía componentes seno/coseno (DEGREES(ATAN2(...))).
+        $diff_days = $start_dt->diff($end_dt)->days;
 
-        // Consulta SQL: Seleccionamos el timestamp crudo
-        $query = "
-            SELECT `timestamp` AS hora, viento_velocidad, viento_racha, viento_direccion
-            FROM meteo
-            WHERE `timestamp` BETWEEN ? AND ?
-            ORDER BY `timestamp` ASC
-        ";
+        if ($diff_days > 30) {
+            // Rango largo (> 30 días): un punto por día.
+            $date_format_php = 'Y-m-d';
+            $query = "
+                SELECT DATE(`timestamp`) AS hora,
+                       AVG(viento_velocidad) AS viento_velocidad,
+                       AVG(viento_racha) AS viento_racha,
+                       DEGREES(ATAN2(AVG(SIN(RADIANS(viento_direccion))), AVG(COS(RADIANS(viento_direccion))))) AS viento_direccion
+                FROM meteo
+                WHERE `timestamp` BETWEEN ? AND ?
+                GROUP BY DATE(`timestamp`)
+                ORDER BY hora ASC
+            ";
+        } elseif ($diff_days > 7) {
+            // Rango medio (7-30 días): un punto por hora.
+            $date_format_php = 'Y-m-d H:i';
+            $query = "
+                SELECT DATE_FORMAT(`timestamp`, '%Y-%m-%d %H:00:00') AS hora,
+                       AVG(viento_velocidad) AS viento_velocidad,
+                       AVG(viento_racha) AS viento_racha,
+                       DEGREES(ATAN2(AVG(SIN(RADIANS(viento_direccion))), AVG(COS(RADIANS(viento_direccion))))) AS viento_direccion
+                FROM meteo
+                WHERE `timestamp` BETWEEN ? AND ?
+                GROUP BY DATE_FORMAT(`timestamp`, '%Y-%m-%d %H:00:00')
+                ORDER BY hora ASC
+            ";
+        } else {
+            // Rango corto (<= 7 días): muestras sin agregar, como antes.
+            // LIMIT de seguridad: cota defensiva ante un rango/frecuencia de
+            // reporte inusualmente altos, sin afectar el uso normal.
+            $date_format_php = ($start_dt->diff($end_dt)->d > 0) ? 'Y-m-d H:i' : 'H:i';
+            $query = "
+                SELECT `timestamp` AS hora, viento_velocidad, viento_racha, viento_direccion
+                FROM meteo
+                WHERE `timestamp` BETWEEN ? AND ?
+                ORDER BY `timestamp` ASC
+                LIMIT 50000
+            ";
+        }
 
         $stmt = $mysqli->prepare($query);
         $stmt->bind_param("ss", $start_date, $end_date);
@@ -59,6 +99,7 @@ if (isset($_GET['start']) && isset($_GET['end'])) {
             FROM meteo
             WHERE `timestamp` >= NOW() - INTERVAL 24 HOUR
             ORDER BY `timestamp` ASC
+            LIMIT 50000
         ";
         $stmt = $mysqli->prepare($query);
     }
@@ -72,6 +113,7 @@ if (isset($_GET['start']) && isset($_GET['end'])) {
         FROM meteo
         WHERE `timestamp` >= NOW() - INTERVAL 24 HOUR
         ORDER BY `timestamp` ASC
+        LIMIT 50000
     ";
     $stmt = $mysqli->prepare($query);
 }
@@ -101,6 +143,13 @@ if ($result) {
             // Mantenemos la hora UTC si la conversión falla
         }
         // ----------------------------------------------
+
+        // Normalizar a [0, 360): ATAN2 (usado en la media circular al agregar
+        // por hora/día) puede devolver valores negativos; en filas sin agregar
+        // esto no cambia nada (ya vienen en 0-360).
+        if (isset($row['viento_direccion']) && $row['viento_direccion'] !== null) {
+            $row['viento_direccion'] = fmod(((float) $row['viento_direccion']) + 360, 360);
+        }
 
         $data[] = $row;
     }

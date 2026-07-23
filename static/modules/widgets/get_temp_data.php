@@ -2,8 +2,12 @@
 // get_temp_data.php
 include __DIR__ . '/../../config/config.php';
 include __DIR__ . '/math_utils.php';
-$TEMP_TREND_CACHE = __DIR__ . '/../../cache/temp_trend.json';
-$TEMP_TREND_TTL   = 10 * 60; // 10 minutos
+// Caché en APCu (memoria compartida entre procesos PHP-FPM) en vez de un
+// archivo en disco. Si APCu no estuviera disponible, se degrada a calcular
+// la tendencia en cada request en vez de fallar.
+$TEMP_TREND_CACHE_KEY = 'clearsky_temp_trend';
+$TEMP_TREND_TTL = 10 * 60; // 10 minutos
+$apcuAvailable = function_exists('apcu_fetch');
 
 
 // Parámetros para el cálculo del ángulo
@@ -101,39 +105,36 @@ if ($result->num_rows === 0) {
     die_with_error("No se encontraron datos en la tabla 'meteo'.");
 }
 
-// CÁLCULO DE TENDENCIAS (con flock: evita que varios widgets/pestañas
-// recalculen a la vez cuando expira el TTL, y evita escrituras entrelazadas
-// en el JSON; mismo patrón que get_forecast.php):
+// CÁLCULO DE TENDENCIAS (vía APCu: evita que varios widgets/pestañas
+// recalculen a la vez cuando expira el TTL, usando apcu_add() como lock
+// atómico; mismo criterio que get_forecast.php):
 $trendData = null;
 $now = time();
 
-$trendFp = fopen($TEMP_TREND_CACHE, 'c+');
-if ($trendFp) {
-    flock($trendFp, LOCK_EX);
+if (!$apcuAvailable) {
+    $trendData = computeTempTrend($mysqli);
+} else {
+    $cache = apcu_fetch($TEMP_TREND_CACHE_KEY, $found);
 
-    $cacheContents = stream_get_contents($trendFp);
-    $cache = $cacheContents ? json_decode($cacheContents, true) : null;
-
-    if ($cache && isset($cache['computed_at']) && ($now - strtotime($cache['computed_at'])) < $TEMP_TREND_TTL) {
+    if ($found && isset($cache['computed_at']) && ($now - strtotime($cache['computed_at'])) < $TEMP_TREND_TTL) {
         $trendData = $cache;
     } else {
-        $newTrend = computeTempTrend($mysqli);
-        if ($newTrend !== null) {
-            rewind($trendFp);
-            ftruncate($trendFp, 0);
-            fwrite($trendFp, json_encode($newTrend, JSON_PRETTY_PRINT));
-            $trendData = $newTrend;
-        } elseif ($cache) {
-            // Sin datos suficientes para recalcular: servir la caché anterior.
+        $lockKey = $TEMP_TREND_CACHE_KEY . '_lock';
+        if (apcu_add($lockKey, true, 10)) {
+            $newTrend = computeTempTrend($mysqli);
+            if ($newTrend !== null) {
+                apcu_store($TEMP_TREND_CACHE_KEY, $newTrend);
+                $trendData = $newTrend;
+            } elseif ($found) {
+                // Sin datos suficientes para recalcular: servir la caché anterior.
+                $trendData = $cache;
+            }
+            apcu_delete($lockKey);
+        } elseif ($found) {
+            // Otro proceso ya está recalculando: servir la caché existente.
             $trendData = $cache;
         }
     }
-
-    flock($trendFp, LOCK_UN);
-    fclose($trendFp);
-} else {
-    // No se pudo abrir el archivo de caché: calcular sin cachear.
-    $trendData = computeTempTrend($mysqli);
 }
 
 

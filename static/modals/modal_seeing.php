@@ -61,8 +61,8 @@
                     <p class="seeing-card-value" id="t300">-</p>
                     <span class="seeing-card-desc">ºC</span>
                 </div>
-                <div class="card">
-                    <h3 class="seeing-card-title">📊 DeltaT</h3>
+                <div class="card" title="Diferencia de temperatura entre 5.5 km (500 hPa) y 9 km (300 hPa) de altura. Indica la estabilidad de la atmósfera: menos de 15°C es excelente, entre 15 y 30°C es moderado, más de 30°C es inestable y empeora el seeing.">
+                    <h3 class="seeing-card-title">📊 DeltaT <span class="seeing-info-hint" aria-hidden="true">ℹ️</span></h3>
                     <p class="seeing-card-value" id="deltaT">-</p>
                     <span class="seeing-card-desc">(Estabilidad)</span>
                 </div>
@@ -76,8 +76,8 @@
                     <p class="seeing-card-value" id="w300">-</p>
                     <span class="seeing-card-desc">Km/h</span>
                 </div>
-                <div class="card">
-                    <h3 class="seeing-card-title">🌪️ Shear vertical</h3>
+                <div class="card" title="Diferencia de velocidad del viento entre 300 hPa y 500 hPa (cizalladura vertical). Indica turbulencia en altura: menos de 20 km/h es excelente, entre 20 y 40 km/h es moderado, más de 40 km/h es alto y empeora el seeing.">
+                    <h3 class="seeing-card-title">🌪️ Shear vertical <span class="seeing-info-hint" aria-hidden="true">ℹ️</span></h3>
                     <p class="seeing-card-value" id="shear">-</p>
                     <span class="seeing-card-desc">(Turbulencia)</span>
                 </div>

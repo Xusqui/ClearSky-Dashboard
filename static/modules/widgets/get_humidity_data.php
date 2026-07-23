@@ -9,8 +9,12 @@ ini_set('display_errors', 1);
 // $db_user, $db_pass, $db_url, $db_database
 include __DIR__ . '/../../config/config.php';
 include __DIR__ . '/math_utils.php';
-$HUMIDITY_TREND_CACHE = __DIR__ . '/../../cache/humidity_trend.json';
-$HUMIDITY_TREND_TTL   = 15 * 60; // 15 minutos
+// Caché en APCu (memoria compartida entre procesos PHP-FPM) en vez de un
+// archivo en disco. Si APCu no estuviera disponible, se degrada a calcular
+// la tendencia en cada request en vez de fallar.
+$HUMIDITY_TREND_CACHE_KEY = 'clearsky_humidity_trend';
+$HUMIDITY_TREND_TTL = 15 * 60; // 15 minutos
+$apcuAvailable = function_exists('apcu_fetch');
 
 /**
  * Función para devolver un error en formato JSON y terminar el script.
@@ -124,39 +128,36 @@ $row = $result->fetch_assoc();
 // ----------------------------
 //  CACHÉ DE TENDENCIA DE HUMEDAD EXTERIOR
 // ----------------------------
-// (con flock: evita que varios widgets/pestañas recalculen a la vez cuando
-// expira el TTL, y evita escrituras entrelazadas en el JSON; mismo patrón
-// que get_forecast.php):
+// (vía APCu: evita que varios widgets/pestañas recalculen a la vez cuando
+// expira el TTL, usando apcu_add() como lock atómico; mismo criterio que
+// get_forecast.php):
 $trendData = null;
 $now = time();
 
-$trendFp = fopen($HUMIDITY_TREND_CACHE, 'c+');
-if ($trendFp) {
-    flock($trendFp, LOCK_EX);
+if (!$apcuAvailable) {
+    $trendData = computeHumidityTrend($mysqli);
+} else {
+    $cache = apcu_fetch($HUMIDITY_TREND_CACHE_KEY, $found);
 
-    $cacheContents = stream_get_contents($trendFp);
-    $cache = $cacheContents ? json_decode($cacheContents, true) : null;
-
-    if ($cache && isset($cache['computed_at']) && ($now - strtotime($cache['computed_at'])) < $HUMIDITY_TREND_TTL) {
+    if ($found && isset($cache['computed_at']) && ($now - strtotime($cache['computed_at'])) < $HUMIDITY_TREND_TTL) {
         $trendData = $cache;
     } else {
-        $newTrend = computeHumidityTrend($mysqli);
-        if ($newTrend !== null) {
-            rewind($trendFp);
-            ftruncate($trendFp, 0);
-            fwrite($trendFp, json_encode($newTrend, JSON_PRETTY_PRINT));
-            $trendData = $newTrend;
-        } elseif ($cache) {
-            // Sin datos suficientes para recalcular: servir la caché anterior.
+        $lockKey = $HUMIDITY_TREND_CACHE_KEY . '_lock';
+        if (apcu_add($lockKey, true, 10)) {
+            $newTrend = computeHumidityTrend($mysqli);
+            if ($newTrend !== null) {
+                apcu_store($HUMIDITY_TREND_CACHE_KEY, $newTrend);
+                $trendData = $newTrend;
+            } elseif ($found) {
+                // Sin datos suficientes para recalcular: servir la caché anterior.
+                $trendData = $cache;
+            }
+            apcu_delete($lockKey);
+        } elseif ($found) {
+            // Otro proceso ya está recalculando: servir la caché existente.
             $trendData = $cache;
         }
     }
-
-    flock($trendFp, LOCK_UN);
-    fclose($trendFp);
-} else {
-    // No se pudo abrir el archivo de caché: calcular sin cachear.
-    $trendData = computeHumidityTrend($mysqli);
 }
 
 // Aseguramos que los valores sean flotantes o 0 si son nulos/inválidos.

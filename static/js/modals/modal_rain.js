@@ -217,6 +217,19 @@ document.addEventListener("DOMContentLoaded", function () {
                     return;
                 }
 
+                if (chartData.labels.length > 5000) {
+                    // Decimación: evita renderizar decenas de miles de puntos si el
+                    // usuario elige un rango de varios días sin agregar en el backend.
+                    // Aquí 'labels' y cada serie ya vienen como arrays paralelos desde
+                    // el backend, así que se decima cada uno con el mismo paso.
+                    const step = Math.ceil(chartData.labels.length / 2000);
+                    chartData.labels = chartData.labels.filter((_, i) => i % step === 0);
+                    chartData.series = chartData.series.map(s => ({
+                        ...s,
+                        data: s.data.filter((_, i) => i % step === 0)
+                    }));
+                }
+
                 // Ejes Y dinámicos para el Rate (Línea) y Evento (Barra)
                 const rateData = chartData.series.find(s => s.name === 'Lluvia Rate').data;
                 const eventData = chartData.series.find(s => s.name === 'Lluvia Evento').data;

@@ -178,6 +178,16 @@
     /* Fija altura para 1-2 líneas */
 }
 
+/* Tarjetas con explicación adicional vía atributo title= (ej. DeltaT, Shear) */
+.card[title] {
+    cursor: help;
+}
+
+.seeing-info-hint {
+    font-size: 0.75em;
+    opacity: 0.6;
+}
+
 /* Valor principal (reemplaza a .card p) */
 .seeing-card-value {
     font-size: 1.7em;

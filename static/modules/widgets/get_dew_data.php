@@ -5,8 +5,12 @@ include __DIR__ . '/../../config/config.php';
 
 $windowMinutes = 30;
 $epsilon = 0.0005;
-$cache_file = __DIR__ . '/../../cache/dew_cache.json';
+// Caché en APCu (memoria compartida entre procesos PHP-FPM) en vez de un
+// archivo en disco. Si APCu no estuviera disponible, se degrada a calcular
+// la tendencia en cada request en vez de fallar.
+$cache_key = 'clearsky_dew_trend';
 $cache_ttl = 180; // Segundos: 3 minutos
+$apcuAvailable = function_exists('apcu_fetch');
 
 /**
  * Devuelve error JSON y termina
@@ -130,33 +134,33 @@ $wind  = is_numeric($cur['viento_velocidad']) ? (float)$cur['viento_velocidad'] 
 $res->free();
 
 // ----------------------------------------------------
-// Leer/recalcular caché con flock (evita que varios widgets/pestañas
-// recalculen a la vez cuando expira el TTL, y escrituras entrelazadas en el
-// JSON; mismo patrón que get_forecast.php)
+// Leer/recalcular caché vía APCu (evita que varios widgets/pestañas
+// recalculen a la vez cuando expira el TTL, usando apcu_add() como lock
+// atómico; mismo criterio que get_forecast.php)
 // ----------------------------------------------------
 $cacheData = null;
 
-$dewFp = fopen($cache_file, 'c+');
-if ($dewFp) {
-    flock($dewFp, LOCK_EX);
+if (!$apcuAvailable) {
+    $cacheData = computeDewTrend($mysqli, $windowMinutes, $epsilon, $temp, $dew, $wind);
+} else {
+    $cached = apcu_fetch($cache_key, $found);
 
-    $cacheContents = stream_get_contents($dewFp);
-    $cached = $cacheContents ? json_decode($cacheContents, true) : null;
-
-    if ($cached && isset($cached['timestamp']) && time() - $cached['timestamp'] < $cache_ttl) {
+    if ($found && isset($cached['timestamp']) && time() - $cached['timestamp'] < $cache_ttl) {
         $cacheData = $cached;
     } else {
-        $cacheData = computeDewTrend($mysqli, $windowMinutes, $epsilon, $temp, $dew, $wind);
-        rewind($dewFp);
-        ftruncate($dewFp, 0);
-        fwrite($dewFp, json_encode($cacheData, JSON_PRETTY_PRINT));
+        $lockKey = $cache_key . '_lock';
+        if (apcu_add($lockKey, true, 10)) {
+            $cacheData = computeDewTrend($mysqli, $windowMinutes, $epsilon, $temp, $dew, $wind);
+            apcu_store($cache_key, $cacheData);
+            apcu_delete($lockKey);
+        } elseif ($found) {
+            // Otro proceso ya está recalculando: servir la caché existente.
+            $cacheData = $cached;
+        } else {
+            // No hay caché previa ni se pudo tomar el lock: calcular igualmente.
+            $cacheData = computeDewTrend($mysqli, $windowMinutes, $epsilon, $temp, $dew, $wind);
+        }
     }
-
-    flock($dewFp, LOCK_UN);
-    fclose($dewFp);
-} else {
-    // No se pudo abrir el archivo de caché: calcular sin cachear.
-    $cacheData = computeDewTrend($mysqli, $windowMinutes, $epsilon, $temp, $dew, $wind);
 }
 
 $trendState  = $cacheData['trend_state'];

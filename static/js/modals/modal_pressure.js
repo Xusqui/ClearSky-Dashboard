@@ -68,6 +68,13 @@ document.addEventListener("DOMContentLoaded", function () {
                     return;
                 }
 
+                if (data.length > 5000) {
+                    // Decimación: evita renderizar decenas de miles de puntos si el
+                    // usuario elige un rango de varios días sin agregar en el backend.
+                    const step = Math.ceil(data.length / 2000);
+                    data = data.filter((_, i) => i % step === 0);
+                }
+
                 const labels = data.map(row => row.hora);
                 const presiones = data.map(row => parseFloat(row.presion_relativa));
 

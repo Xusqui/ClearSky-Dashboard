@@ -17,8 +17,14 @@ if ($LAT === null || $LON === null) {
     exit;
 }
 
-$CACHE_FILE = __DIR__ . '/../../cache/cache_forecast.json';
-$CACHE_TTL  = 30 * 60; // 30 minutos
+// Caché en APCu (memoria compartida entre los procesos PHP-FPM) en vez de un
+// archivo en disco: misma semántica (TTL manual comparado contra
+// 'timestamp', fallback a la última caché conocida si Open-Meteo falla) pero
+// sin I/O de filesystem en cada request. Si APCu no estuviera disponible, se
+// degrada a "calcular siempre sin cachear" en vez de fallar.
+$CACHE_KEY = 'clearsky_forecast';
+$CACHE_TTL = 30 * 60; // 30 minutos
+$apcuAvailable = function_exists('apcu_fetch');
 
 $OPENMETEO_URL =
     "https://api.open-meteo.com/v1/forecast?" .
@@ -60,35 +66,54 @@ function curl_get_json(string $url): ?string
 }
 
 // ─────────────────────────────────────────────
-// CONTROL DE CONCURRENCIA + CACHE
+// LEER CACHÉ (APCu)
 // ─────────────────────────────────────────────
-$fp = fopen($CACHE_FILE, 'c+');
-if (!$fp) {
-    http_response_code(500);
-    echo json_encode(["error" => "No se puede abrir la caché"]);
-    exit;
-}
-
-flock($fp, LOCK_EX);
-
-$cache = null;
 $now = time();
+$cache = null;
+$found = false;
 
-// Leer caché existente
-$contents = stream_get_contents($fp);
-if ($contents) {
-    $cache = json_decode($contents, true);
+if ($apcuAvailable) {
+    $cache = apcu_fetch($CACHE_KEY, $found);
 }
 
 // Cache válida → devolver
 if (
-    $cache &&
+    $found &&
     isset($cache['timestamp'], $cache['data']) &&
     ($now - $cache['timestamp']) < $CACHE_TTL
 ) {
     echo json_encode($cache['data']);
-    flock($fp, LOCK_UN);
-    fclose($fp);
+    exit;
+}
+
+if (!$apcuAvailable) {
+    // Sin APCu disponible: calcular siempre, sin cachear.
+    $response = curl_get_json($OPENMETEO_URL);
+    if ($response === null) {
+        http_response_code(502);
+        echo json_encode(["error" => "Open-Meteo no responde"]);
+        exit;
+    }
+    echo json_encode(json_decode($response, true));
+    exit;
+}
+
+// ─────────────────────────────────────────────
+// CONTROL DE CONCURRENCIA: solo un proceso recalcula a la vez. apcu_add()
+// falla atómicamente si la clave de lock ya existe, evitando que varias
+// peticiones simultáneas golpeen Open-Meteo a la vez cuando expira el TTL.
+// ─────────────────────────────────────────────
+$lockKey = $CACHE_KEY . '_lock';
+
+if (!apcu_add($lockKey, true, 10)) {
+    // Otro proceso ya está recalculando: servir la caché existente aunque
+    // esté caducada, antes que hacer esperar al usuario.
+    if ($found && isset($cache['data'])) {
+        echo json_encode($cache['data']);
+    } else {
+        http_response_code(503);
+        echo json_encode(["error" => "Caché en proceso de actualización, reintenta en unos segundos"]);
+    }
     exit;
 }
 
@@ -98,15 +123,14 @@ if (
 $response = curl_get_json($OPENMETEO_URL);
 
 if ($response === null) {
+    apcu_delete($lockKey);
     // Fallback: servir caché vieja si existe
-    if ($cache && isset($cache['data'])) {
+    if ($found && isset($cache['data'])) {
         echo json_encode($cache['data']);
     } else {
         http_response_code(502);
         echo json_encode(["error" => "Open-Meteo no responde"]);
     }
-    flock($fp, LOCK_UN);
-    fclose($fp);
     exit;
 }
 
@@ -115,15 +139,11 @@ $data = json_decode($response, true);
 // ─────────────────────────────────────────────
 // GUARDAR NUEVA CACHE
 // ─────────────────────────────────────────────
-rewind($fp);
-ftruncate($fp, 0);
-fwrite($fp, json_encode([
+apcu_store($CACHE_KEY, [
     "timestamp" => $now,
     "data" => $data
-], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
-
-flock($fp, LOCK_UN);
-fclose($fp);
+]);
+apcu_delete($lockKey);
 
 // ─────────────────────────────────────────────
 // RESPUESTA
