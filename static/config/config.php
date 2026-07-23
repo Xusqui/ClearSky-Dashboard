@@ -16,75 +16,85 @@ if ($conn->connect_error) {
 }
 
 // =========================================================
-// === COMPROBACIONES PARA LA TABLA 'config' ===
+// === COMPROBACIONES DE ESQUEMA (config + meteo), con caché ===
 // =========================================================
-
-// === COMPROBAR SI EXISTE LA TABLA 'config' ===
-$tableExists = $conn->query("SHOW TABLES LIKE 'config'");
-if ($tableExists->num_rows === 0) {
-    // Si la tabla no existe, redirige al setup
-    header("Location: ./static/config/setup.php");
-    exit;
-}
-
-// === COMPROBAR SI EXISTEN LAS COLUMNAS REQUERIDAS (config) ===
-// Obtenemos todos los nombres de las columnas a validar, incluido 'id' del esquema.
+// Estas comprobaciones (SHOW TABLES / SHOW COLUMNS) solo cambian tras un
+// despliegue o una visita a setup.php, así que se cachean con un TTL para
+// no repetirlas en cada request de cada widget. setup.php invalida esta
+// caché en cuanto migra el esquema.
 $requiredFields = array_keys($config_schema);
-
-$result = $conn->query("SHOW COLUMNS FROM config");
-if (!$result) {
-    // Si falla el SHOW COLUMNS, redirige al setup
-    header("Location: ./static/config/setup.php");
-    exit;
-}
-
-// === COMPROBAR SI EXISTEN LOS CAMPOS REQUERIDOS (config) ===
-$columns = [];
-while ($row = $result->fetch_assoc()) {
-    $columns[] = $row['Field'];
-}
-foreach ($requiredFields as $field) {
-    if (!in_array($field, $columns)) {
-        // Si falta alguna columna (porque se añadió al esquema después), redirige al setup
-        header("Location: ./static/config/setup.php");
-        exit;
-    }
-}
-
-// =========================================================
-// === COMPROBACIONES PARA LA TABLA 'meteo' ===
-// =========================================================
-
-// === COMPROBAR SI EXISTE LA TABLA 'meteo' ===
-$meteoTableExists = $conn->query("SHOW TABLES LIKE 'meteo'");
-if ($meteoTableExists->num_rows === 0) {
-    // Si la tabla 'meteo' no existe, redirige al setup
-    header("Location: ./static/config/setup.php");
-    exit;
-}
-
-// === COMPROBAR SI EXISTEN LAS COLUMNAS REQUERIDAS (meteo) ===
-// Obtenemos todos los nombres de las columnas a validar para 'meteo'.
 $requiredMeteoFields = array_keys($meteo_schema);
 
-$meteoResult = $conn->query("SHOW COLUMNS FROM meteo");
-if (!$meteoResult) {
-    // Si falla el SHOW COLUMNS para 'meteo', redirige al setup
-    header("Location: ./static/config/setup.php");
-    exit;
+$schemaCacheFile = __DIR__ . '/../cache/schema_check.json';
+$schemaCacheTTL = 3600; // 1 hora
+$schemaValidatedRecently = false;
+
+if (is_file($schemaCacheFile)) {
+    $cached = json_decode(file_get_contents($schemaCacheFile), true);
+    if (is_array($cached) && isset($cached['checked_at']) && (time() - $cached['checked_at']) < $schemaCacheTTL) {
+        $schemaValidatedRecently = true;
+    }
 }
 
-// === COMPROBAR SI EXISTEN LOS CAMPOS REQUERIDOS (meteo) ===
-$meteoColumns = [];
-while ($row = $meteoResult->fetch_assoc()) {
-    $meteoColumns[] = $row['Field'];
-}
-foreach ($requiredMeteoFields as $field) {
-    if (!in_array($field, $meteoColumns)) {
-        // Si falta alguna columna en 'meteo', redirige al setup
+if (!$schemaValidatedRecently) {
+    // === COMPROBAR SI EXISTE LA TABLA 'config' ===
+    $tableExists = $conn->query("SHOW TABLES LIKE 'config'");
+    if ($tableExists->num_rows === 0) {
+        // Si la tabla no existe, redirige al setup
         header("Location: ./static/config/setup.php");
         exit;
     }
+
+    // === COMPROBAR SI EXISTEN LAS COLUMNAS REQUERIDAS (config) ===
+    $result = $conn->query("SHOW COLUMNS FROM config");
+    if (!$result) {
+        // Si falla el SHOW COLUMNS, redirige al setup
+        header("Location: ./static/config/setup.php");
+        exit;
+    }
+
+    $columns = [];
+    while ($row = $result->fetch_assoc()) {
+        $columns[] = $row['Field'];
+    }
+    foreach ($requiredFields as $field) {
+        if (!in_array($field, $columns)) {
+            // Si falta alguna columna (porque se añadió al esquema después), redirige al setup
+            header("Location: ./static/config/setup.php");
+            exit;
+        }
+    }
+
+    // === COMPROBAR SI EXISTE LA TABLA 'meteo' ===
+    $meteoTableExists = $conn->query("SHOW TABLES LIKE 'meteo'");
+    if ($meteoTableExists->num_rows === 0) {
+        // Si la tabla 'meteo' no existe, redirige al setup
+        header("Location: ./static/config/setup.php");
+        exit;
+    }
+
+    // === COMPROBAR SI EXISTEN LAS COLUMNAS REQUERIDAS (meteo) ===
+    $meteoResult = $conn->query("SHOW COLUMNS FROM meteo");
+    if (!$meteoResult) {
+        // Si falla el SHOW COLUMNS para 'meteo', redirige al setup
+        header("Location: ./static/config/setup.php");
+        exit;
+    }
+
+    $meteoColumns = [];
+    while ($row = $meteoResult->fetch_assoc()) {
+        $meteoColumns[] = $row['Field'];
+    }
+    foreach ($requiredMeteoFields as $field) {
+        if (!in_array($field, $meteoColumns)) {
+            // Si falta alguna columna en 'meteo', redirige al setup
+            header("Location: ./static/config/setup.php");
+            exit;
+        }
+    }
+
+    // Esquema validado correctamente: refrescar la caché.
+    @file_put_contents($schemaCacheFile, json_encode(['checked_at' => time()]));
 }
 
 // =========================================================

@@ -129,6 +129,11 @@ if ($conn->query("SHOW TABLES LIKE 'meteo'")->num_rows > 0) { // Solo si la tabl
 	}
 }
 
+// Invalidar la caché de validación de esquema de config.php: acaba de migrarse
+// el esquema, así que la próxima carga debe revalidar en vez de confiar en la
+// caché de hasta 1 hora.
+@unlink(__DIR__ . '/../cache/schema_check.json');
+
 // ------------------------------------------------------------------
 // === AUTENTICACIÓN Y CARGA DE DATOS (Continúa con el código original) ===
 // ------------------------------------------------------------------

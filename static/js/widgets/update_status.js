@@ -37,6 +37,12 @@ const WIDGET_SCRIPTS = [
 // Variable global para almacenar la última diferencia conocida de tiempo
 let lastKnownDiffSeconds = Infinity; // Inicializado alto para forzar la primera carga si es necesario
 
+// Última diferencia (en segundos) reportada por el servidor, y el instante local
+// en el que se recibió, para poder seguir contando "hacia adelante" sin volver a
+// consultar al servidor cada segundo.
+let lastServerDiffSeconds = 0;
+let lastFetchClientTime = Date.now();
+
 /**
  * 1. Carga inicial de todos los scripts de widgets.
  */
@@ -76,7 +82,20 @@ function reloadWidgetScripts() {
 }
 
 /**
- * 3. Función principal para obtener el estado del servidor y actualizar el DOM.
+ * 3. Actualiza el texto "Actualizado hace X sec" contando localmente a partir
+ * de la última diferencia conocida por el servidor, sin necesidad de red.
+ */
+function tickTimeAgo() {
+    const elapsedSinceFetch = Math.floor((Date.now() - lastFetchClientTime) / 1000);
+    const currentDiffSeconds = lastServerDiffSeconds + elapsedSinceFetch;
+
+    if (statusTimeAgoEl) {
+        statusTimeAgoEl.innerText = `Actualizado hace ${currentDiffSeconds} sec`;
+    }
+}
+
+/**
+ * 4. Función principal para obtener el estado del servidor y actualizar el DOM.
  */
 async function updateStatusFromAPI() {
     try {
@@ -98,6 +117,10 @@ async function updateStatusFromAPI() {
 
         // Actualizar la última diferencia conocida DESPUÉS de la comprobación.
         lastKnownDiffSeconds = currentDiffSeconds;
+
+        // Anclar el contador local al valor recién recibido del servidor.
+        lastServerDiffSeconds = currentDiffSeconds;
+        lastFetchClientTime = Date.now();
 
         // =======================================================
         // 🚨 LÓGICA DE ESTADO ONLINE / OFFLINE
@@ -141,9 +164,11 @@ async function updateStatusFromAPI() {
         }
 
         if (statusTimeAgoEl) {
-            statusTimeAgoEl.innerText = `Actualizado hace ${currentDiffSeconds} sec`;
             statusTimeAgoEl.dataset.updated = data.local_timestamp;
         }
+        // No forzamos un tick aquí: el intervalo de 1s (con cadencia fija desde
+        // la carga de página) recogerá el nuevo ancla en su próxima ejecución,
+        // evitando el "salto" visual de un tick fuera de ritmo.
 
     } catch (error) {
         console.error('Fallo al actualizar el estado:', error);
@@ -160,6 +185,7 @@ async function updateStatusFromAPI() {
 // 1. Cargar los scripts de los widgets inmediatamente al iniciar el script de estado
 loadWidgetScripts();
 
-// 2. Iniciar la actualización de estado inmediata y luego configurar el intervalo
-updateStatusFromAPI(); // Primera ejecución
-setInterval(updateStatusFromAPI, 1000); // Ejecutar cada 1000 milisegundos (1 segundo)
+// 2. Iniciar la actualización de estado inmediata y luego configurar los intervalos.
+updateStatusFromAPI(); // Primera ejecución: consulta al servidor y ancla el contador.
+setInterval(updateStatusFromAPI, 5000); // Consultar al servidor cada 5 segundos.
+setInterval(tickTimeAgo, 1000); // Refrescar el contador local cada 1 segundo, sin red.

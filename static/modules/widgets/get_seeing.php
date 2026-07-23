@@ -141,8 +141,60 @@ function fetch_cloud_layers_openmeteo($lat, $lon, $tz)
     ];
 }
 
-// --- 5. Obtener datos de altura ---
-$levels = fetch_pressure_levels($lat, $lon);
+// --- 5/6. Obtener datos externos de Open-Meteo (altura + nubosidad), con caché ---
+// Son datos horarios (no cambian dentro de la misma hora), así que se cachean
+// juntos con TTL de 30 min (igual que get_forecast.php) en vez de llamar a la
+// API externa en cada poll del widget.
+$SEEING_CACHE_FILE = __DIR__ . '/../../cache/seeing_external.json';
+$SEEING_CACHE_TTL = 30 * 60; // 30 minutos
+
+$levels = null;
+$clouds = null;
+
+$fp = fopen($SEEING_CACHE_FILE, 'c+');
+if ($fp) {
+    flock($fp, LOCK_EX);
+
+    $now = time();
+    $contents = stream_get_contents($fp);
+    $cache = $contents ? json_decode($contents, true) : null;
+    $cacheIsFresh = $cache && isset($cache['timestamp'], $cache['levels'], $cache['clouds'])
+        && ($now - $cache['timestamp']) < $SEEING_CACHE_TTL;
+
+    if ($cacheIsFresh) {
+        $levels = $cache['levels'];
+        $clouds = $cache['clouds'];
+    } else {
+        $freshLevels = fetch_pressure_levels($lat, $lon);
+        $freshClouds = fetch_cloud_layers_openmeteo($lat, $lon, $tz);
+
+        if ($freshLevels['error'] && $freshClouds['error'] && $cache) {
+            // Open-Meteo no responde: servir la última caché conocida antes que nada.
+            $levels = $cache['levels'];
+            $clouds = $cache['clouds'];
+        } else {
+            $levels = $freshLevels;
+            $clouds = $freshClouds;
+
+            rewind($fp);
+            ftruncate($fp, 0);
+            fwrite($fp, json_encode([
+                "timestamp" => $now,
+                "levels" => $levels,
+                "clouds" => $clouds
+            ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+        }
+    }
+
+    flock($fp, LOCK_UN);
+    fclose($fp);
+} else {
+    // No se pudo abrir el archivo de caché: seguir funcionando sin cachear.
+    $levels = fetch_pressure_levels($lat, $lon);
+    $clouds = fetch_cloud_layers_openmeteo($lat, $lon, $tz);
+}
+
+// --- 5. Procesar datos de altura ---
 if ($levels['error']) {
     $detalles['pressure_levels_error'] = $levels['message'];
     $temp300 = $temp500 = $wind300 = $wind500 = $shear = $deltaT = 0;
@@ -163,8 +215,7 @@ if ($levels['error']) {
     $detalles['deltaT'] = $deltaT;
 }
 
-// --- 6. Obtener nubosidad ---
-$clouds = fetch_cloud_layers_openmeteo($lat, $lon, $tz);
+// --- 6. Procesar nubosidad ---
 if ($clouds['error']) {
     $detalles['cloud_error'] = $clouds['message'];
     $low = $mid = $high = 0;

@@ -31,7 +31,7 @@ function write_debug(string $file, string $msg): void
 {
     clearsky_rotate_log($file);
     $time = date("Y-m-d H:i:s");
-    file_put_contents($file, "[$time] $msg\n", FILE_APPEND);
+    file_put_contents($file, "[$time] $msg\n", FILE_APPEND | LOCK_EX);
 }
 
 // -------------------------------------------
@@ -42,11 +42,10 @@ require_once __DIR__ . "/static/config/config_db.php";
 
 $conn = new mysqli($db_url, $db_user, $db_pass, $db_database);
 if ($conn->connect_error) {
-    $error_msg = "Error de conexión a la Base de Datos: " . $conn->connect_error;
-    write_debug($DEBUG_FILE, $error_msg);
+    write_debug($DEBUG_FILE, "Error de conexión a la Base de Datos: " . $conn->connect_error);
     // Respondemos OK a la estación para evitar reintentos, pero no procesamos.
     http_response_code(200);
-    echo "DB Connection Error";
+    echo "OK";
     exit;
 }
 
@@ -89,6 +88,7 @@ date_default_timezone_set($TIMEZONE);
 
 // Seguridad LAN: lista blanca de IPs/CIDR permitidos.
 require_once __DIR__ . "/static/modules/security/ip_allowlist.php";
+require_once __DIR__ . "/static/modules/ingest/input_validation.php";
 
 $REQUEST_IP = $_SERVER['REMOTE_ADDR'] ?? '';
 $SERVER_IP = $_SERVER['SERVER_ADDR'] ?? '';
@@ -145,7 +145,7 @@ if (empty($data)) {
 // el archivo weather_data.log no se haga gigantesco
 if ($send_LOG === 1) {
     clearsky_rotate_log($LOG_FILE);
-    file_put_contents($LOG_FILE, json_encode(clearsky_sanitize_log($data), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n", FILE_APPEND);
+    file_put_contents($LOG_FILE, json_encode(clearsky_sanitize_log($data), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n", FILE_APPEND | LOCK_EX);
     write_debug($DEBUG_FILE, "SE ESTÁN ESCRIBIENDO LOS DATOS CRUDOS EN weather_data.log");
 }
 
@@ -161,13 +161,16 @@ $required_fields = [
     'dailyrainin' => 'Lluvia Diaria'
 ];
 
-$missing_fields = [];
-foreach ($required_fields as $key => $label) {
-    // Comprueba si la clave no existe O si es null, vacía, o no es un valor numérico válido (que es lo que esperamos)
-    if (!isset($data[$key]) || $data[$key] === null || trim($data[$key]) === '' || !is_numeric($data[$key])) {
-        $missing_fields[] = $label . " ({$key})";
-    }
-}
+$required_field_ranges = [
+    'tempf' => ['min' => -100, 'max' => 180],
+    'humidity' => ['min' => 0, 'max' => 100],
+    'windspeedmph' => ['min' => 0, 'max' => 250],
+    'winddir' => ['min' => 0, 'max' => 360],
+    'baromrelin' => ['min' => 20, 'max' => 35],
+    'dailyrainin' => ['min' => 0, 'max' => 500],
+];
+
+$missing_fields = clearsky_validate_required_numeric_fields($data, $required_fields, $required_field_ranges);
 
 if (!empty($missing_fields)) {
     $error_msg = "VALIDACIÓN FALLIDA: Datos críticos faltantes o inválidos. NO se enviarán ni guardarán datos. Faltantes: " . implode(", ", $missing_fields);
@@ -181,63 +184,14 @@ if (!empty($missing_fields)) {
 }
 
 // -------------------------------------------
-// ENVÍO A HOME ASSISTANT
+// CONVERSIONES Y PERSISTENCIA LOCAL
 // -------------------------------------------
-if ($send_HA === 1) {
-    try {
-        // Validación: asegurar que la URL se ha construido correctamente
-        if (empty($config['ha_token'])) {
-            write_debug($DEBUG_FILE, "Error enviando a HA: Token de Home Assistant vacío.");
-        } else {
-            $ch = curl_init($HOME_ASSISTANT_WEBHOOK);
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_exec($ch);
-            $http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            //curl_close($ch);
-            // Para ver los datos enviados a HA, descomentar la siguiente línea
-            // write_debug($DEBUG_FILE, "Enviado a HA. Estado: $http_status");
-        }
-    } catch (Exception $e) {
-        write_debug($DEBUG_FILE, "Error enviando a HA: " . $e->getMessage());
-    }
-} else {
-    write_debug($DEBUG_FILE, "Se ha omitido el envío de datos a Home Assistant");
-}
-// -------------------------------------------
-// ENVÍO A METEOCLIMATIC
-// -------------------------------------------
-if ($send_METEOCLIMATIC === 1) {
-    try {
-        // Validación: asegurar que las claves no están vacías
-        if (empty($STATION_CODE) || empty($API_KEY)) {
-            write_debug($DEBUG_FILE, "Error enviando a Meteoclimatic: Código de estación o API Key vacío.");
-        } else {
-            $url = str_replace(
-                ["{station_code}", "{api_key}"],
-                [$STATION_CODE, $API_KEY],
-                $METEOCLIMATIC_API
-            );
-            $ch = curl_init($url);
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_exec($ch);
-            $http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            //curl_close($ch);
-            // Para ver el resultado de los datos enviados a meteoclimatic, descomentar la siguiente línea
-            //write_debug($DEBUG_FILE, "Enviado a Meteoclimatic. Estado: $http_status");
-        }
-    } catch (Exception $e) {
-        write_debug($DEBUG_FILE, "Error enviando a Meteoclimatic: " . $e->getMessage());
-    }
-} else {
-    write_debug($DEBUG_FILE, "Se ha omitido el envío de datos a Meteoclimatic.net");
-}
-// -------------------------------------------
-// CONVERSIONES
-// -------------------------------------------
+// Se hace ANTES de notificar a Home Assistant/Meteoclimatic: si esos
+// servicios están caídos o lentos (hasta ~10s de timeout combinado) y el
+// cliente (la estación) cierra la conexión por timeout mientras esperamos,
+// PHP puede abortar el script a mitad de ejecución (según ignore_user_abort)
+// — persistir primero garantiza que el dato local no se pierda por culpa de
+// una integración externa lenta.
 if ($send_LOCAL === 1) {
     // Fahrenheit → Celsius
     function f_to_c($f)
@@ -349,8 +303,15 @@ if ($send_LOCAL === 1) {
         return apparent_temperature($tempC, $humidity, $wind_kmh, $vpd);
     }
 
-    // Convertir dateutc a la zona horaria de la configuración ($TIMEZONE)
-    $utc = new DateTime($data["dateutc"], new DateTimeZone("UTC"));
+    // Convertir dateutc a UTC con validación robusta de formato.
+    [$utc, $dateutc_error] = clearsky_parse_payload_utc_datetime($data, 'dateutc');
+    if ($utc === null) {
+        write_debug($DEBUG_FILE, "VALIDACIÓN FALLIDA: {$dateutc_error}. NO se guardarán datos locales.");
+        http_response_code(200);
+        echo "OK";
+        exit;
+    }
+
     $timestamp_utc = $utc->format("Y-m-d H:i:s");
     $timezone = "UTC"; // Se almacena como UTC para consistencia
 
@@ -409,7 +370,7 @@ if ($send_LOCAL === 1) {
             'apparent_temperature' => $apparent_val,
         ];
         //file_put_contents($LOG_FILE, json_encode($calc, JSON_PARTIAL_OUTPUT_ON_ERROR | JSON_UNESCAPED_UNICODE) . "\n", FILE_APPEND);
-        file_put_contents($LOG_FILE, json_encode($calc, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n", FILE_APPEND);
+        file_put_contents($LOG_FILE, json_encode($calc, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n", FILE_APPEND | LOCK_EX);
     }
     $punto_rocio = dew_point($temperatura, $humedad);
 
@@ -422,7 +383,11 @@ if ($send_LOCAL === 1) {
     $wh65batt = $data["wh65batt"];
     $freq = $data["freq"];
     $model = $data["model"];
-    $passkey = $data["PASSKEY"];
+    // C8: no persistimos PASSKEY en claro. Se conserva la columna por compatibilidad, pero se guarda NULL.
+    $passkey = null;
+    if (array_key_exists("PASSKEY", $data) && getenv('CLEARSKY_DEBUG_C8') === '1') {
+        write_debug($DEBUG_FILE, "C8 debug: PASSKEY recibido y descartado para persistencia.");
+    }
     $interval = $data["interval"];
 
     // -------------------------------------------
@@ -509,6 +474,90 @@ if ($send_LOCAL === 1) {
     }
 } else {
     write_debug($DEBUG_FILE, "Se ha omitido el envío a la Base de Datos local");
+}
+
+// -------------------------------------------
+// ENVÍO A HOME ASSISTANT
+// -------------------------------------------
+if ($send_HA === 1) {
+    try {
+        // Validación: asegurar que la URL se ha construido correctamente
+        if (empty($config['ha_token'])) {
+            write_debug($DEBUG_FILE, "Error enviando a HA: Token de Home Assistant vacío.");
+        } else {
+            $ch = curl_init($HOME_ASSISTANT_WEBHOOK);
+            if ($ch === false) {
+                write_debug($DEBUG_FILE, "Error enviando a HA: no se pudo iniciar cURL.");
+            } else {
+                curl_setopt($ch, CURLOPT_POST, true);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
+                curl_setopt($ch, CURLOPT_TIMEOUT, 4);
+
+                curl_exec($ch);
+                $ha_errno = curl_errno($ch);
+                $http_status = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                curl_close($ch);
+
+                if ($ha_errno !== 0) {
+                    write_debug($DEBUG_FILE, "Error enviando a HA: cURL #{$ha_errno}.");
+                } elseif ($http_status >= 400 || $http_status === 0) {
+                    write_debug($DEBUG_FILE, "Error enviando a HA: HTTP {$http_status}.");
+                }
+            }
+            // Para ver los datos enviados a HA, descomentar la siguiente línea
+            // write_debug($DEBUG_FILE, "Enviado a HA. Estado: $http_status");
+        }
+    } catch (Exception $e) {
+        write_debug($DEBUG_FILE, "Error enviando a HA: " . $e->getMessage());
+    }
+} else {
+    write_debug($DEBUG_FILE, "Se ha omitido el envío de datos a Home Assistant");
+}
+// -------------------------------------------
+// ENVÍO A METEOCLIMATIC
+// -------------------------------------------
+if ($send_METEOCLIMATIC === 1) {
+    try {
+        // Validación: asegurar que las claves no están vacías
+        if (empty($STATION_CODE) || empty($API_KEY)) {
+            write_debug($DEBUG_FILE, "Error enviando a Meteoclimatic: Código de estación o API Key vacío.");
+        } else {
+            $url = str_replace(
+                ["{station_code}", "{api_key}"],
+                [$STATION_CODE, $API_KEY],
+                $METEOCLIMATIC_API
+            );
+            $ch = curl_init($url);
+            if ($ch === false) {
+                write_debug($DEBUG_FILE, "Error enviando a Meteoclimatic: no se pudo iniciar cURL.");
+            } else {
+                curl_setopt($ch, CURLOPT_POST, true);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);
+                curl_setopt($ch, CURLOPT_TIMEOUT, 6);
+
+                curl_exec($ch);
+                $meteo_errno = curl_errno($ch);
+                $http_status = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                curl_close($ch);
+
+                if ($meteo_errno !== 0) {
+                    write_debug($DEBUG_FILE, "Error enviando a Meteoclimatic: cURL #{$meteo_errno}.");
+                } elseif ($http_status >= 400 || $http_status === 0) {
+                    write_debug($DEBUG_FILE, "Error enviando a Meteoclimatic: HTTP {$http_status}.");
+                }
+            }
+            // Para ver el resultado de los datos enviados a meteoclimatic, descomentar la siguiente línea
+            //write_debug($DEBUG_FILE, "Enviado a Meteoclimatic. Estado: $http_status");
+        }
+    } catch (Exception $e) {
+        write_debug($DEBUG_FILE, "Error enviando a Meteoclimatic: " . $e->getMessage());
+    }
+} else {
+    write_debug($DEBUG_FILE, "Se ha omitido el envío de datos a Meteoclimatic.net");
 }
 // -------------------------------------------
 // RESPUESTA A ECOWITT

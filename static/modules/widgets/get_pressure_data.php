@@ -121,24 +121,39 @@ $pressure_abs = isset($row['presion_absoluta']) && is_numeric($row['presion_abso
 $pressure_abs = round($pressure_abs, 1);
 
 
+// (con flock: evita que varios widgets/pestañas recalculen a la vez cuando
+// expira el TTL, y evita escrituras entrelazadas en el JSON; mismo patrón
+// que get_forecast.php):
 $trendData = null;
 $now = time();
 
-if (file_exists($PRESS_TREND_CACHE)) {
-    $cache = json_decode(file_get_contents($PRESS_TREND_CACHE), true);
-    if ($cache && isset($cache['computed_at'])) {
-        if ($now - strtotime($cache['computed_at']) < $PRESS_TREND_TTL) {
+$trendFp = fopen($PRESS_TREND_CACHE, 'c+');
+if ($trendFp) {
+    flock($trendFp, LOCK_EX);
+
+    $cacheContents = stream_get_contents($trendFp);
+    $cache = $cacheContents ? json_decode($cacheContents, true) : null;
+
+    if ($cache && isset($cache['computed_at']) && ($now - strtotime($cache['computed_at'])) < $PRESS_TREND_TTL) {
+        $trendData = $cache;
+    } else {
+        $newTrend = computePressureTrend($mysqli);
+        if ($newTrend !== null) {
+            rewind($trendFp);
+            ftruncate($trendFp, 0);
+            fwrite($trendFp, json_encode($newTrend, JSON_PRETTY_PRINT));
+            $trendData = $newTrend;
+        } elseif ($cache) {
+            // Sin datos suficientes para recalcular: servir la caché anterior.
             $trendData = $cache;
         }
     }
-}
 
-if ($trendData === null) {
-    $newTrend = computePressureTrend($mysqli);
-    if ($newTrend !== null) {
-        file_put_contents($PRESS_TREND_CACHE, json_encode($newTrend, JSON_PRETTY_PRINT));
-        $trendData = $newTrend;
-    }
+    flock($trendFp, LOCK_UN);
+    fclose($trendFp);
+} else {
+    // No se pudo abrir el archivo de caché: calcular sin cachear.
+    $trendData = computePressureTrend($mysqli);
 }
 
 

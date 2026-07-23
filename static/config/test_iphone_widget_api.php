@@ -98,6 +98,7 @@ if (!file_exists($config_path)) {
                 echo '</div>';
             } else {
                 $row = $result->fetch_assoc();
+                unset($row['passkey']);
 
                 echo '<div class="status success">';
                 echo '✅ Datos encontrados';

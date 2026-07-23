@@ -1,0 +1,17 @@
+{
+    "timestamp": 1784809369,
+    "levels": {
+        "error": false,
+        "temp300": -34,
+        "temp500": -9.6,
+        "wind300": 96.3,
+        "wind500": 69
+    },
+    "clouds": {
+        "error": false,
+        "cloud_low": 0,
+        "cloud_mid": 1,
+        "cloud_high": 0,
+        "timestamp": "2026-07-23T14:00"
+    }
+}

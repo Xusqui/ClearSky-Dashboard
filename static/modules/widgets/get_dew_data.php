@@ -47,55 +47,11 @@ function classifyTrend(float $slope, float $epsilon) {
     return ['stable', '■', '--green'];
 }
 
-// ----------------------------------------------------
-// Conexión a DB
-// ----------------------------------------------------
-if (!isset($db_url, $db_user, $db_pass, $db_database)) {
-    die_with_error("Credenciales no definidas.");
-}
-
-$mysqli = new mysqli($db_url, $db_user, $db_pass, $db_database);
-if ($mysqli->connect_error) die_with_error("Error de conexión.");
-
-// ----------------------------------------------------
-// Último valor actual
-// ----------------------------------------------------
-$sqlCurrent = "
-SELECT punto_rocio, temperatura, viento_velocidad
-FROM meteo
-ORDER BY timestamp DESC
-LIMIT 1
-";
-
-$res = $mysqli->query($sqlCurrent);
-if (!$res || $res->num_rows === 0) die_with_error("Sin datos actuales.");
-
-$cur = $res->fetch_assoc();
-$dew   = is_numeric($cur['punto_rocio']) ? (float)$cur['punto_rocio'] : null;
-$temp  = is_numeric($cur['temperatura']) ? (float)$cur['temperatura'] : null;
-$wind  = is_numeric($cur['viento_velocidad']) ? (float)$cur['viento_velocidad'] : 0.0;
-$res->free();
-
-// ----------------------------------------------------
-// Leer cache si existe y no caducada
-// ----------------------------------------------------
-$cachedTrend = null;
-if (file_exists($cache_file)) {
-    $cacheData = json_decode(file_get_contents($cache_file), true);
-    if ($cacheData && isset($cacheData['timestamp']) && time() - $cacheData['timestamp'] < $cache_ttl) {
-        $cachedTrend = $cacheData;
-    }
-}
-
-// ----------------------------------------------------
-// Calcular tendencia solo si no hay cache válida
-// ----------------------------------------------------
-if ($cachedTrend) {
-    [$trendState, $trendSymbol, $trendColor] = [$cachedTrend['trend_state'], $cachedTrend['trend_symbol'], $cachedTrend['trend_color']];
-    $dewProb = $cachedTrend['dew_probability'];
-    $fogProb = $cachedTrend['fog_probability'];
-} else {
-    // Historial últimos 30 minutos
+/**
+ * Calcula la tendencia de punto de rocío y las probabilidades de rocío/niebla
+ * a partir del historial reciente. Devuelve el array listo para cachear.
+ */
+function computeDewTrend(mysqli $mysqli, int $windowMinutes, float $epsilon, ?float $temp, ?float $dew, float $wind) {
     $sqlHist = "
     SELECT UNIX_TIMESTAMP(timestamp) AS t, punto_rocio
     FROM meteo
@@ -134,8 +90,7 @@ if ($cachedTrend) {
     elseif ($dewProb > 30 && $wind < 4)  $fogProb = 40;
     else                                  $fogProb = 10;
 
-    // Guardar en cache
-    $cacheData = [
+    return [
         'timestamp' => time(),
         'trend_state' => $trendState,
         'trend_symbol' => $trendSymbol,
@@ -143,8 +98,72 @@ if ($cachedTrend) {
         'dew_probability' => $dewProb,
         'fog_probability' => $fogProb
     ];
-    file_put_contents($cache_file, json_encode($cacheData, JSON_PRETTY_PRINT));
 }
+
+// ----------------------------------------------------
+// Conexión a DB
+// ----------------------------------------------------
+if (!isset($db_url, $db_user, $db_pass, $db_database)) {
+    die_with_error("Credenciales no definidas.");
+}
+
+$mysqli = new mysqli($db_url, $db_user, $db_pass, $db_database);
+if ($mysqli->connect_error) die_with_error("Error de conexión.");
+
+// ----------------------------------------------------
+// Último valor actual
+// ----------------------------------------------------
+$sqlCurrent = "
+SELECT punto_rocio, temperatura, viento_velocidad
+FROM meteo
+ORDER BY timestamp DESC
+LIMIT 1
+";
+
+$res = $mysqli->query($sqlCurrent);
+if (!$res || $res->num_rows === 0) die_with_error("Sin datos actuales.");
+
+$cur = $res->fetch_assoc();
+$dew   = is_numeric($cur['punto_rocio']) ? (float)$cur['punto_rocio'] : null;
+$temp  = is_numeric($cur['temperatura']) ? (float)$cur['temperatura'] : null;
+$wind  = is_numeric($cur['viento_velocidad']) ? (float)$cur['viento_velocidad'] : 0.0;
+$res->free();
+
+// ----------------------------------------------------
+// Leer/recalcular caché con flock (evita que varios widgets/pestañas
+// recalculen a la vez cuando expira el TTL, y escrituras entrelazadas en el
+// JSON; mismo patrón que get_forecast.php)
+// ----------------------------------------------------
+$cacheData = null;
+
+$dewFp = fopen($cache_file, 'c+');
+if ($dewFp) {
+    flock($dewFp, LOCK_EX);
+
+    $cacheContents = stream_get_contents($dewFp);
+    $cached = $cacheContents ? json_decode($cacheContents, true) : null;
+
+    if ($cached && isset($cached['timestamp']) && time() - $cached['timestamp'] < $cache_ttl) {
+        $cacheData = $cached;
+    } else {
+        $cacheData = computeDewTrend($mysqli, $windowMinutes, $epsilon, $temp, $dew, $wind);
+        rewind($dewFp);
+        ftruncate($dewFp, 0);
+        fwrite($dewFp, json_encode($cacheData, JSON_PRETTY_PRINT));
+    }
+
+    flock($dewFp, LOCK_UN);
+    fclose($dewFp);
+} else {
+    // No se pudo abrir el archivo de caché: calcular sin cachear.
+    $cacheData = computeDewTrend($mysqli, $windowMinutes, $epsilon, $temp, $dew, $wind);
+}
+
+$trendState  = $cacheData['trend_state'];
+$trendSymbol = $cacheData['trend_symbol'];
+$trendColor  = $cacheData['trend_color'];
+$dewProb     = $cacheData['dew_probability'];
+$fogProb     = $cacheData['fog_probability'];
 
 $mysqli->close();
 
