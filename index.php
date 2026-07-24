@@ -58,6 +58,7 @@ function asset_v(string $relativePath): string
     <link rel="stylesheet" type="text/css" href="./static/css/widget-sun.css?v=<?= asset_v('./static/css/widget-sun.css'); ?>" />
     <link rel="stylesheet" type="text/css" href="./static/css/forecast.css?v=<?= asset_v('./static/css/forecast.css'); ?>" />
     <link rel="stylesheet" type="text/css" href="./static/css/widget-seeing.css?v=<?= asset_v('./static/css/widget-seeing.css'); ?>" />
+    <link rel="stylesheet" type="text/css" href="./static/css/observing-checklist-widget.css?v=<?= asset_v('./static/css/observing-checklist-widget.css'); ?>" />
     <link rel="stylesheet" type="text/css" href="./static/css/modal-seeing.css?v=<?= asset_v('./static/css/modal-seeing.css'); ?>" />
     <link rel="stylesheet" type="text/css" href="./static/css/modal-credits.css?v=<?= asset_v('./static/css/modal-credits.css'); ?>" />
     <link rel="stylesheet" type="text/css" href="./static/css/modal-dates.css?v=<?= asset_v('./static/css/modal-dates.css'); ?>" />
@@ -148,6 +149,7 @@ function asset_v(string $relativePath): string
                         }
                         if ($show_sky == 1) {
                             require_once __DIR__ . '/static/widgets/widget_seeing.php';
+                            require_once __DIR__ . '/static/widgets/widget_observing_checklist.php';
                         }
                         ?>
                     </div>

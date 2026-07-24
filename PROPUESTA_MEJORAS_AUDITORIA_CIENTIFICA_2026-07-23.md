@@ -38,9 +38,9 @@ Antes de planificar, comprobé cada hallazgo restante contra el código real —
 | C7 | Tooltip explicativo para DeltaT (y Shear) en `modal_seeing.php` | Frontend/UX | Media | Bajo | Técnica (mecánica) | Implementado |
 | C8 | Decimación en frontend para gráficos con miles de puntos | Frontend | Media | Medio | Técnica (mecánica) | Implementado |
 | C9 | Libración lunar en el filtrado del Catálogo Lunar 100 | Frontend/Astronomía | Baja | Alto | Técnica, pero de precisión marginal (±7° en casos extremos) | Pendiente |
-| C10 | Reducir de ~12 a ~6-8 widgets visibles (pestañas o colapsado) | UX/Diseño | Media | Alto | **Decisión de producto** — cambia la disposición visual completa | Pendiente (necesita tu visto bueno) |
+| C10 | Reducir de ~12 a ~6-8 widgets visibles (pestañas o colapsado) | UX/Diseño | Media | Alto | **Decisión de producto** | Rechazado por el usuario — no se implementa |
 | C11 | Unificar ~90 iconos a un set reducido (5-8 estados) | UX/Diseño | Baja | Alto | **Decisión de producto** — afecta identidad visual | Pendiente (necesita tu visto bueno) |
-| C12 | Modo "Observador Nocturno" (checklist de condiciones) | UX/Feature nueva | Baja | Alto | **Decisión de producto** — funcionalidad nueva, no un arreglo | Pendiente (necesita tu visto bueno) |
+| C12 | Checklist "¿Puedo observar esta noche?" (versión reducida de "Modo Observador Nocturno", sin ocultar/resaltar widgets — esa parte se solapaba con C10) | UX/Feature nueva | Baja | Medio | Alcance acordado con el usuario tras rechazar C10 | Implementado |
 
 ## Cómo lo distingo del resto de la hoja de ruta de rendimiento
 A diferencia de R1-R8 (todas mecánicas: aplicar un patrón conocido sin ambigüedad), varias de estas sí implican una decisión que no es solo técnica:
@@ -91,6 +91,22 @@ Importante: los umbrales del texto explicativo se sacaron del código real de pu
 Estado: Implementado en los 8 archivos JS de gráficos históricos (`modal_temp.js`, `modal_tempint.js`, `modal_humidity.js`, `modal_humidityint.js`, `modal_pressure.js`, `modal_solar.js`, `modal_wind.js`, `modal_rain.js`), como red de seguridad complementaria a C2/C5 (que ya acotan el backend, pero el tramo ≤7 días sigue pudiendo devolver hasta 50.000 filas crudas).
 Cambio: se usó exactamente el criterio que proponía la propia auditoría — si el array de datos tiene más de 5000 elementos, se diezma a un paso fijo (`Math.ceil(length / 2000)`) quedándose ~1 de cada N filas, antes de extraer las series para ECharts. En `modal_rain.js` (que recibe `{labels, series}` ya separados desde el backend en vez de un array de filas) se decima `labels` y cada `series[i].data` con el mismo paso, para mantener los arrays paralelos.
 Nota: no se adoptó el muestreo nativo de ECharts (`sampling: 'lttb'`), que da mejores resultados visuales pero requiere pasar a un eje `type: 'time'` con pares `[timestamp, valor]` en vez de `type: 'category'` con arrays paralelos — un refactor mayor en los 8 archivos, desproporcionado para lo que pedía este ítem. Queda como posible mejora futura si el "cada N puntos" se nota visualmente basto.
+
+### C12. Checklist "¿Puedo observar esta noche?"
+Estado: Implementado, con alcance reducido respecto a la propuesta original de la auditoría.
+Alcance descartado: la propuesta original ("Modo Observador Nocturno") incluía ocultar widgets irrelevantes y resaltar los críticos — esa parte se solapaba directamente con C10, que el usuario rechazó explícitamente. Se implementó solo la segunda mitad: una tarjeta nueva, aditiva, que no oculta ni reordena nada existente.
+Archivos nuevos:
+- `static/widgets/widget_observing_checklist.php` — tarjeta con una rejilla de 5 insignias circulares (seeing, viento, nubosidad, humedad, luna), cada una con emoji + un valor corto debajo. Se añade al `.widgets` (misma zona que los demás widgets de sensores), gateada por `$show_sky` (no tiene sentido sin la función de seeing activada).
+- `static/js/widgets/observing_checklist_widget.js` — no crea un backend nuevo: reutiliza `get_seeing.php` (seeing, viento actual, `cloud_index`) y `get_humidity_data.php` (humedad y su estado de confort), y calcula la fase lunar en el propio cliente con `SunCalc.getMoonIllumination()` (la misma librería que ya usa `moon.js`, cargada globalmente). Sigue el patrón ya establecido de los demás widgets (`function updateX() {...}` + llamada inmediata al final, sin `const`/`let` de nivel superior, para que recargar el `<script>` no falle).
+- `static/css/observing-checklist-widget.css` — **dos ajustes tras feedback del usuario**: (1) versión inicial era más ancha que el resto y solo texto → rediseñada como rejilla de círculos con anillo de color (verde/ámbar/rojo, reutilizando `--green`/`--orange`/`--red`, las mismas variables que ya usan las flechas de tendencia de temperatura), sin override de ancho (hereda el `max-width:16%` estándar de `.widget`); (2) se añadió un veredicto agregado 👍/👎 (círculo arriba de la rejilla) — negativo si algún indicador está en rojo, positivo en caso contrario, calculado en `observing_checklist_widget.js` sincronizando la fase lunar (client-side) con los dos fetch antes de decidir; (3) la rejilla volvió a 3 columnas (2 filas para 5 elementos, en vez de 3) y se redujeron círculos/márgenes/gaps porque la versión de 2 columnas quedaba más alta que el resto de tarjetas — el ancho no cambia con el número de columnas (lo fija `max-width:16%` en `.widget`), así que este ajuste solo afecta a la altura.
+Registrado en: `index.php` (nuevo `<link>` de CSS + `require_once` dentro del bloque `if ($show_sky == 1)`, justo después de `widget_seeing.php`) y `update_status.js` (añadido a `WIDGET_SCRIPTS` para que se recargue junto al resto de widgets cuando llega un dato nuevo de la estación).
+Umbrales usados (no inventados, sacados del propio código):
+- Seeing: `estrellas >= 2` ✅ (Bueno/Muy bueno/Excelente), `>= 1` ⚠️ (Regular), si no ❌ — reutiliza la escala ya definida en `get_seeing.php`.
+- Viento: mismos cortes que la propia fórmula de puntuación de seeing (`< 10` ✅, `< 20` ⚠️, si no ❌).
+- Nubosidad: sobre `cloud_index` (0-100, ya ponderado con los pesos 0.5/0.7/1.0 de `factor_nubes`): `< 10` ✅, `< 40` ⚠️, si no ❌.
+- Humedad: `state === 'comfortable'` ✅, si no ⚠️ (riesgo de condensación en la óptica, no descarta observar).
+- Luna: `fraction < 0.25` ✅, `< 0.6` ⚠️, si no ❌ (más iluminación lunar = más brillo de fondo de cielo, peor para cielo profundo).
+Riesgo: ninguno para el resto del dashboard (tarjeta puramente aditiva, no toca ningún widget existente). Depende de que `get_seeing.php`/`get_humidity_data.php` respondan; si fallan, esas filas quedan en "Cargando…" y se loguea el error en consola sin romper el resto de la tarjeta.
 
 ## Orden sugerido si se implementan
 1. **C1** (bug idéntico al ya arreglado en nubes, coherencia interna) y **C2**/**C5** (riesgo de payload/queries sin límite) — más parecidos a R1-R8, bajo riesgo.

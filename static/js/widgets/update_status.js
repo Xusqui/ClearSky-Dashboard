@@ -31,6 +31,7 @@ const WIDGET_SCRIPTS = [
     "./static/js/widgets/temp_interior_widget.js",
     "./static/js/widgets/humidity_interior_widget.js",
     "./static/js/widgets/seeing_widget.js",
+    "./static/js/widgets/observing_checklist_widget.js",
     "./static/js/sun.js",
 ];
 

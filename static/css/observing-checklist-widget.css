@@ -1,0 +1,95 @@
+/* observing-checklist-widget.css */
+
+/* Sin override de ancho: usa el mismo max-width:16% que el resto de .widget,
+   para no destacar por tamaño frente a los demás. */
+
+.checklist-verdict-wrap {
+    display: flex;
+    justify-content: center;
+    margin: 2px 0 6px;
+}
+
+.checklist-verdict {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3em;
+    line-height: 1;
+    background: var(--color-box-bg);
+    border: 3px solid var(--color-secondary-font);
+    opacity: 0.6;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
+}
+
+.checklist-verdict.status-ok {
+    border-color: var(--green);
+    box-shadow: 0 0 10px rgba(var(--green-raw), 0.5);
+    opacity: 1;
+}
+
+.checklist-verdict.status-bad {
+    border-color: var(--red);
+    box-shadow: 0 0 10px rgba(var(--red-raw), 0.5);
+    opacity: 1;
+}
+
+.checklist-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px 4px;
+    justify-items: center;
+    width: 100%;
+}
+
+.checklist-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.checklist-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-box-bg);
+    border: 3px solid var(--color-secondary-font);
+    opacity: 0.6;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
+}
+
+.checklist-emoji {
+    font-size: 0.95em;
+    line-height: 1;
+}
+
+.checklist-circle.status-ok {
+    border-color: var(--green);
+    box-shadow: 0 0 8px rgba(var(--green-raw), 0.5);
+    opacity: 1;
+}
+
+.checklist-circle.status-warn {
+    border-color: var(--orange);
+    box-shadow: 0 0 8px rgba(var(--orange-raw), 0.5);
+    opacity: 1;
+}
+
+.checklist-circle.status-bad {
+    border-color: var(--red);
+    box-shadow: 0 0 8px rgba(var(--red-raw), 0.5);
+    opacity: 1;
+}
+
+.checklist-value {
+    font-size: 0.7em;
+    color: var(--color-secondary-font);
+    text-align: center;
+    line-height: 1.2;
+}
