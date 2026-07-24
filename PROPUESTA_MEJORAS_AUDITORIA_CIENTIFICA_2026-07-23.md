@@ -31,7 +31,7 @@ Antes de planificar, comprobé cada hallazgo restante contra el código real —
 |---|---|---|---|---|---|---|
 | C1 | Arreglar `fetch_pressure_levels()` para usar el índice horario más cercano (igual que ya hace `fetch_cloud_layers_openmeteo()`) | Backend | Alta | Bajo | Técnica (mecánica) | Implementado |
 | C2 | `LIMIT`/downsampling en históricos con rango personalizado largo | Backend | Alta | Medio | Técnica (mecánica) | Implementado |
-| C3 | Corregir pesos de `factor_nubes` (nubes bajas > altas) | Backend | Alta | Bajo | **Requiere tu criterio** — cambia el resultado científico mostrado al usuario | Pendiente |
+| C3 | Corregir pesos de `factor_nubes` (nubes bajas > altas) | Backend | Alta | Bajo | Requería tu criterio — cambia el resultado científico mostrado al usuario | Implementado (con tu confirmación) |
 | C4 | Calibrar coeficientes de seeing con datos reales de observación | Backend | Media | Alto | **Requiere datos que no tengo** — necesita meses de observación visual (escala Antoniadi) correlacionada | Bloqueado (no es tarea de código) |
 | C5 | `LIMIT` de seguridad genérico en el resto de queries de `meteo` | Backend | Media | Bajo | Técnica (mecánica) | Implementado |
 | C6 | Migrar caché de archivo a APCu | Backend | Baja | Medio | Técnica, pero depende de si APCu está disponible en el servidor | Implementado |
@@ -39,18 +39,28 @@ Antes de planificar, comprobé cada hallazgo restante contra el código real —
 | C8 | Decimación en frontend para gráficos con miles de puntos | Frontend | Media | Medio | Técnica (mecánica) | Implementado |
 | C9 | Libración lunar en el filtrado del Catálogo Lunar 100 | Frontend/Astronomía | Baja | Alto | Técnica, pero de precisión marginal (±7° en casos extremos) | Pendiente |
 | C10 | Reducir de ~12 a ~6-8 widgets visibles (pestañas o colapsado) | UX/Diseño | Media | Alto | **Decisión de producto** | Rechazado por el usuario — no se implementa |
-| C11 | Unificar ~90 iconos a un set reducido (5-8 estados) | UX/Diseño | Baja | Alto | **Decisión de producto** — afecta identidad visual | Pendiente (necesita tu visto bueno) |
+| C11 | Unificar ~90 iconos a un set reducido (5-8 estados) | UX/Diseño | Baja | Alto/Bajo (ver detalle) | Mixta — la limpieza es mecánica, el posible rediseño visual seguiría siendo decisión de producto | Implementado (alcance reducido a limpieza técnica, ver detalle) |
 | C12 | Checklist "¿Puedo observar esta noche?" (versión reducida de "Modo Observador Nocturno", sin ocultar/resaltar widgets — esa parte se solapaba con C10) | UX/Feature nueva | Baja | Medio | Alcance acordado con el usuario tras rechazar C10 | Implementado |
 
 ## Cómo lo distingo del resto de la hoja de ruta de rendimiento
 A diferencia de R1-R8 (todas mecánicas: aplicar un patrón conocido sin ambigüedad), varias de estas sí implican una decisión que no es solo técnica:
 
-- **C3 y C4** cambian el *resultado científico* que ve el usuario (el índice de seeing). No es solo "arreglar un bug" — es decidir qué modelo físico usar. C4 directamente no se puede resolver con código: requiere recolectar datos de seeing observado durante meses y correlacionarlos.
-- **C10, C11, C12** son rediseño de producto/UX, no arreglos de rendimiento. Cambian cómo se ve y se usa el dashboard.
+- **C3 y C4** cambian el *resultado científico* que ve el usuario (el índice de seeing). No es solo "arreglar un bug" — es decidir qué modelo físico usar. C3 ya se resolvió con tu confirmación explícita del criterio (nubes bajas > altas). C4 directamente no se puede resolver con código: requiere recolectar datos de seeing observado durante meses y correlacionarlos.
+- **C10, C12** son rediseño de producto/UX, no arreglos de rendimiento. Cambian cómo se ve y se usa el dashboard. **C11** resultó ser distinto de lo que asumía la auditoría (ver detalle): el usuario nunca ve más de 14 iconos, así que la parte ejecutada fue limpieza técnica, no rediseño.
 
 Para el resto (C1, C2, C5, C6, C7, C8, C9) son cambios técnicos acotados, del mismo estilo que R1-R8 — puedo implementarlos uno a uno igual que hicimos con la hoja de ruta de rendimiento, sin necesitar más que confirmación de "adelante".
 
 ## Detalle de implementación
+
+### C3. Corregir pesos de `factor_nubes`
+Estado: Implementado, con confirmación explícita del usuario sobre el criterio físico a aplicar.
+Problema: los pesos originales (`low=0.5, mid=0.7, high=1.0` en `$low*0.5 + $mid*0.7 + $high*1.0`) penalizaban más la nubosidad alta (cirros, a menudo finos y translúcidos) que la baja (estrato/cúmulos, opacos y los que realmente tapan el cielo) — al revés de lo esperable físicamente para observación astronómica.
+Cambio: se invirtieron los pesos a `low=1.0, mid=0.7, high=0.5` en los dos sitios donde vivía la fórmula duplicada:
+- `static/modules/widgets/get_seeing.php` (líneas 269-275, cálculo del seeing actual servido al widget/modal).
+- `static/js/widgets/forecast.js` (línea 77, mismo cálculo pero client-side para las 9 horas del pronóstico).
+
+Impacto en cascada: `cloud_index` (0-100) cambia de valor con los mismos datos de entrada, lo que afecta también a C12 (checklist "¿Puedo observar esta noche?"), que usa los mismos cortes (`<10` ✅, `<40` ⚠️) sobre ese índice — los umbrales no se tocaron, pero al cambiar el peso de las capas, algunas situaciones (p. ej. mucha nube baja + poca alta) pasarán de ✅/⚠️ a un estado peor, y otras (mucha nube alta fina + poca baja) mejorarán respecto a antes.
+Riesgo: ninguno técnico — incluido en la caché de 30 min de `get_seeing.php` (C6, APCu), así que el valor antiguo puede tardar hasta ese TTL en refrescarse de forma natural, igual que se documentó para C1.
 
 ### C1. Índice horario más cercano en `fetch_pressure_levels()`
 Estado: Implementado en `static/modules/widgets/get_seeing.php`.
@@ -92,6 +102,28 @@ Estado: Implementado en los 8 archivos JS de gráficos históricos (`modal_temp.
 Cambio: se usó exactamente el criterio que proponía la propia auditoría — si el array de datos tiene más de 5000 elementos, se diezma a un paso fijo (`Math.ceil(length / 2000)`) quedándose ~1 de cada N filas, antes de extraer las series para ECharts. En `modal_rain.js` (que recibe `{labels, series}` ya separados desde el backend en vez de un array de filas) se decima `labels` y cada `series[i].data` con el mismo paso, para mantener los arrays paralelos.
 Nota: no se adoptó el muestreo nativo de ECharts (`sampling: 'lttb'`), que da mejores resultados visuales pero requiere pasar a un eje `type: 'time'` con pares `[timestamp, valor]` en vez de `type: 'category'` con arrays paralelos — un refactor mayor en los 8 archivos, desproporcionado para lo que pedía este ítem. Queda como posible mejora futura si el "cada N puntos" se nota visualmente basto.
 
+### C11. Unificar el set de iconos meteorológicos
+Estado: Implementado, con alcance distinto al que asumía la auditoría original.
+Verificación previa: antes de tocar nada se comprobó cuántos de los ~90 iconos definidos como variables CSS (`static/css/theme-switcher.php` y `static/css/images.php`, 69 nombres únicos repetidos en ambos archivos, de ahí el "87"/"147" que contaba la auditoría de enero) son realmente alcanzables por algún camino de código:
+- El único sitio de todo el dashboard que dibuja un icono de condición meteorológica dinámicamente es `iconoWeatherCodeCSS()` en `static/js/widgets/forecast.js` (widget de pronóstico Open-Meteo). Esa función ya reducía el universo a **14 estados** (7 día + 7 noche: despejado/mayormente despejado/parcialmente nublado/muy nublado × día-noche, más niebla, lluvia, lluvia intensa, nieve y tormenta).
+- `static/modals/modal_credits.php` usa, de forma estática (no dependiente de datos), 2 iconos más del mismo set: `breezy` y `cloudy`.
+- Los **32 iconos restantes** (`tornado`, `hurricane`, `tropical-storm`, `strong-storms`, `blizzard`, `hail`, `sleet`, `drizzle`, `freezing-drizzle`, `freezing-rain`, `showers`, `flurries`, `snow-showers`, `blowing-drifting-snow`, `blowing-dust-sandstorm`, `haze`, `smoke`, `windy`, `frigid-ice-crystals`, `mixed-rain-and-hail`, `hot-day`, `wintry-mix`, `rain-snow`, `rain-sleet`, `heavy-snow`, y los 6 `scattered-*`/`isolated-*` día/noche) no los invocaba ningún código — sobrantes del set original de Weather Underground, sin ninguna clase HTML que los aplicara.
+
+Conclusión: el usuario nunca llegó a ver "~90 iconos" en la práctica, así que no había una decisión de rediseño visual urgente que tomar. Lo que sí había era deuda técnica (assets y CSS muertos). Se dividió en dos tareas mecánicas:
+
+**C11a — Limpieza de iconos no usados.**
+- Eliminadas las 32 variables `--icon-*` correspondientes en `static/css/theme-switcher.php` (bloque de modo claro) y `static/css/images.php` (bloque `:root` y sus 32 reglas `.icon.<nombre> { background-image: ... }`), verificando antes con `grep` en todo el árbol (`.php`/`.js`/`.css`) que ninguna de las 32 quedaba referenciada por otra ruta.
+- Borrados los 32 SVG huérfanos correspondientes en `static/images/icons/`.
+- Sin cambios visuales: los 16 iconos en uso (14 del pronóstico + `breezy`/`cloudy` de créditos) y todos los iconos utilitarios (flechas, settings, plus/minus, termómetro, etc.) quedaron intactos.
+- Riesgo: ninguno — el bloque `@media (prefers-color-scheme: dark)` de `images.php` y el bloque de modo noche de `theme-switcher.php` no redefinían ninguno de los 32 iconos eliminados (los iconos de condición meteorológica no tenían variante oscura propia), así que no queda ninguna referencia rota.
+
+**C11b — Cobertura completa de códigos WMO en el pronóstico.**
+- `iconoWeatherCodeCSS()` y `traducirWeatherCode()` en `static/js/widgets/forecast.js` solo cubrían 20 de los 28 códigos WMO que puede devolver Open-Meteo; los 8 restantes (`56`,`57` llovizna helada, `66`,`67` lluvia helada, `77` granos de nieve, `85`,`86` chubascos de nieve, `96` tormenta con granizo ligero) caían en el icono genérico "no disponible" y en la etiqueta "Desconocido".
+- Se añadieron esos 8 códigos a los grupos existentes por similitud (sin crear iconos nuevos, reutilizando los 14 ya vigentes): `56/66` → `rain`, `57/67` → `heavy-rain`, `77/85/86` → `snow`, `96` → `thunderstorms`. Y se añadieron sus 8 etiquetas en español a `traducirWeatherCode()`.
+- Con esto, el pronóstico ya no muestra "Desconocido"/icono genérico para ningún código WMO válido.
+
+Alcance descartado (sigue pendiente de tu decisión, no ejecutado): un rediseño visual real del *estilo* de icono (p. ej. pasar de ilustraciones estilo Weather Underground a un set más plano/minimalista). Eso sí seguiría siendo una decisión de producto — pero es un cambio de estilo, no de cantidad, ya que la cantidad ya estaba en 14-16 antes de esta limpieza.
+
 ### C12. Checklist "¿Puedo observar esta noche?"
 Estado: Implementado, con alcance reducido respecto a la propuesta original de la auditoría.
 Alcance descartado: la propuesta original ("Modo Observador Nocturno") incluía ocultar widgets irrelevantes y resaltar los críticos — esa parte se solapaba directamente con C10, que el usuario rechazó explícitamente. Se implementó solo la segunda mitad: una tarjeta nueva, aditiva, que no oculta ni reordena nada existente.
@@ -112,5 +144,5 @@ Riesgo: ninguno para el resto del dashboard (tarjeta puramente aditiva, no toca 
 1. **C1** (bug idéntico al ya arreglado en nubes, coherencia interna) y **C2**/**C5** (riesgo de payload/queries sin límite) — más parecidos a R1-R8, bajo riesgo.
 2. **C7** (tooltip) y **C8** (decimación) — mejoras de UX/rendimiento acotadas.
 3. **C6** (APCu) — depende de disponibilidad en el servidor, verificar primero.
-4. **C3** — pedirte confirmación antes de tocar los pesos científicos.
-5. **C9, C10, C11, C12, C4** — requieren tu decisión de producto o no son ejecutables como tarea de código (C4).
+4. **C3** — pedirte confirmación antes de tocar los pesos científicos. (Hecho: confirmaste el criterio y se implementó.)
+5. **C9, C10, C12, C4** — requieren tu decisión de producto o no son ejecutables como tarea de código (C4). **C11** ya no está en este grupo: resultó ser limpieza mecánica (ver detalle) y quedó implementado.

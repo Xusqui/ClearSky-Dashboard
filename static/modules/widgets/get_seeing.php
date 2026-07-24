@@ -266,11 +266,13 @@ $puntos_base += ($shear < 20) ? 5 : (($shear < 40) ? 3 : 1);
 $puntos_base += ($deltaT < 15) ? 5 : (($deltaT < 30) ? 3 : 1);
 
 // --- 8. Ajuste de puntos según nubosidad (factor multiplicativo) ---
-$factor_nubes = 1 - (($low * 0.5 + $mid * 0.7 + $high * 1.0) / 100);
+// Las nubes bajas (opacas, bloquean casi todo el cielo) pesan más que las
+// altas (cirros finos, a menudo translúcidos): low=1.0, mid=0.7, high=0.5.
+$factor_nubes = 1 - (($low * 1.0 + $mid * 0.7 + $high * 0.5) / 100);
 $factor_nubes = max(0, min(1, $factor_nubes)); // límite entre 0 y 1
 
 $puntos_final = $puntos_base * $factor_nubes;
-$detalles['cloud_index'] = round(($low * 0.5 + $mid * 0.7 + $high * 1.0), 1);
+$detalles['cloud_index'] = round(($low * 1.0 + $mid * 0.7 + $high * 0.5), 1);
 $detalles['factor_nubes'] = round($factor_nubes, 2);
 $detalles['puntos_base'] = $puntos_base;
 $detalles['puntos_final'] = round($puntos_final, 1);

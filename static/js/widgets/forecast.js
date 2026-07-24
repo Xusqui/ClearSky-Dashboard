@@ -30,10 +30,10 @@ function iconoWeatherCodeCSS(code, esNocheFlag) {
     if ([2].includes(code)) return "var(--icon-partly-cloudy-day)";
     if ([3].includes(code)) return "var(--icon-mostly-cloudy-day)";
     if ([45,48].includes(code)) return "var(--icon-foggy)";
-    if ([51,53,55,61,63,80,81].includes(code)) return "var(--icon-rain)";
-    if ([65,82].includes(code)) return "var(--icon-heavy-rain)";
-    if ([71,73,75].includes(code)) return "var(--icon-snow)";
-    if ([95,99].includes(code)) return "var(--icon-thunderstorms)";
+    if ([51,53,55,56,61,63,66,80,81].includes(code)) return "var(--icon-rain)";
+    if ([57,65,67,82].includes(code)) return "var(--icon-heavy-rain)";
+    if ([71,73,75,77,85,86].includes(code)) return "var(--icon-snow)";
+    if ([95,96,99].includes(code)) return "var(--icon-thunderstorms)";
     return "var(--icon-not-available)";
 }
 
@@ -45,10 +45,13 @@ function traducirWeatherCode(code) {
         0: "Despejado",1: "Mayormente despejado",2: "Parcialmente nublado",3: "Nublado",
         45: "Niebla",48: "Niebla con escarcha",
         51: "Llovizna ligera",53: "Llovizna moderada",55: "Llovizna intensa",
+        56: "Llovizna helada ligera",57: "Llovizna helada intensa",
         61: "Lluvia ligera",63: "Lluvia moderada",65: "Lluvia intensa",
-        71: "Nieve ligera",73: "Nieve moderada",75: "Nieve intensa",
+        66: "Lluvia helada ligera",67: "Lluvia helada intensa",
+        71: "Nieve ligera",73: "Nieve moderada",75: "Nieve intensa",77: "Granos de nieve",
         80: "Chubascos ligeros",81: "Chubascos moderados",82: "Chubascos intensos",
-        95: "Tormenta",99: "Tormenta fuerte"
+        85: "Chubascos de nieve",86: "Chubascos de nieve intensos",
+        95: "Tormenta",96: "Tormenta con granizo ligero",99: "Tormenta fuerte con granizo"
     };
     return condiciones[code] || "Desconocido";
 }
@@ -71,7 +74,7 @@ function calcularSeeingHora(h) {
     const low  = h.nubesBajas || 0;
     const mid  = h.nubesMedias || 0;
     const high = h.nubesAltas || 0;
-    let factor_nubes = 1 - ((low*0.5 + mid*0.7 + high*1.0)/100);
+    let factor_nubes = 1 - ((low*1.0 + mid*0.7 + high*0.5)/100);
     factor_nubes = Math.max(0, Math.min(1, factor_nubes));
     const puntos_final = puntos_base * factor_nubes;
     let seeing, point;
