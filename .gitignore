@@ -40,6 +40,7 @@
 /static/cache/temp_trend.json
 /static/cache/pressure_trend.json
 /static/cache/dew_cache.json
+/static/cache/schema_check.json
 AUDITORIA_CIENTIFICA_CLEARSKY_2026.md
 PACKAGE_SUMMARY.md
 PROPUESTA_HARDENING_API_INGESTA_2026-05-10.md
