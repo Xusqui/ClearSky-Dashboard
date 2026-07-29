@@ -4,6 +4,7 @@
    para no destacar por tamaño frente a los demás. */
 
 .checklist-verdict-wrap {
+    position: relative;
     display: flex;
     justify-content: center;
     margin: 2px 0 6px;
@@ -45,10 +46,12 @@
 }
 
 .checklist-badge {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 2px;
+    cursor: help;
 }
 
 .checklist-circle {
@@ -92,4 +95,54 @@
     color: var(--color-secondary-font);
     text-align: center;
     line-height: 1.2;
+}
+
+/* Tarjeta explicativa al pasar el ratón (o al hacer foco/tap) sobre cada
+   insignia: explica por qué ese indicador está verde/ámbar/rojo. */
+.checklist-tooltip {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-6px);
+    width: max-content;
+    min-width: 160px;
+    max-width: 220px;
+    background: var(--color-box-bg);
+    color: var(--color-secondary-font);
+    border: 1px solid var(--color-secondary-font);
+    border-left: 4px solid var(--color-secondary-font);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 0.72em;
+    line-height: 1.4;
+    text-align: left;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    z-index: 50;
+}
+
+.checklist-badge:hover .checklist-tooltip,
+.checklist-badge:focus-within .checklist-tooltip,
+.checklist-badge.tooltip-open .checklist-tooltip,
+.checklist-verdict-wrap:hover .checklist-tooltip,
+.checklist-verdict-wrap:focus-within .checklist-tooltip,
+.checklist-verdict-wrap.tooltip-open .checklist-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(-10px);
+}
+
+.checklist-tooltip.status-ok {
+    border-left-color: var(--green);
+}
+
+.checklist-tooltip.status-warn {
+    border-left-color: var(--orange);
+}
+
+.checklist-tooltip.status-bad {
+    border-left-color: var(--red);
 }
