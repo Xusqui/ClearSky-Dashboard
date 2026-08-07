@@ -127,19 +127,98 @@ function loadTempIntChart(startDate, endDate) {
             return;
         }
 
+        // Extremos reales del periodo, calculados ANTES de decimar: en rangos
+        // largos el backend agrega por día/hora con AVG, lo que aplana los
+        // picos. Las columnas "_min"/"_max" que manda en esos casos llevan el
+        // real de cada día/hora; si no vienen (rango corto, sin agregar),
+        // cada fila ya es un dato real y se usa el propio campo.
+        // Redondeo a 1 decimal: AVG() en MySQL (usado en los rangos
+        // agregados por día/hora) genera muchos decimales (ej. 22.072892...)
+        // que no aportan precisión real y quedan feos en pantalla. Se aplica
+        // en todos los valores mostrados (línea, banda y etiquetas Máx/Mín)
+        // para que sean consistentes entre sí.
+        function redondear1(v) {
+            return Math.round(v * 10) / 10;
+        }
+        function extremoFila(row, campo, tipo) {
+            var key = campo + "_" + tipo;
+            var v = row[key] !== undefined ? row[key] : row[campo];
+            return (v === null || v === undefined) ? NaN : redondear1(parseFloat(v));
+        }
+        function extremoPeriodo(campo, tipo) {
+            var mejor = null, mejorIdx = -1;
+            data.forEach((row, i) => {
+                var v = extremoFila(row, campo, tipo);
+                if (isNaN(v)) return;
+                if (mejor === null || (tipo === "max" ? v > mejor : v < mejor)) {
+                    mejor = v;
+                    mejorIdx = i;
+                }
+            });
+            return { valor: mejor, idx: mejorIdx };
+        }
+        var extTemp = { min: extremoPeriodo("temperatura_interior", "min"), max: extremoPeriodo("temperatura_interior", "max") };
+
         if (data.length > 5000) {
             // Decimación: evita renderizar decenas de miles de puntos si el
             // usuario elige un rango de varios días sin agregar en el backend.
+            // Se fuerza a conservar las filas que contienen los extremos
+            // reales para que no desaparezcan de la gráfica.
             const step = Math.ceil(data.length / 2000);
-            data = data.filter((_, i) => i % step === 0);
+            var keepIdx = new Set();
+            for (var i = 0; i < data.length; i += step) keepIdx.add(i);
+            keepIdx.add(extTemp.min.idx);
+            keepIdx.add(extTemp.max.idx);
+            data = data.filter((_, i) => keepIdx.has(i));
         }
 
         var labels = data.map((row) => row.hora);
-        var temperaturas = data.map((row) => parseFloat(row.temperatura_interior));
+        var temperaturas = data.map((row) => redondear1(parseFloat(row.temperatura_interior)));
 
-        // Escala Y dinámica
-        var minY = Math.min(...temperaturas) - 2;
-        var maxY = Math.max(...temperaturas) + 2;
+        // Banda sombreada mín-máx real: así el "Máx"/"Mín" del periodo
+        // coincide con el borde de la banda dibujada, en vez de quedar como
+        // una etiqueta flotando por encima de una línea que nunca llega a
+        // ese valor. Truco de ECharts: dos series apiladas (stack), la
+        // primera invisible hasta el mínimo, la segunda visible con la
+        // diferencia hasta el máximo -> el área visible va exactamente de
+        // mín a máx.
+        function serieBanda(minArr, maxArr, color, stackId) {
+            var delta = maxArr.map((v, i) => v - minArr[i]);
+            return [
+                {
+                    name: stackId + "_min",
+                    type: "line",
+                    data: minArr,
+                    stack: stackId,
+                    symbol: "none",
+                    lineStyle: { opacity: 0 },
+                    areaStyle: { opacity: 0 },
+                    silent: true,
+                    tooltip: { show: false }
+                },
+                {
+                    name: stackId + "_range",
+                    type: "line",
+                    data: delta,
+                    stack: stackId,
+                    symbol: "none",
+                    lineStyle: { opacity: 0 },
+                    areaStyle: { color: color, opacity: 0.18 },
+                    silent: true,
+                    tooltip: { show: false }
+                }
+            ];
+        }
+        var tempMinArr = data.map((row) => extremoFila(row, "temperatura_interior", "min"));
+        var tempMaxArr = data.map((row) => extremoFila(row, "temperatura_interior", "max"));
+
+        // Escala Y dinámica basada en los extremos reales del periodo, no en
+        // la serie (potencialmente promediada) que se dibuja.
+        var minY = extTemp.min.valor - 2;
+        var maxY = extTemp.max.valor + 2;
+
+        var maxIdx = data.findIndex((row) => extremoFila(row, "temperatura_interior", "max") === extTemp.max.valor);
+        var minIdx = data.findIndex((row) => extremoFila(row, "temperatura_interior", "min") === extTemp.min.valor);
 
         var option = {
             backgroundColor: bgColor,
@@ -185,6 +264,7 @@ function loadTempIntChart(startDate, endDate) {
                 axisLabel: { color: fontColor }
             },
             series: [
+                ...serieBanda(tempMinArr, tempMaxArr, redColor, "bandaTempInt"),
                 {
                     name: "Temperatura Interior",
                     data: temperaturas,
@@ -193,8 +273,8 @@ function loadTempIntChart(startDate, endDate) {
                     lineStyle: { width: 2, color: redColor },
                     markPoint: {
                         data: [
-                            { type: "max", name: "Máx", itemStyle: { color: "darkred" } },
-                            { type: "min", name: "Mín", itemStyle: { color: "orange" } }
+                            { name: "Máx", coord: [maxIdx, extTemp.max.valor], value: extTemp.max.valor, itemStyle: { color: "darkred" } },
+                            { name: "Mín", coord: [minIdx, extTemp.min.valor], value: extTemp.min.valor, itemStyle: { color: "orange" } }
                         ]
                     }
                 }

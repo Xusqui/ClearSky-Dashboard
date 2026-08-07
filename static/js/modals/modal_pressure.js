@@ -68,19 +68,98 @@ document.addEventListener("DOMContentLoaded", function () {
                     return;
                 }
 
+                // Extremos reales del periodo, calculados ANTES de decimar:
+                // en rangos largos el backend agrega por día/hora con AVG, lo
+                // que aplana los picos. Las columnas "_min"/"_max" que manda
+                // en esos casos llevan el real de cada día/hora; si no
+                // vienen (rango corto, sin agregar), cada fila ya es un dato
+                // real y se usa el propio campo.
+                // Redondeo a 1 decimal: AVG() en MySQL (usado en los rangos
+                // agregados por día/hora) genera muchos decimales que no
+                // aportan precisión real y quedan feos en pantalla. Se aplica
+                // en todos los valores mostrados (línea, banda y etiquetas
+                // Máx/Mín) para que sean consistentes entre sí.
+                function redondear1(v) {
+                    return Math.round(v * 10) / 10;
+                }
+                function extremoFila(row, campo, tipo) {
+                    const key = campo + "_" + tipo;
+                    const v = row[key] !== undefined ? row[key] : row[campo];
+                    return (v === null || v === undefined) ? NaN : redondear1(parseFloat(v));
+                }
+                function extremoPeriodo(campo, tipo) {
+                    let mejor = null, mejorIdx = -1;
+                    data.forEach((row, i) => {
+                        const v = extremoFila(row, campo, tipo);
+                        if (isNaN(v)) return;
+                        if (mejor === null || (tipo === "max" ? v > mejor : v < mejor)) {
+                            mejor = v;
+                            mejorIdx = i;
+                        }
+                    });
+                    return { valor: mejor, idx: mejorIdx };
+                }
+                const extPresion = { min: extremoPeriodo("presion_relativa", "min"), max: extremoPeriodo("presion_relativa", "max") };
+
                 if (data.length > 5000) {
                     // Decimación: evita renderizar decenas de miles de puntos si el
                     // usuario elige un rango de varios días sin agregar en el backend.
+                    // Se fuerza a conservar las filas que contienen los extremos
+                    // reales para que no desaparezcan de la gráfica.
                     const step = Math.ceil(data.length / 2000);
-                    data = data.filter((_, i) => i % step === 0);
+                    const keepIdx = new Set();
+                    for (let i = 0; i < data.length; i += step) keepIdx.add(i);
+                    keepIdx.add(extPresion.min.idx);
+                    keepIdx.add(extPresion.max.idx);
+                    data = data.filter((_, i) => keepIdx.has(i));
                 }
 
                 const labels = data.map(row => row.hora);
-                const presiones = data.map(row => parseFloat(row.presion_relativa));
+                const presiones = data.map(row => redondear1(parseFloat(row.presion_relativa)));
 
-                // Escala Y dinámica
-                const minY = Math.min(...presiones) - 2;
-                const maxY = Math.max(...presiones) + 2;
+                // Banda sombreada mín-máx real: así el "Máx"/"Mín" del
+                // periodo coincide con el borde de la banda dibujada, en vez
+                // de quedar como una etiqueta flotando por encima de una
+                // línea que nunca llega a ese valor. Truco de ECharts: dos
+                // series apiladas (stack), la primera invisible hasta el
+                // mínimo, la segunda visible con la diferencia hasta el
+                // máximo -> el área visible va exactamente de mín a máx.
+                function serieBanda(minArr, maxArr, color, stackId) {
+                    const delta = maxArr.map((v, i) => v - minArr[i]);
+                    return [
+                        {
+                            name: stackId + "_min",
+                            type: "line",
+                            data: minArr,
+                            stack: stackId,
+                            symbol: "none",
+                            lineStyle: { opacity: 0 },
+                            areaStyle: { opacity: 0 },
+                            silent: true,
+                            tooltip: { show: false }
+                        },
+                        {
+                            name: stackId + "_range",
+                            type: "line",
+                            data: delta,
+                            stack: stackId,
+                            symbol: "none",
+                            lineStyle: { opacity: 0 },
+                            areaStyle: { color: color, opacity: 0.18 },
+                            silent: true,
+                            tooltip: { show: false }
+                        }
+                    ];
+                }
+                const presMinArr = data.map(row => extremoFila(row, "presion_relativa", "min"));
+                const presMaxArr = data.map(row => extremoFila(row, "presion_relativa", "max"));
+
+                // Escala Y dinámica basada en los extremos reales del periodo
+                const minY = extPresion.min.valor - 2;
+                const maxY = extPresion.max.valor + 2;
+
+                const maxIdx = data.findIndex(row => extremoFila(row, "presion_relativa", "max") === extPresion.max.valor);
+                const minIdx = data.findIndex(row => extremoFila(row, "presion_relativa", "min") === extPresion.min.valor);
 
                 const option = {
                     backgroundColor: bgColor,
@@ -124,7 +203,9 @@ document.addEventListener("DOMContentLoaded", function () {
                         axisLine: { lineStyle: { color: fontColor } },
                         axisLabel: { color: fontColor }
                     },
-                    series: [{
+                    series: [
+                        ...serieBanda(presMinArr, presMaxArr, greenColor, "bandaPresion"),
+                        {
                         name: 'Presión Relativa',
                         data: presiones,
                         type: 'line',
@@ -132,8 +213,8 @@ document.addEventListener("DOMContentLoaded", function () {
                         lineStyle: { width: 2, color: greenColor }, // Color de tu CSS
                         markPoint: {
                             data: [
-                                { type: 'max', name: 'Máx', itemStyle: { color: 'darkgreen' } },
-                                { type: 'min', name: 'Mín', itemStyle: { color: 'lightgreen' } }
+                                { name: 'Máx', coord: [maxIdx, extPresion.max.valor], value: extPresion.max.valor, itemStyle: { color: 'darkgreen' } },
+                                { name: 'Mín', coord: [minIdx, extPresion.min.valor], value: extPresion.min.valor, itemStyle: { color: 'lightgreen' } }
                             ]
                         }
                     }]

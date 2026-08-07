@@ -74,19 +74,62 @@ document.addEventListener("DOMContentLoaded", function () {
                     return;
                 }
 
+                // Extremos reales del periodo, calculados ANTES de decimar:
+                // en rangos largos el backend agrega por día/hora con AVG, lo
+                // que aplana los picos. Las columnas "_min"/"_max" que manda
+                // en esos casos llevan el real de cada día/hora; si no
+                // vienen (rango corto, sin agregar), cada fila ya es un dato
+                // real y se usa el propio campo. (viento_direccion no tiene
+                // extremo real: es una magnitud circular.)
+                // Redondeo a 1 decimal: AVG() en MySQL (usado en los rangos
+                // agregados por día/hora) genera muchos decimales que no
+                // aportan precisión real y quedan feos en pantalla. Se aplica
+                // en todos los valores mostrados (línea, banda y etiquetas
+                // Máx/Mín) para que sean consistentes entre sí.
+                function redondear1(v) {
+                    return Math.round(v * 10) / 10;
+                }
+                function extremoFila(row, campo, tipo) {
+                    const key = campo + "_" + tipo;
+                    const v = row[key] !== undefined ? row[key] : row[campo];
+                    return (v === null || v === undefined) ? NaN : redondear1(parseFloat(v));
+                }
+                function extremoPeriodo(campo, tipo) {
+                    let mejor = null, mejorIdx = -1;
+                    data.forEach((row, i) => {
+                        const v = extremoFila(row, campo, tipo);
+                        if (isNaN(v)) return;
+                        if (mejor === null || (tipo === "max" ? v > mejor : v < mejor)) {
+                            mejor = v;
+                            mejorIdx = i;
+                        }
+                    });
+                    return { valor: mejor, idx: mejorIdx };
+                }
+                const extVel = { min: extremoPeriodo("viento_velocidad", "min"), max: extremoPeriodo("viento_velocidad", "max") };
+                const extRacha = { min: extremoPeriodo("viento_racha", "min"), max: extremoPeriodo("viento_racha", "max") };
+
                 if (data.length > 5000) {
                     // Decimación: evita renderizar decenas de miles de puntos si el
                     // usuario elige un rango de varios días sin agregar en el backend.
+                    // Se fuerza a conservar las filas que contienen los extremos
+                    // reales para que no desaparezcan de la gráfica.
                     const step = Math.ceil(data.length / 2000);
-                    data = data.filter((_, i) => i % step === 0);
+                    const keepIdx = new Set();
+                    for (let i = 0; i < data.length; i += step) keepIdx.add(i);
+                    keepIdx.add(extVel.min.idx);
+                    keepIdx.add(extVel.max.idx);
+                    keepIdx.add(extRacha.min.idx);
+                    keepIdx.add(extRacha.max.idx);
+                    data = data.filter((_, i) => keepIdx.has(i));
                 }
 
                 // 6. Procesar datos
                 const labels = data.map(r => r.hora);
                 //const velocidad = data.map(r => parseFloat(r.viento_velocidad));
-                const velocidad = data.map(r => parseFloat(r.viento_velocidad))
+                const velocidad = data.map(r => redondear1(parseFloat(r.viento_velocidad)))
                       .filter(val => Number.isFinite(val));
-                const rachas = data.map(r => parseFloat(r.viento_racha));
+                const rachas = data.map(r => redondear1(parseFloat(r.viento_racha)));
                 const direccion = data.map(r => parseFloat(r.viento_direccion));
 
                 // 7. Obtener colores (ya tenemos fontColor y wuOrange)
@@ -94,6 +137,41 @@ document.addEventListener("DOMContentLoaded", function () {
                 const wuRed = rootStyle.getPropertyValue('--red').trim();
                 const wuGreen = rootStyle.getPropertyValue('--green').trim();
                 const wuBlue = rootStyle.getPropertyValue('--lightblue').trim();
+
+                // Banda sombreada mín-máx real para la Velocidad (métrica
+                // principal): así el "Máx"/"Mín" del periodo coincide con el
+                // borde de la banda dibujada. Rachas no lleva banda propia
+                // (evita solapar 2 áreas a la vez) y usa su propia línea
+                // (posiblemente promediada) para el rango del eje.
+                function serieBanda(minArr, maxArr, color, stackId) {
+                    const delta = maxArr.map((v, i) => v - minArr[i]);
+                    return [
+                        {
+                            name: stackId + "_min",
+                            type: "line",
+                            data: minArr,
+                            stack: stackId,
+                            symbol: "none",
+                            lineStyle: { opacity: 0 },
+                            areaStyle: { opacity: 0 },
+                            silent: true,
+                            tooltip: { show: false }
+                        },
+                        {
+                            name: stackId + "_range",
+                            type: "line",
+                            data: delta,
+                            stack: stackId,
+                            symbol: "none",
+                            lineStyle: { opacity: 0 },
+                            areaStyle: { color: color, opacity: 0.18 },
+                            silent: true,
+                            tooltip: { show: false }
+                        }
+                    ];
+                }
+                const velMinArr = data.map(row => extremoFila(row, "viento_velocidad", "min"));
+                const velMaxArr = data.map(row => extremoFila(row, "viento_velocidad", "max"));
 
                 // ------------------------
                 // Gráfico de velocidad y rachas (MODIFICADO con dataZoom)
@@ -138,10 +216,16 @@ document.addEventListener("DOMContentLoaded", function () {
                     yAxis: {
                         type: 'value',
                         name: 'km/h',
+                        // Escala Y: extremos reales para Velocidad (la banda),
+                        // y el rango de la propia línea para Rachas (que no
+                        // lleva banda), para que el eje cubra todo lo dibujado.
+                        min: Math.max(0, Math.min(extVel.min.valor, ...rachas) - 2).toFixed(1),
+                        max: (Math.max(extVel.max.valor, ...rachas) + 2).toFixed(1),
                         axisLine: { lineStyle: { color: fontColor } },
                         axisLabel: { color: fontColor }
                     },
                     series: [
+                        ...serieBanda(velMinArr, velMaxArr, wuBlue, "bandaVelocidad"),
                         {
                             name: 'Velocidad',
                             data: velocidad,
@@ -163,8 +247,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 // Gráfico polar de dirección (Sin cambios en la opción, solo en la carga)
                 // ------------------------
                 const cardinales = ['N','NE','E','SE','S','SO','O','NO'];
-                const minVel = Math.min(...velocidad);
-                const maxVel = Math.max(...velocidad);
+                // Extremos reales de velocidad (no de la serie ya promediada)
+                // para calibrar el radio del gráfico polar y el gradiente de color.
+                const minVel = extVel.min.valor;
+                const maxVel = extVel.max.valor;
 
                 dirChart.setOption({
                     backgroundColor: bgColor,

@@ -132,22 +132,121 @@ function loadTempChart(startDate, endDate) {
                 return;
             }
 
+            // Extremos reales del periodo, calculados ANTES de decimar: para
+            // rangos largos el backend agrega por día/hora con AVG (para que
+            // la línea no sea un muro de puntos), lo que aplana los picos. Las
+            // columnas "_min"/"_max" que manda el backend en esos casos sí
+            // llevan el mínimo/máximo real de cada día/hora; si no vienen
+            // (rango corto, sin agregar), cada fila ya es un dato real y se
+            // usa el propio campo.
+            // Redondeo a 1 decimal: AVG() en MySQL (usado en los rangos
+            // agregados por día/hora) genera muchos decimales (ej.
+            // 22.072892...) que no aportan precisión real y quedan feos en
+            // pantalla. Se aplica en todos los valores mostrados (línea,
+            // banda y etiquetas Máx/Mín) para que sean consistentes entre sí.
+            function redondear1(v) {
+                return Math.round(v * 10) / 10;
+            }
+            function extremoFila(row, campo, tipo) {
+                var key = campo + "_" + tipo;
+                var v = row[key] !== undefined ? row[key] : row[campo];
+                return (v === null || v === undefined) ? NaN : redondear1(parseFloat(v));
+            }
+            function extremoPeriodo(campo, tipo) {
+                var mejor = null, mejorIdx = -1;
+                data.forEach((row, i) => {
+                    var v = extremoFila(row, campo, tipo);
+                    if (isNaN(v)) return;
+                    if (mejor === null || (tipo === "max" ? v > mejor : v < mejor)) {
+                        mejor = v;
+                        mejorIdx = i;
+                    }
+                });
+                return { valor: mejor, idx: mejorIdx };
+            }
+            var camposExtremos = ["temperatura", "sensacion_termica", "punto_rocio"];
+            var extremos = {};
+            camposExtremos.forEach((campo) => {
+                extremos[campo] = { min: extremoPeriodo(campo, "min"), max: extremoPeriodo(campo, "max") };
+            });
+
             if (data.length > 5000) {
                 // Decimación: evita renderizar decenas de miles de puntos si el
                 // usuario elige un rango de varios días sin agregar en el backend.
+                // Se fuerza a conservar las filas que contienen los extremos
+                // reales para que no desaparezcan de la gráfica.
                 const step = Math.ceil(data.length / 2000);
-                data = data.filter((_, i) => i % step === 0);
+                var keepIdx = new Set();
+                for (var i = 0; i < data.length; i += step) keepIdx.add(i);
+                camposExtremos.forEach((campo) => {
+                    keepIdx.add(extremos[campo].min.idx);
+                    keepIdx.add(extremos[campo].max.idx);
+                });
+                data = data.filter((_, i) => keepIdx.has(i));
             }
 
             var labels = data.map((row) => row.hora);
-            var temperaturas = data.map((row) => parseFloat(row.temperatura));
-            var sensaciones = data.map((row) => parseFloat(row.sensacion_termica));
-            var puntosRocio = data.map((row) => parseFloat(row.punto_rocio));
+            var temperaturas = data.map((row) => redondear1(parseFloat(row.temperatura)));
+            var sensaciones = data.map((row) => redondear1(parseFloat(row.sensacion_termica)));
+            var puntosRocio = data.map((row) => redondear1(parseFloat(row.punto_rocio)));
 
-            // Escala Y dinámica
-            var todos = temperaturas.concat(sensaciones, puntosRocio);
-            var minY = Math.min(...todos) - 2;
-            var maxY = Math.max(...todos) + 2;
+            // Banda sombreada mín-máx real para la temperatura (la métrica
+            // principal): así el "Máx"/"Mín" del periodo coincide con el
+            // borde de la banda dibujada, en vez de quedar como una etiqueta
+            // flotando por encima de una línea que nunca llega a ese valor.
+            // Truco de ECharts: dos series apiladas (stack), la primera
+            // invisible hasta el mínimo, la segunda visible con la diferencia
+            // hasta el máximo -> el área visible va exactamente de mín a máx.
+            function serieBanda(minArr, maxArr, color, stackId) {
+                var delta = maxArr.map((v, i) => v - minArr[i]);
+                return [
+                    {
+                        name: stackId + "_min",
+                        type: "line",
+                        data: minArr,
+                        stack: stackId,
+                        symbol: "none",
+                        lineStyle: { opacity: 0 },
+                        areaStyle: { opacity: 0 },
+                        silent: true,
+                        tooltip: { show: false }
+                    },
+                    {
+                        name: stackId + "_range",
+                        type: "line",
+                        data: delta,
+                        stack: stackId,
+                        symbol: "none",
+                        lineStyle: { opacity: 0 },
+                        areaStyle: { color: color, opacity: 0.18 },
+                        silent: true,
+                        tooltip: { show: false }
+                    }
+                ];
+            }
+            var tempMinArr = data.map((row) => extremoFila(row, "temperatura", "min"));
+            var tempMaxArr = data.map((row) => extremoFila(row, "temperatura", "max"));
+
+            // Escala Y dinámica basada en los extremos reales del periodo, no
+            // en la serie (potencialmente promediada) que se dibuja.
+            var minY = Math.min(extremos.temperatura.min.valor, ...sensaciones, ...puntosRocio) - 2;
+            var maxY = Math.max(extremos.temperatura.max.valor, ...sensaciones, ...puntosRocio) + 2;
+
+            // markPoint explícito para Temperatura (en vez de type:"max"/"min"
+            // automático de ECharts, que tomaría el máximo/mínimo de la serie
+            // ya dibujada -posiblemente promediada- en lugar del valor real
+            // del periodo). Al coincidir con el borde de la banda sombreada,
+            // el marcador queda visualmente coherente con lo dibujado.
+            function markPointReal(campo, colorMax, colorMin) {
+                var maxIdx = data.findIndex((row) => extremoFila(row, campo, "max") === extremos[campo].max.valor);
+                var minIdx = data.findIndex((row) => extremoFila(row, campo, "min") === extremos[campo].min.valor);
+                return {
+                    data: [
+                        { name: "Máx", coord: [maxIdx, extremos[campo].max.valor], value: extremos[campo].max.valor, itemStyle: { color: colorMax } },
+                        { name: "Mín", coord: [minIdx, extremos[campo].min.valor], value: extremos[campo].min.valor, itemStyle: { color: colorMin } }
+                    ]
+                };
+            }
 
             var option = {
                 backgroundColor: bgColor,
@@ -193,18 +292,14 @@ function loadTempChart(startDate, endDate) {
                     axisLabel: { color: fontColor }
                 },
                 series: [
+                    ...serieBanda(tempMinArr, tempMaxArr, redColor, "bandaTemp"),
                     {
                         name: "Temperatura",
                         data: temperaturas,
                         type: "line",
                         smooth: true,
                         lineStyle: { width: 2, color: redColor },
-                        markPoint: {
-                            data: [
-                                { type: "max", name: "Máx", itemStyle: { color: "darkred" } },
-                                { type: "min", name: "Mín", itemStyle: { color: "orange" } }
-                            ]
-                        }
+                        markPoint: markPointReal("temperatura", "darkred", "orange")
                     },
                     {
                         name: "Sensación térmica",
@@ -212,6 +307,9 @@ function loadTempChart(startDate, endDate) {
                         type: "line",
                         smooth: true,
                         lineStyle: { width: 2, color: greenColor },
+                        // Sin banda propia (evita solapar 3 áreas a la vez);
+                        // el marcador usa el máximo/mínimo de la propia línea
+                        // dibujada, así que siempre queda sobre ella.
                         markPoint: {
                             data: [
                                 { type: "max", name: "Máx", itemStyle: { color: "darkgreen" } },

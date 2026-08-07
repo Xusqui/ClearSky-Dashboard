@@ -45,25 +45,42 @@ if (isset($_GET['start']) && isset($_GET['end'])) {
 
         if ($diff_days > 30) {
             // Rango largo (> 30 días): un punto por día.
+            // Además del promedio (para la línea), se incluyen MIN/MAX reales
+            // de cada día: promediar oculta los picos reales del periodo, así
+            // que el frontend usa estas columnas para el eje Y y las etiquetas
+            // Máx/Mín en vez de derivarlas de la serie ya promediada.
             $date_format_php = 'Y-m-d';
             $query = "
                 SELECT DATE(`timestamp`) AS hora,
                        AVG(temperatura) AS temperatura,
+                       MIN(temperatura) AS temperatura_min,
+                       MAX(temperatura) AS temperatura_max,
                        AVG(sensacion_termica) AS sensacion_termica,
-                       AVG(punto_rocio) AS punto_rocio
+                       MIN(sensacion_termica) AS sensacion_termica_min,
+                       MAX(sensacion_termica) AS sensacion_termica_max,
+                       AVG(punto_rocio) AS punto_rocio,
+                       MIN(punto_rocio) AS punto_rocio_min,
+                       MAX(punto_rocio) AS punto_rocio_max
                 FROM meteo
                 WHERE `timestamp` BETWEEN ? AND ?
                 GROUP BY DATE(`timestamp`)
                 ORDER BY hora ASC
             ";
         } elseif ($diff_days > 7) {
-            // Rango medio (7-30 días): un punto por hora.
+            // Rango medio (7-30 días): un punto por hora. Mismo motivo que
+            // arriba para las columnas MIN/MAX.
             $date_format_php = 'Y-m-d H:i';
             $query = "
                 SELECT DATE_FORMAT(`timestamp`, '%Y-%m-%d %H:00:00') AS hora,
                        AVG(temperatura) AS temperatura,
+                       MIN(temperatura) AS temperatura_min,
+                       MAX(temperatura) AS temperatura_max,
                        AVG(sensacion_termica) AS sensacion_termica,
-                       AVG(punto_rocio) AS punto_rocio
+                       MIN(sensacion_termica) AS sensacion_termica_min,
+                       MAX(sensacion_termica) AS sensacion_termica_max,
+                       AVG(punto_rocio) AS punto_rocio,
+                       MIN(punto_rocio) AS punto_rocio_min,
+                       MAX(punto_rocio) AS punto_rocio_max
                 FROM meteo
                 WHERE `timestamp` BETWEEN ? AND ?
                 GROUP BY DATE_FORMAT(`timestamp`, '%Y-%m-%d %H:00:00')

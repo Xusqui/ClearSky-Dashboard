@@ -44,20 +44,30 @@ if (isset($_GET['start']) && isset($_GET['end'])) {
         $diff_days = $start_dt->diff($end_dt)->days;
 
         if ($diff_days > 30) {
-            // Rango largo (> 30 días): un punto por día.
+            // Rango largo (> 30 días): un punto por día. Además del promedio
+            // (para la línea), se incluyen MIN/MAX reales de cada día: el
+            // frontend los usa para el eje Y y las etiquetas Máx/Mín en vez
+            // de derivarlas de la serie ya promediada.
             $date_format_php = 'Y-m-d';
             $query = "
-                SELECT DATE(`timestamp`) AS hora, AVG(presion_relativa) AS presion_relativa
+                SELECT DATE(`timestamp`) AS hora,
+                       AVG(presion_relativa) AS presion_relativa,
+                       MIN(presion_relativa) AS presion_relativa_min,
+                       MAX(presion_relativa) AS presion_relativa_max
                 FROM meteo
                 WHERE `timestamp` BETWEEN ? AND ?
                 GROUP BY DATE(`timestamp`)
                 ORDER BY hora ASC
             ";
         } elseif ($diff_days > 7) {
-            // Rango medio (7-30 días): un punto por hora.
+            // Rango medio (7-30 días): un punto por hora. Mismo motivo que
+            // arriba para las columnas MIN/MAX.
             $date_format_php = 'Y-m-d H:i';
             $query = "
-                SELECT DATE_FORMAT(`timestamp`, '%Y-%m-%d %H:00:00') AS hora, AVG(presion_relativa) AS presion_relativa
+                SELECT DATE_FORMAT(`timestamp`, '%Y-%m-%d %H:00:00') AS hora,
+                       AVG(presion_relativa) AS presion_relativa,
+                       MIN(presion_relativa) AS presion_relativa_min,
+                       MAX(presion_relativa) AS presion_relativa_max
                 FROM meteo
                 WHERE `timestamp` BETWEEN ? AND ?
                 GROUP BY DATE_FORMAT(`timestamp`, '%Y-%m-%d %H:00:00')

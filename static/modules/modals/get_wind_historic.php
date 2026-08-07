@@ -48,12 +48,21 @@ if (isset($_GET['start']) && isset($_GET['end'])) {
         $diff_days = $start_dt->diff($end_dt)->days;
 
         if ($diff_days > 30) {
-            // Rango largo (> 30 días): un punto por día.
+            // Rango largo (> 30 días): un punto por día. Además del promedio
+            // (para la línea), se incluyen MIN/MAX reales de velocidad/racha
+            // de cada día: el frontend los usa para el eje Y y las etiquetas
+            // Máx/Mín en vez de derivarlas de la serie ya promediada.
+            // (viento_direccion no tiene MIN/MAX real: es una magnitud
+            // circular, ya se trata aparte con la media circular de arriba.)
             $date_format_php = 'Y-m-d';
             $query = "
                 SELECT DATE(`timestamp`) AS hora,
                        AVG(viento_velocidad) AS viento_velocidad,
+                       MIN(viento_velocidad) AS viento_velocidad_min,
+                       MAX(viento_velocidad) AS viento_velocidad_max,
                        AVG(viento_racha) AS viento_racha,
+                       MIN(viento_racha) AS viento_racha_min,
+                       MAX(viento_racha) AS viento_racha_max,
                        DEGREES(ATAN2(AVG(SIN(RADIANS(viento_direccion))), AVG(COS(RADIANS(viento_direccion))))) AS viento_direccion
                 FROM meteo
                 WHERE `timestamp` BETWEEN ? AND ?
@@ -61,12 +70,17 @@ if (isset($_GET['start']) && isset($_GET['end'])) {
                 ORDER BY hora ASC
             ";
         } elseif ($diff_days > 7) {
-            // Rango medio (7-30 días): un punto por hora.
+            // Rango medio (7-30 días): un punto por hora. Mismo motivo que
+            // arriba para las columnas MIN/MAX.
             $date_format_php = 'Y-m-d H:i';
             $query = "
                 SELECT DATE_FORMAT(`timestamp`, '%Y-%m-%d %H:00:00') AS hora,
                        AVG(viento_velocidad) AS viento_velocidad,
+                       MIN(viento_velocidad) AS viento_velocidad_min,
+                       MAX(viento_velocidad) AS viento_velocidad_max,
                        AVG(viento_racha) AS viento_racha,
+                       MIN(viento_racha) AS viento_racha_min,
+                       MAX(viento_racha) AS viento_racha_max,
                        DEGREES(ATAN2(AVG(SIN(RADIANS(viento_direccion))), AVG(COS(RADIANS(viento_direccion))))) AS viento_direccion
                 FROM meteo
                 WHERE `timestamp` BETWEEN ? AND ?

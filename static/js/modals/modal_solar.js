@@ -77,30 +77,118 @@ document.addEventListener("DOMContentLoaded", function () {
                     return;
                 }
 
+                // Extremos reales del periodo, calculados ANTES de decimar:
+                // en rangos largos el backend agrega por día/hora con AVG, lo
+                // que aplana los picos. Las columnas "_min"/"_max" que manda
+                // en esos casos llevan el real de cada día/hora; si no
+                // vienen (rango corto, sin agregar), cada fila ya es un dato
+                // real y se usa el propio campo.
+                // Redondeo a 1 decimal: AVG() en MySQL (usado en los rangos
+                // agregados por día/hora) genera muchos decimales que no
+                // aportan precisión real y quedan feos en pantalla. Se aplica
+                // en todos los valores mostrados (línea, banda y etiquetas
+                // Máx/Mín) para que sean consistentes entre sí.
+                function redondear1(v) {
+                    return Math.round(v * 10) / 10;
+                }
+                function extremoFila(row, campo, tipo) {
+                    const key = campo + "_" + tipo;
+                    const v = row[key] !== undefined ? row[key] : row[campo];
+                    return (v === null || v === undefined) ? NaN : redondear1(parseFloat(v));
+                }
+                function extremoPeriodo(campo, tipo) {
+                    let mejor = null, mejorIdx = -1;
+                    data.forEach((row, i) => {
+                        const v = extremoFila(row, campo, tipo);
+                        if (isNaN(v)) return;
+                        if (mejor === null || (tipo === "max" ? v > mejor : v < mejor)) {
+                            mejor = v;
+                            mejorIdx = i;
+                        }
+                    });
+                    return { valor: mejor, idx: mejorIdx };
+                }
+                const extUv = { min: extremoPeriodo("indice_uv", "min"), max: extremoPeriodo("indice_uv", "max") };
+                const extSolar = { min: extremoPeriodo("radiacion_solar", "min"), max: extremoPeriodo("radiacion_solar", "max") };
+
                 if (data.length > 5000) {
                     // Decimación: evita renderizar decenas de miles de puntos si el
                     // usuario elige un rango de varios días sin agregar en el backend.
+                    // Se fuerza a conservar las filas que contienen los extremos
+                    // reales para que no desaparezcan de la gráfica.
                     const step = Math.ceil(data.length / 2000);
-                    data = data.filter((_, i) => i % step === 0);
+                    const keepIdx = new Set();
+                    for (let i = 0; i < data.length; i += step) keepIdx.add(i);
+                    keepIdx.add(extUv.min.idx);
+                    keepIdx.add(extUv.max.idx);
+                    keepIdx.add(extSolar.min.idx);
+                    keepIdx.add(extSolar.max.idx);
+                    data = data.filter((_, i) => keepIdx.has(i));
                 }
 
                 // 6. Procesar datos
                 const labels = data.map(row => row.hora);
                 //const uvValues = data.map(row => parseFloat(row.indice_uv));
                 //const solarValues = data.map(row => parseFloat(row.radiacion_solar));
-                const uvValues = data.map(row => parseFloat(row.indice_uv))
+                const uvValues = data.map(row => redondear1(parseFloat(row.indice_uv)))
                     .filter(val => Number.isFinite(val));
-                const solarValues = data.map(row => parseFloat(row.radiacion_solar))
+                const solarValues = data.map(row => redondear1(parseFloat(row.radiacion_solar)))
                     .filter(val => Number.isFinite(val));
+
+                const uvMaxIdx = data.findIndex(row => extremoFila(row, "indice_uv", "max") === extUv.max.valor);
+                const uvMinIdx = data.findIndex(row => extremoFila(row, "indice_uv", "min") === extUv.min.valor);
+                const solarMaxIdx = data.findIndex(row => extremoFila(row, "radiacion_solar", "max") === extSolar.max.valor);
+                const solarMinIdx = data.findIndex(row => extremoFila(row, "radiacion_solar", "min") === extSolar.min.valor);
 
                 // 7. Obtener más colores
                 const bgColor = rootStyle.getPropertyValue('--bg-color').trim();
                 const lowColor = rootStyle.getPropertyValue('--lightblue').trim();
 
+                // Banda sombreada mín-máx real: así el "Máx"/"Mín" del
+                // periodo coincide con el borde de la banda dibujada, en vez
+                // de quedar como una etiqueta flotando por encima de una
+                // línea que nunca llega a ese valor. Truco de ECharts: dos
+                // series apiladas (stack), la primera invisible hasta el
+                // mínimo, la segunda visible con la diferencia hasta el
+                // máximo -> el área visible va exactamente de mín a máx.
+                function serieBanda(minArr, maxArr, color, stackId) {
+                    const delta = maxArr.map((v, i) => v - minArr[i]);
+                    return [
+                        {
+                            name: stackId + "_min",
+                            type: "line",
+                            data: minArr,
+                            stack: stackId,
+                            symbol: "none",
+                            lineStyle: { opacity: 0 },
+                            areaStyle: { opacity: 0 },
+                            silent: true,
+                            tooltip: { show: false }
+                        },
+                        {
+                            name: stackId + "_range",
+                            type: "line",
+                            data: delta,
+                            stack: stackId,
+                            symbol: "none",
+                            lineStyle: { opacity: 0 },
+                            areaStyle: { color: color, opacity: 0.18 },
+                            silent: true,
+                            tooltip: { show: false }
+                        }
+                    ];
+                }
+                const uvMinArr = data.map(row => extremoFila(row, "indice_uv", "min"));
+                const uvMaxArr = data.map(row => extremoFila(row, "indice_uv", "max"));
+                const solarMinArr = data.map(row => extremoFila(row, "radiacion_solar", "min"));
+                const solarMaxArr = data.map(row => extremoFila(row, "radiacion_solar", "max"));
+
                 // 8. Opciones de Gráficos
 
                 // --- Gráfica UV (MODIFICADA con dataZoom y rangos Y) ---
-                const maxUv = Math.max(...uvValues) + 1;
+                // Escala Y basada en el máximo real del periodo, no en la
+                // serie (potencialmente promediada) que se dibuja.
+                const maxUv = extUv.max.valor + 1;
                 uvChart.setOption({
                     backgroundColor: bgColor,
                     tooltip: { trigger: 'axis', backgroundColor : bgColor, textStyle: { color: fontColor } },
@@ -108,6 +196,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         show: false,
                         min: 0,
                         max: 11,
+                        seriesIndex: 2, // solo la línea de Índice UV, no la banda mín-máx
                         inRange: { color: [lowColor, highColor] }
                     },
                     // --- NUEVO: DataZoom ---
@@ -139,7 +228,9 @@ document.addEventListener("DOMContentLoaded", function () {
                         axisLine: { lineStyle: { color: fontColor } },
                         axisLabel: { color: fontColor }
                     },
-                    series: [{
+                    series: [
+                        ...serieBanda(uvMinArr, uvMaxArr, highColor, "bandaUv"),
+                        {
                         name: 'Índice UV',
                         data: uvValues,
                         type: 'line',
@@ -147,16 +238,18 @@ document.addEventListener("DOMContentLoaded", function () {
                         lineStyle: { width: 1 },
                         markPoint: {
                             data: [
-                                { type: 'max', name: 'Máx', itemStyle: { color: highColor } },
-                                { type: 'min', name: 'Mín', itemStyle: { color: lowColor } }
+                                { name: 'Máx', coord: [uvMaxIdx, extUv.max.valor], value: extUv.max.valor, itemStyle: { color: highColor } },
+                                { name: 'Mín', coord: [uvMinIdx, extUv.min.valor], value: extUv.min.valor, itemStyle: { color: lowColor } }
                             ]
                         }
                     }]
                 });
 
                 // --- Gráfica radiación solar (MODIFICADA con dataZoom y rangos Y) ---
-                const minSolar = Math.min(...solarValues);
-                const maxSolar = Math.max(...solarValues);
+                // Escala Y basada en los extremos reales del periodo, no en
+                // la serie (potencialmente promediada) que se dibuja.
+                const minSolar = extSolar.min.valor;
+                const maxSolar = extSolar.max.valor;
                 solarChart.setOption({
                     backgroundColor: bgColor,
                     tooltip: { trigger: 'axis', backgroundColor : bgColor , textStyle: { color: fontColor } },
@@ -164,6 +257,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         show: false,
                         min: minSolar,
                         max: maxSolar,
+                        seriesIndex: 2, // solo la línea de Radiación Solar, no la banda mín-máx
                         inRange: { color: [lowColor, highColor] }
                     },
                     // --- NUEVO: DataZoom ---
@@ -195,7 +289,9 @@ document.addEventListener("DOMContentLoaded", function () {
                         axisLine: { lineStyle: { color: fontColor } },
                         axisLabel: { color: fontColor }
                     },
-                    series: [{
+                    series: [
+                        ...serieBanda(solarMinArr, solarMaxArr, highColor, "bandaSolar"),
+                        {
                         name: 'Radiación Solar',
                         type: 'line',
                         smooth: true,
@@ -204,8 +300,8 @@ document.addEventListener("DOMContentLoaded", function () {
                         lineStyle: { width: 2 },
                         markPoint: {
                             data: [
-                                { type: 'max', name: 'Máx', itemStyle: { color: highColor } },
-                                { type: 'min', name: 'Mín', itemStyle: { color: lowColor } }
+                                { name: 'Máx', coord: [solarMaxIdx, extSolar.max.valor], value: extSolar.max.valor, itemStyle: { color: highColor } },
+                                { name: 'Mín', coord: [solarMinIdx, extSolar.min.valor], value: extSolar.min.valor, itemStyle: { color: lowColor } }
                             ]
                         }
                     }]
