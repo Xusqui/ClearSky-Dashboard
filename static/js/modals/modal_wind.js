@@ -173,6 +173,21 @@ document.addEventListener("DOMContentLoaded", function () {
                 const velMinArr = data.map(row => extremoFila(row, "viento_velocidad", "min"));
                 const velMaxArr = data.map(row => extremoFila(row, "viento_velocidad", "max"));
 
+                // markPoint explícito con los extremos reales del periodo (igual
+                // que en Temperatura/Humedad), en vez del type:"max"/"min"
+                // automático de ECharts, que tomaría el máximo/mínimo de la
+                // serie ya dibujada (posiblemente promediada).
+                function markPointReal(campo, ext, colorMax, colorMin) {
+                    const maxIdx = data.findIndex(row => extremoFila(row, campo, "max") === ext.max.valor);
+                    const minIdx = data.findIndex(row => extremoFila(row, campo, "min") === ext.min.valor);
+                    return {
+                        data: [
+                            { name: "Máx", coord: [maxIdx, ext.max.valor], value: ext.max.valor, itemStyle: { color: colorMax } },
+                            { name: "Mín", coord: [minIdx, ext.min.valor], value: ext.min.valor, itemStyle: { color: colorMin } }
+                        ]
+                    };
+                }
+
                 // ------------------------
                 // Gráfico de velocidad y rachas (MODIFICADO con dataZoom)
                 // ------------------------
@@ -231,14 +246,16 @@ document.addEventListener("DOMContentLoaded", function () {
                             data: velocidad,
                             type: 'line',
                             smooth: true,
-                            lineStyle: { width: 2, color: wuBlue }
+                            lineStyle: { width: 2, color: wuBlue },
+                            markPoint: markPointReal("viento_velocidad", extVel, wuRed, wuGreen)
                         },
                         {
                             name: 'Rachas',
                             data: rachas,
                             type: 'line',
                             smooth: true,
-                            lineStyle: { width: 2, color: wuOrange }
+                            lineStyle: { width: 2, color: wuOrange },
+                            markPoint: markPointReal("viento_racha", extRacha, wuRed, wuGreen)
                         }
                     ]
                 });
