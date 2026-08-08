@@ -38,7 +38,12 @@ function computeMoonData(date){
     const fraction = ill.fraction;
     const angle = ill.angle;      // rad
 
-    const isWaxing = angle < 0;
+    // Creciente/menguante por la fase (0-0.5 = nueva→llena), no por el signo
+    // de "angle": el ángulo de posición del limbo iluminado no es un proxy
+    // fiable de antes/después de la luna llena y podía desalinearse con el
+    // texto "creciente"/"menguante" que muestra el widget principal (moon.js)
+    // para el mismo instante.
+    const isWaxing = phase < 0.5;
     const terminatorName = isWaxing ? "Amanecer lunar" : "Anochecer lunar";
 
     // Longitud subsolar (Ls)

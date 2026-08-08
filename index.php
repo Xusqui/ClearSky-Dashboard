@@ -211,7 +211,7 @@ function asset_v(string $relativePath): string
     conf_to_js.php → moon.js, o conf_to_js.php → update_status.js →
     sun.js inyectado dinámicamente, siguen intactas) pero permite que el
     navegador las descargue todas en paralelo en vez de en serie. -->
-    <script defer src="https://unpkg.com/suncalc@1.9.0/suncalc.js"></script>
+    <script defer src="./static/js/other/suncalc.js?v=<?= asset_v('./static/js/other/suncalc.js'); ?>"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
     <script defer src="./static/js/other/astronomy.browser.js?v=<?= asset_v('./static/js/other/astronomy.browser.js'); ?>"></script>
     <script defer src="./static/js/other/orb.v2.js?v=<?= asset_v('./static/js/other/orb.v2.js'); ?>"></script>
