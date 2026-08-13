@@ -52,6 +52,7 @@ function asset_v(string $relativePath): string
     <link rel="stylesheet" type="text/css" href="./static/css/temp-widget.css?v=<?= asset_v('./static/css/temp-widget.css'); ?>" />
     <link rel="stylesheet" type="text/css" href="./static/css/temp-int-widget.css?v=<?= asset_v('./static/css/temp-int-widget.css'); ?>" />
     <link rel="stylesheet" type="text/css" href="./static/css/uv-widget.css?v=<?= asset_v('./static/css/uv-widget.css'); ?>" />
+    <link rel="stylesheet" type="text/css" href="./static/css/eclipse-widget.css?v=<?= asset_v('./static/css/eclipse-widget.css'); ?>" />
     <link rel="stylesheet" type="text/css" href="./static/css/widget-base.css?v=<?= asset_v('./static/css/widget-base.css'); ?>" />
     <link rel="stylesheet" type="text/css" href="./static/css/widget-wind.css?v=<?= asset_v('./static/css/widget-wind.css'); ?>" />
     <link rel="stylesheet" type="text/css" href="./static/css/widget-moon.css?v=<?= asset_v('./static/css/widget-moon.css'); ?>" />
@@ -151,6 +152,7 @@ function asset_v(string $relativePath): string
                             require_once __DIR__ . '/static/widgets/widget_seeing.php';
                             require_once __DIR__ . '/static/widgets/widget_observing_checklist.php';
                         }
+                        require_once __DIR__ . '/static/widgets/widget_eclipse.php';
                         ?>
                     </div>
                     <!--############################################################
@@ -226,6 +228,7 @@ function asset_v(string $relativePath): string
     <!-- JS de widgets-->
     <script defer src="./static/js/widgets/update_status.js?v=<?= asset_v('./static/js/widgets/update_status.js'); ?>"></script>
     <script defer src="./static/js/widgets/forecast.js?v=<?= asset_v('./static/js/widgets/forecast.js'); ?>"></script>
+    <script defer src="./static/js/widgets/eclipse_widget.js?v=<?= asset_v('./static/js/widgets/eclipse_widget.js'); ?>"></script>
     <!-- JS de Modales -->
     <script type="module" src="./static/js/modals/modal_moon.js?v=<?= asset_v('./static/js/modals/modal_moon.js'); ?>"></script>
     <script defer src="./static/js/modals/modal_temp.js?v=<?= asset_v('./static/js/modals/modal_temp.js'); ?>"></script>
