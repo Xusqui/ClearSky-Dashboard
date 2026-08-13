@@ -6,7 +6,7 @@
         ***************************************************** -->
 <div class="widget" id="eclipse_widget">
     <div class="title">Próximo Eclipse Solar</div>
-    <eclipse-widget-view data-pws-id="<?= $observatorio ?>" data-status="connected" class="widget-view loaded">
+    <eclipse-widget-view data-pws-id="<?= $observatorio ?>" data-status="connected" data-main-value="" class="widget-view loaded">
         <div class="graphic-container">
             <div class="eclipse-container">
                 <svg width="100%" height="100%" viewBox="0 0 100 100">
@@ -18,7 +18,7 @@
                         </radialGradient>
                     </defs>
                     <circle id="eclipse-sun" cx="50" cy="50" r="26" fill="url(#eclipseSunGradient)" />
-                    <circle id="eclipse-moon" cx="106" cy="50" r="26" />
+                    <image id="eclipse-moon" href="./static/images/icons/moons/full_moon4.svg" x="80" y="24" width="52" height="52" />
                 </svg>
             </div>
         </div>

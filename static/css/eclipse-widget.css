@@ -6,16 +6,11 @@ eclipse-widget-view .eclipse-container {
 }
 
 eclipse-widget-view #eclipse-moon {
-    /* Color fijo (no depende de variables de tema): así siempre contrasta
-       con el degradado cálido del Sol, sea cual sea el tema activo. */
-    fill: #12141c;
-    stroke: rgba(255, 255, 255, 0.15);
-    stroke-width: 0.5;
-    transition: cx 0.6s ease;
-}
-
-eclipse-widget-view #eclipse-moon.total {
-    fill: #05070c;
+    /* Oscurecido suave: lo bastante para que no compita con el brillo del
+       Sol, pero sin llegar a verse como un círculo negro liso (con
+       brightness(0.25) se perdía casi toda la textura). */
+    filter: brightness(0.55) saturate(0.5);
+    transition: x 4s ease;
 }
 
 eclipse-widget-view .cuaternary-value {

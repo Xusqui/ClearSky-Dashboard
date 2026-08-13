@@ -32,7 +32,9 @@ function updateEclipseGraphic(eclipse) {
     // No es una proyección astronómica exacta, solo una aproximación visual.
     const bite = Math.max(eclipse.obscuration, 0.12);
     const separation = 2 * r * (1 - bite);
-    moonEl.setAttribute('cx', sunCx + separation);
+    // moonEl es una <image> posicionada por su esquina (x, no cx): se resta
+    // el radio para obtener el borde izquierdo a partir del centro deseado.
+    moonEl.setAttribute('x', sunCx + separation - r);
     moonEl.classList.toggle('total', eclipse.kind === 'total');
 }
 
